@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import pub.devrel.easypermissions.EasyPermissions;
 import ru.evtushenko.english.R;
+import ru.nsu.fit.scriptaur.fragments.RegistrationFragment;
 import ru.nsu.fit.scriptaur.fragments.SingleVideoFragment;
 
 import java.util.List;
@@ -72,13 +73,21 @@ public class DrawerActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_video) {
-
+            Fragment fragment = new SingleVideoFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString(SingleVideoFragment.VIDEO_ID_KEY, "VNqNnUJVcVs");
+            fragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.content_drawer, new SingleVideoFragment())
+                    .replace(R.id.content_drawer, fragment)
                     .commit();
         } else if (id == R.id.nav_api) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.content_drawer, new SingleVideoFragment()).commit();
+                    .replace(R.id.content_drawer, new SingleVideoFragment())
+                    .commit();
+        } else if (id == R.id.nav_register){
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.content_drawer, new RegistrationFragment())
+                    .commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

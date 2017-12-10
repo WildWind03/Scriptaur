@@ -177,14 +177,14 @@ public class SingleVideoFragment extends Fragment {
 
     @OnClick(R.id.repeatButton)
     public void repeat() {
-        player.seekToMillis(captions.get(curCaption).getStart()-50);
+        player.seekToMillis(captions.get(curCaption).getStart() - 50);
         player.play();
     }
 
     @OnClick(R.id.skipButton)
     public void skip() {
         curCaption++;
-        player.seekToMillis(captions.get(curCaption).getStart()-50);
+        player.seekToMillis(captions.get(curCaption).getStart() - 50);
         text.post(new Runnable() {
             @Override
             public void run() {
@@ -193,8 +193,6 @@ public class SingleVideoFragment extends Fragment {
         });
         player.play();
     }
-
-
 
 
     private class PlayerInitializedListener implements YouTubePlayer.OnInitializedListener {
@@ -255,5 +253,11 @@ public class SingleVideoFragment extends Fragment {
         public void onLoaded(String s) {
             player.play();
         }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        timer.cancel();
     }
 }

@@ -10,6 +10,10 @@
                 android:id="@+id/nav_api"
                 android:icon="@drawable/ic_menu_gallery"
                 android:title="Api Fragment"/>
+        <item
+                android:id="@+id/nav_register"
+                android:icon="@drawable/ic_menu_gallery"
+                android:title="Registration"/>
     </group>
 
     <item android:title="Communicate">
