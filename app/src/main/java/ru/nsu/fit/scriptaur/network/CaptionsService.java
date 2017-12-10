@@ -1,4 +1,4 @@
-package ru.nsu.fit.scriptaur;
+package ru.nsu.fit.scriptaur.network;
 
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;

@@ -1,4 +1,4 @@
-package ru.nsu.fit.scriptaur;
+package ru.nsu.fit.scriptaur.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -28,6 +28,10 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import retrofit2.Response;
 import ru.evtushenko.english.R;
+import ru.nsu.fit.scriptaur.model.AbstractPlayerListener;
+import ru.nsu.fit.scriptaur.model.Caption;
+import ru.nsu.fit.scriptaur.network.CaptionsService;
+import ru.nsu.fit.scriptaur.network.RetrofitServiceFactory;
 
 import java.io.IOException;
 import java.io.StringReader;

@@ -1,4 +1,4 @@
-package ru.nsu.fit.scriptaur;
+package ru.nsu.fit.scriptaur.model;
 
 import com.google.android.youtube.player.YouTubePlayer;
 

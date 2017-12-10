@@ -1,4 +1,4 @@
-package ru.nsu.fit.scriptaur;
+package ru.nsu.fit.scriptaur.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import pub.devrel.easypermissions.EasyPermissions;
 import ru.evtushenko.english.R;
+import ru.nsu.fit.scriptaur.fragments.SingleVideoFragment;
 
 import java.util.List;
 

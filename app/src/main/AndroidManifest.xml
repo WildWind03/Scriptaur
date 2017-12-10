@@ -13,7 +13,7 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity
-                android:name="ru.nsu.fit.scriptaur.DrawerActivity"
+                android:name="ru.nsu.fit.scriptaur.activity.DrawerActivity"
                 android:label="@string/title_activity_drawer"
                 android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

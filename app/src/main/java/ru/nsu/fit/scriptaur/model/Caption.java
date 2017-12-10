@@ -1,4 +1,4 @@
-package ru.nsu.fit.scriptaur;
+package ru.nsu.fit.scriptaur.model;
 
 public class Caption {
     private final int start;
