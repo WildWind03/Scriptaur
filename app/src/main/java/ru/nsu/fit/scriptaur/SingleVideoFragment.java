@@ -1,6 +1,5 @@
-package ru.evtushenko.english;
+package ru.nsu.fit.scriptaur;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -28,8 +27,7 @@ import okhttp3.ResponseBody;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import ru.evtushenko.english.R;
 
 import java.io.IOException;
 import java.io.StringReader;

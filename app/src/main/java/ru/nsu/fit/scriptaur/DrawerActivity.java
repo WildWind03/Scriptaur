@@ -1,4 +1,4 @@
-package ru.evtushenko.english;
+package ru.nsu.fit.scriptaur;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import pub.devrel.easypermissions.EasyPermissions;
+import ru.evtushenko.english.R;
 
 import java.util.List;
 

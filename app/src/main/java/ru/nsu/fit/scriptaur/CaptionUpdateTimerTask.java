@@ -1,4 +1,4 @@
-package ru.evtushenko.english;
+package ru.nsu.fit.scriptaur;
 
 import java.util.TimerTask;
 

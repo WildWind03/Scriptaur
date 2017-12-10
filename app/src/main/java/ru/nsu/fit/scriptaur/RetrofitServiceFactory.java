@@ -1,4 +1,4 @@
-package ru.evtushenko.english;
+package ru.nsu.fit.scriptaur;
 
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;

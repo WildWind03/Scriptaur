@@ -1,4 +1,4 @@
-package ru.evtushenko.english;
+package ru.nsu.fit.scriptaur;
 
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
