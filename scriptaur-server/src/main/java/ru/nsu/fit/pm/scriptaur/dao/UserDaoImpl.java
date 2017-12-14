@@ -38,7 +38,7 @@ public class UserDaoImpl implements UserDao {
     public List<User> getAllUsers() {
         Session session = sessionFactory.getCurrentSession();
         Transaction trans = session.beginTransaction();
-        List<User> userList = session.createQuery("from entity.User").list();
+        List<User> userList = session.createQuery("from ru.nsu.fit.pm.scriptaur.entity.User").list();
         for (User user : userList) {
             System.out.println("dao " + user.getUsername());
         }
