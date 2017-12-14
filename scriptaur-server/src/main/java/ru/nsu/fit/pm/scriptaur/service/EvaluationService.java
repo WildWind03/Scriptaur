@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface EvaluationService {
 
-    void addMark(int videoId, int mark);
+    void addMark(int userId, int videoId, int mark);
 
-    Evaluation getEvaluationByVideoId(int videoId);
+    Evaluation getEvaluationByVideoId(int userId, int videoId);
 
     List<Evaluation> getEvaluationList(int page);
 }

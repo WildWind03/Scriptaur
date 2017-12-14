@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface EvaluationDao {
 
-    void addMark(int videoId, int mark);
+    void addMark(int userId, int videoId, int mark);
 
-    Evaluation getEvaluationByVideoId(int videoId);
+    Evaluation getEvaluationByVideoId(int useId, int videoId);
 
     List<Evaluation> getEvaluationList(int page);
 

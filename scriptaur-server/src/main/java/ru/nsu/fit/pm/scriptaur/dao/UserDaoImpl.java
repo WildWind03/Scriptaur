@@ -22,8 +22,10 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void addUser(User user) {
         Session session = sessionFactory.getCurrentSession();
+
         Transaction trans = session.beginTransaction();
         session.persist(user);
+
         trans.commit();
     }
 
@@ -37,11 +39,13 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<User> getAllUsers() {
         Session session = sessionFactory.getCurrentSession();
+
         Transaction trans = session.beginTransaction();
         List<User> userList = session.createQuery("from ru.nsu.fit.pm.scriptaur.entity.User").list();
         for (User user : userList) {
             System.out.println("dao " + user.getUsername());
         }
+
         trans.commit();
         return userList;
     }
@@ -59,6 +63,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void removeUser(int id) {
         Session session = sessionFactory.getCurrentSession();
+
         Transaction trans = session.beginTransaction();
         User user = (User) session.load(User.class, id);
         if (user != null) {
@@ -67,6 +72,7 @@ public class UserDaoImpl implements UserDao {
         } else {
             System.out.println("nothing");
         }
+
         trans.commit();
     }
 }
