@@ -17,14 +17,14 @@ public class EvaluationServiceImpl implements EvaluationService {
 
     @Transactional
     @Override
-    public void addMark(int videoId, int mark) {
-        this.evaluationDao.addMark(videoId, mark);
+    public void addMark(int userId, int videoId, int mark) {
+        this.evaluationDao.addMark(userId, videoId, mark);
     }
 
     @Transactional
     @Override
-    public Evaluation getEvaluationByVideoId(int videoId) {
-        return this.evaluationDao.getEvaluationByVideoId(videoId);
+    public Evaluation getEvaluationByVideoId(int userId, int videoId) {
+        return this.evaluationDao.getEvaluationByVideoId(userId, videoId);
     }
 
     @Transactional
