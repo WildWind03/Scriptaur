@@ -2,12 +2,7 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="ru.evtushenko.english.ru.nsu.fit.scriptaur.SingleVideoFragment">
+             tools:context="ru.nsu.fit.scriptaur.fragments.SingleVideoFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/hello_blank_fragment"/>
 
 </FrameLayout>

@@ -1,6 +1,7 @@
 package ru.nsu.fit.scriptaur.activity;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -12,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import pub.devrel.easypermissions.EasyPermissions;
 import ru.evtushenko.english.R;
-import ru.nsu.fit.scriptaur.fragments.RegistrationFragment;
 import ru.nsu.fit.scriptaur.fragments.SingleVideoFragment;
 
 import java.util.List;
@@ -69,7 +69,7 @@ public class DrawerActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
         if (id == R.id.nav_video) {
@@ -83,10 +83,6 @@ public class DrawerActivity extends AppCompatActivity
         } else if (id == R.id.nav_api) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.content_drawer, new SingleVideoFragment())
-                    .commit();
-        } else if (id == R.id.nav_register){
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.content_drawer, new RegistrationFragment())
                     .commit();
         }
 
@@ -104,6 +100,4 @@ public class DrawerActivity extends AppCompatActivity
     public void onPermissionsDenied(int requestCode, List<String> perms) {
 
     }
-
-
 }
