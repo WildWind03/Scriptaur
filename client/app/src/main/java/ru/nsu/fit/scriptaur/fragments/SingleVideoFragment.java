@@ -83,7 +83,6 @@ public class SingleVideoFragment extends Fragment {
         YouTubePlayerSupportFragment youTubePlayer
                 = (YouTubePlayerSupportFragment) getChildFragmentManager().findFragmentById(R.id.playerContainer);
         youTubePlayer.initialize(API_KEY, new PlayerInitializedListener());
-
         CaptionsService service = RetrofitServiceFactory
                 .createRetrofitService(CaptionsService.class, BASE_URL);
 
