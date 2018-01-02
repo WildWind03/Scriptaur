@@ -27,10 +27,10 @@ import okhttp3.ResponseBody;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import retrofit2.Response;
-import ru.evtushenko.english.R;
+import ru.nsu.fit.scriptaur.R;
 import ru.nsu.fit.scriptaur.model.AbstractPlayerListener;
 import ru.nsu.fit.scriptaur.model.Caption;
-import ru.nsu.fit.scriptaur.network.CaptionsService;
+import ru.nsu.fit.scriptaur.network.CaptionsClient;
 import ru.nsu.fit.scriptaur.network.RetrofitServiceFactory;
 
 import java.io.IOException;
@@ -46,14 +46,7 @@ public class SingleVideoFragment extends Fragment {
     public static final String VIDEO_ID_KEY = "video_id";
 
     private static final String BASE_URL = "http://video.google.com/";
-
-    private List<Caption> captions;
-    private int curCaption = -1;
-    private boolean answered = true;
-    private Timer timer = new Timer();
-
-    private YouTubePlayer player;
-
+    private static String videoId;
     @BindView(R.id.repeatButton)
     Button repeatButton;
     @BindView(R.id.skipButton)
@@ -62,10 +55,11 @@ public class SingleVideoFragment extends Fragment {
     TextView text;
     @BindView(R.id.editText)
     EditText editText;
-
-
-    private static String videoId;
-
+    private List<Caption> captions;
+    private int curCaption = -1;
+    private boolean answered = true;
+    private Timer timer = new Timer();
+    private YouTubePlayer player;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,8 +77,8 @@ public class SingleVideoFragment extends Fragment {
         YouTubePlayerSupportFragment youTubePlayer
                 = (YouTubePlayerSupportFragment) getChildFragmentManager().findFragmentById(R.id.playerContainer);
         youTubePlayer.initialize(API_KEY, new PlayerInitializedListener());
-        CaptionsService service = RetrofitServiceFactory
-                .createRetrofitService(CaptionsService.class, BASE_URL);
+        CaptionsClient service = RetrofitServiceFactory
+                .createRetrofitService(CaptionsClient.class, BASE_URL);
 
         service.text(videoId)
                 .subscribeOn(Schedulers.newThread())
@@ -154,6 +148,12 @@ public class SingleVideoFragment extends Fragment {
                     }
                 });
         return view;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        timer.cancel();
     }
 
     @OnTextChanged(value = R.id.editText, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
@@ -254,9 +254,5 @@ public class SingleVideoFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        timer.cancel();
-    }
+
 }

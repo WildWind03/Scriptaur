@@ -2,7 +2,7 @@ package ru.nsu.fit.scriptaur.network;
 
 import io.reactivex.Observable;
 import retrofit2.http.*;
-import ru.nsu.fit.scriptaur.model.entities.*;
+import ru.nsu.fit.scriptaur.network.entities.*;
 
 import java.util.List;
 

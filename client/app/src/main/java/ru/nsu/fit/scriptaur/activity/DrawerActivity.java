@@ -12,7 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import pub.devrel.easypermissions.EasyPermissions;
-import ru.evtushenko.english.R;
+import ru.nsu.fit.scriptaur.R;
 import ru.nsu.fit.scriptaur.fragments.SingleVideoFragment;
 
 import java.util.List;

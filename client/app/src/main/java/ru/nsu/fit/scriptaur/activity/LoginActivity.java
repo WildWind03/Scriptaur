@@ -11,10 +11,11 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import ru.evtushenko.english.R;
+import ru.nsu.fit.scriptaur.R;
+
 
 public class LoginActivity extends AppCompatActivity {
-    final static int REGISTRATION_ACTIVITY_CODE = 1;
+    private final static int REGISTRATION_ACTIVITY_CODE = 1;
 
 
     @BindView(R.id.login)
@@ -41,11 +42,18 @@ public class LoginActivity extends AppCompatActivity {
                 REGISTRATION_ACTIVITY_CODE);
     }
 
+    @OnClick(R.id.goButton)
+    void startDrawerActivity() {
+        startActivity(new Intent(this, DrawerActivity.class));
+        finish();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REGISTRATION_ACTIVITY_CODE){
-            Toast.makeText(this, resultCode+"", Toast.LENGTH_LONG).show();
+        if (requestCode == REGISTRATION_ACTIVITY_CODE) {
+            Toast.makeText(this, resultCode + "", Toast.LENGTH_LONG).show();
+            //TODO sign in
         }
     }
 }
