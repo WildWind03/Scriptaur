@@ -13,4 +13,12 @@ public class RetrofitServiceFactory {
                 .build();
         return retrofit.create(clazz);
     }
+
+    public static <T> T createRetrofitServiceNoConverter(final Class<T> clazz, final String baseUrl) {
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build();
+        return retrofit.create(clazz);
+    }
 }

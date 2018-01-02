@@ -11,10 +11,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import pub.devrel.easypermissions.EasyPermissions;
 import ru.nsu.fit.scriptaur.R;
 import ru.nsu.fit.scriptaur.fragments.SingleVideoFragment;
+import ru.nsu.fit.scriptaur.fragments.VideoListFragment;
+import ru.nsu.fit.scriptaur.network.entities.Video;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class DrawerActivity extends AppCompatActivity
@@ -37,13 +44,14 @@ public class DrawerActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Fragment fragment = new SingleVideoFragment();
+        switchToFragment(R.id.nav_video);
+        /*Fragment fragment = new SingleVideoFragment();
         Bundle bundle = new Bundle();
         bundle.putString(SingleVideoFragment.VIDEO_ID_KEY, "VNqNnUJVcVs");
         fragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.content_drawer, fragment)
-                .commit();
+                .commit();*/
     }
 
     @Override
@@ -68,26 +76,42 @@ public class DrawerActivity extends AppCompatActivity
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
+    private void switchToFragment(int fragmentId) {
+        switch (fragmentId) {
+            case R.id.nav_video: {
+                Fragment fragment = new VideoListFragment();
+                Bundle bundle = new Bundle();
 
-        if (id == R.id.nav_video) {
-            Fragment fragment = new SingleVideoFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString(SingleVideoFragment.VIDEO_ID_KEY, "VNqNnUJVcVs");
-            fragment.setArguments(bundle);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.content_drawer, fragment)
-                    .commit();
-        } else if (id == R.id.nav_api) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.content_drawer, new SingleVideoFragment())
-                    .commit();
+                ArrayList<Video> videos = new ArrayList<>();
+                // Todo: only for debug
+                for(int i = 0; i < 10; ++i) {
+                    videos.addAll(Arrays.asList(
+                            new Video(1, "VNqNnUJVcVs", 0, "0", 4.5f, 10, false),
+                            new Video(2, "CW5oGRx9CLM", 0, "0", 5.0f, 15, true),
+                            new Video(3, "FBnAZnfNB6U", 0, "0", 1.488f, 1, false)));
+                }
+
+                bundle.putParcelableArrayList(VideoListFragment.VIDEOS_LIST_KEY, videos);
+                fragment.setArguments(bundle);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.content_drawer, fragment)
+                        .commit();
+
+            }
+            /*case R.id.nav_api: {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.content_drawer, new SingleVideoFragment())
+                        .commit();
+            }*/
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switchToFragment(item.getItemId());
         return true;
     }
 
