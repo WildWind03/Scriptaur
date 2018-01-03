@@ -11,6 +11,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import android.widget.ListView;
+import android.widget.RatingBar;
+import android.widget.TextView;
+
+import org.joda.time.Duration;
+import org.joda.time.LocalTime;
+import org.joda.time.Period;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.ISOPeriodFormat;
+import org.joda.time.format.PeriodFormatter;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import okhttp3.ResponseBody;
@@ -33,9 +51,13 @@ public class VideoListFragment extends Fragment {
     public static final String API_KEY = "AIzaSyB1EKAPqyzYEDcLmTK5ZaqmRLwzgHB8kmc";
     public static final String VIDEOS_LIST_KEY = "videos_list";
     private static final String BASE_URL = "https://www.googleapis.com/youtube/v3/";
+
+    // https://www.googleapis.com/youtube/v3/videos?key=AIzaSyB1EKAPqyzYEDcLmTK5ZaqmRLwzgHB8kmc&part=snippet,contentDetails&id=CW5oGRx9CLM
+
     private static List<Video> videos;
     private static Map<Video, Bitmap> icons = new TreeMap<>();
     private static Map<Video, String> names = new TreeMap<>();
+    private static Map<Video, Integer> durations = new TreeMap<>();
     @BindView(R.id.listView)
     ListView listView;
     @BindView(R.id.emptyListHint)
@@ -85,22 +107,29 @@ public class VideoListFragment extends Fragment {
                 Video video = (Video) getItem(position);
 
                 TextView link = ((TextView) view.findViewById(R.id.link));
-                TextView rating = ((TextView) view.findViewById(R.id.rating));
+                TextView duration = ((TextView) view.findViewById(R.id.duration));
+                RatingBar rating = ((RatingBar) view.findViewById(R.id.rating));
                 ImageView icon = ((ImageView) view.findViewById(R.id.icon));
 
                 if (names.containsKey(video)) {
                     link.setText(names.get(video));
                 }
 
-                rating.setText(String.format("Рейтинг %.2f", video.getRating()));
-
                 if (icons.containsKey(video)) {
                     icon.setImageBitmap(icons.get(video));
                 }
 
+                if(durations.containsKey(video)){
+                    LocalTime time = new LocalTime(0, 0); // midnight
+                    time = time.plusSeconds(durations.get(video));
+                    duration.setText(DateTimeFormat.forPattern("HH:mm:ss").print(time));
+                }
+
+                rating.setRating(video.getRating());
                 return view;
             }
         };
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -114,8 +143,8 @@ public class VideoListFragment extends Fragment {
                         .commit();
             }
         });
-        listView.setAdapter(adapter);
 
+        listView.setAdapter(adapter);
 
         @SuppressLint("StaticFieldLeak")
         AsyncTask<Video, Void, Void> loadTask = new AsyncTask<Video, Void, Void>() {
@@ -126,21 +155,35 @@ public class VideoListFragment extends Fragment {
                         .createRetrofitService(YoutubeApi.class, BASE_URL);
 
                 for (final Video video : videos) {
-                    youtubeApi.getMetaInfo(API_KEY, "snippet", video.getVideoUrl()).subscribe(new DefaultObserver<Response<ResponseBody>>() {
+                    youtubeApi.getMetaInfo(API_KEY, "snippet,contentDetails", video.getVideoUrl()).subscribe(new DefaultObserver<Response<ResponseBody>>() {
                         @Override
                         public void onNextElement(final Response<ResponseBody> response) throws JSONException, IOException {
+
                             String body = response.body().string();
                             JSONObject jsonObject = new JSONObject(body);
-                            String title = jsonObject.getJSONArray("items").getJSONObject(0).getJSONObject("snippet").getString("title");
-
+                            String title = jsonObject.getJSONArray("items")
+                                    .getJSONObject(0)
+                                    .getJSONObject("snippet")
+                                    .getString("title");
                             names.put(video, title);
+
+
+                            String duration = jsonObject.getJSONArray("items")
+                                    .getJSONObject(0)
+                                    .getJSONObject("contentDetails")
+                                    .getString("duration");
+
+                            PeriodFormatter formatter = ISOPeriodFormat.standard();
+                            int seconds = formatter.parsePeriod(duration).toStandardSeconds().getSeconds();
+                            durations.put(video, seconds);
+
 
                             String iconUrl = jsonObject.getJSONArray("items")
                                     .getJSONObject(0)
                                     .getJSONObject("snippet")
                                     .getJSONObject("thumbnails")
-                                    .getJSONObject("medium").getString("url");
-
+                                    .getJSONObject("medium")
+                                    .getString("url");
                             youtubeApi.getIcon(iconUrl).subscribe(new DefaultObserver<Response<ResponseBody>>() {
                                 @Override
                                 public void onNextElement(Response<ResponseBody> iconResponce) throws IOException {
