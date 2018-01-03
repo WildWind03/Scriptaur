@@ -6,15 +6,23 @@ import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.nsu.fit.pm.scriptaur.entity.Evaluation;
 import ru.nsu.fit.pm.scriptaur.entity.User;
 
 import java.util.List;
 
+@Repository
 public class EvaluationDaoImpl implements EvaluationDao {
 
+    private final SessionFactory sessionFactory;
+
     @Autowired
-    private SessionFactory sessionFactory;
+    public EvaluationDaoImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public void addMark(int userId, int videoId, int mark) {

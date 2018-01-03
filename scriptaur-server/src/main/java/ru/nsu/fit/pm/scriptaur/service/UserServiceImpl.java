@@ -1,6 +1,7 @@
 package ru.nsu.fit.pm.scriptaur.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.nsu.fit.pm.scriptaur.dao.UserDao;
@@ -9,10 +10,15 @@ import ru.nsu.fit.pm.scriptaur.entity.User;
 import java.util.List;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserDao userDao;
+
+    @Bean
+    public static UserServiceImpl getUserDaoImpl() {
+        return new UserServiceImpl();
+    }
 
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
