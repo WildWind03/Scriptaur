@@ -2,6 +2,8 @@ package ru.nsu.fit.pm.scriptaur.service;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.nsu.fit.pm.scriptaur.dao.EvaluationDao;
@@ -10,9 +12,11 @@ import ru.nsu.fit.pm.scriptaur.entity.Evaluation;
 import java.util.List;
 
 @Service
+@Transactional
+@ComponentScan("ru.nsu.fit.scriptaur.dao")
 public class EvaluationServiceImpl implements EvaluationService {
 
-    @Autowired
+    //@Autowired
     private EvaluationDao evaluationDao;
 
     @Transactional

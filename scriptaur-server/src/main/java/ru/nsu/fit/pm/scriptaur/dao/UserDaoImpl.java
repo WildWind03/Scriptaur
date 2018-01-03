@@ -1,16 +1,22 @@
 package ru.nsu.fit.pm.scriptaur.dao;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.nsu.fit.pm.scriptaur.entity.User;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
-@Repository
+@Component
 public class UserDaoImpl implements UserDao {
+
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -19,9 +25,24 @@ public class UserDaoImpl implements UserDao {
         this.sessionFactory = sessionFactory;
     }
 
-    @Override
+    private Session getSession() {
+        Session session = null;
+
+        try {
+
+            sessionFactory.getCurrentSession();
+        } catch (HibernateException e) {
+            session = sessionFactory.openSession();
+        }
+        return session;
+    }
+
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
     public void addUser(User user) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = getSession();
 
         Transaction trans = session.beginTransaction();
         session.persist(user);
@@ -29,16 +50,14 @@ public class UserDaoImpl implements UserDao {
         trans.commit();
     }
 
-    @Override
     public void updateUser(User user) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = getSession();
         session.update(user);
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public List<User> getAllUsers() {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = getSession();
 
         Transaction trans = session.beginTransaction();
         List<User> userList = session.createQuery("from ru.nsu.fit.pm.scriptaur.entity.User").list();
@@ -50,9 +69,8 @@ public class UserDaoImpl implements UserDao {
         return userList;
     }
 
-    @Override
     public User getUserById(int id) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = getSession();
         Transaction trans = session.beginTransaction();
         User user = (User) session.load(User.class, id);
         System.out.println(user.getUsername());
@@ -60,9 +78,8 @@ public class UserDaoImpl implements UserDao {
         return user;
     }
 
-    @Override
     public void removeUser(int id) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = getSession();
 
         Transaction trans = session.beginTransaction();
         User user = (User) session.load(User.class, id);

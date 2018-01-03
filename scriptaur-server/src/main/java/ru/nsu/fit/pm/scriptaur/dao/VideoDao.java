@@ -11,4 +11,6 @@ public interface VideoDao {
     List<Video> getVideoList(int page);
 
     void removeVideo(int id);
+
+    Video getVideoById(int id);
 }

@@ -12,6 +12,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userId;
 
+
+
     private String username;
 
     @Column(name = "trust_factor")
@@ -73,5 +75,14 @@ public class User {
     public User() {
     }
 
-
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", username='" + username + '\'' +
+                ", trustFactor=" + trustFactor +
+                ", hash='" + hash + '\'' +
+                ", salt='" + salt + '\'' +
+                '}';
+    }
 }
