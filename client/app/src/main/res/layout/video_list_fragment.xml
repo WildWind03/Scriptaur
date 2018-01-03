@@ -1,19 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/linearLayout"
+        android:layout_alignParentStart="true">
+
     </ListView>
 
     <TextView
         android:id="@+id/emptyListHint"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Список видео пуст"/>
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="Список видео пуст" />
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center_horizontal"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:id="@+id/linearLayout">
+
+        <Button
+            android:id="@+id/prevPage"
+            android:layout_width="96dp"
+            android:layout_height="48dp"
+            android:layout_marginLeft="96dp"
+            android:text="prev"/>
+
+        <TextView
+            android:id="@+id/pageHint"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Page 3 of 5" />
+
+        <Button
+            android:id="@+id/nextPage"
+            android:layout_width="96dp"
+            android:layout_height="48dp"
+            android:layout_marginRight="96dp"
+            android:text="next"/>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

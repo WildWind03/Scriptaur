@@ -7,6 +7,10 @@ import ru.nsu.fit.scriptaur.network.entities.*;
 import java.util.List;
 
 public interface Api {
+
+    @GET("videosCount")
+    Observable<List<Video>> getPagesCount(@Query("token") String token);
+
     @GET("videos")
     Observable<List<Video>> getVideos(@Query("page") int page, @Query("token") String token);
 
