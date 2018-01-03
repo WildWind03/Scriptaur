@@ -75,9 +75,9 @@ public class DrawerActivity extends AppCompatActivity
                 // Todo: only for debug
                 for (int i = 0; i < 10; ++i) {
                     videos.addAll(Arrays.asList(
-                            new Video(1, "VNqNnUJVcVs", 0, "0", 4.5f, 10, false),
-                            new Video(2, "CW5oGRx9CLM", 0, "0", 5.0f, 15, true),
-                            new Video(3, "FBnAZnfNB6U", 0, "0", 1.488f, 1, false)));
+                            new Video(1, "VNqNnUJVcVs", "video 1", "image url 1",100, 0, "0", 4.5f, 10, false),
+                            new Video(2, "CW5oGRx9CLM","video 2", "image url 2",200, 0, "0", 5.0f, 15, true),
+                            new Video(3, "FBnAZnfNB6U","video 3", "image url 3",300, 0, "0", 1.488f, 1, false)));
                 }
 
                 bundle.putParcelableArrayList(VideoListFragment.VIDEOS_LIST_KEY, videos);

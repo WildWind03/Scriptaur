@@ -1,35 +1,51 @@
 package ru.nsu.fit.scriptaur.network;
 
 import io.reactivex.Observable;
+import okhttp3.ResponseBody;
 import retrofit2.http.*;
 import ru.nsu.fit.scriptaur.network.entities.*;
 
 import java.util.List;
 
 public interface Api {
+    //gets number of pages of all videos from database
+    @GET("videosCount")
+    Observable<PagesCount> getVideosPagesCount(@Query("token") String token);
+
+    //gets all videos from database
     @GET("videos")
     Observable<List<Video>> getVideos(@Query("page") int page, @Query("token") String token);
 
-    @GET("videos")
-    Observable<Video> getVideo(@Query("video_id") int id, @Query("token") String token);
+    //gets number of pages of videos added by specified user
+    @GET("userVideosCount")
+    Observable<PagesCount> getUserVideosPagesCount(@Query("token") String token);
 
+    //gets all videos added by specified user
     @GET("videos")
-    Observable<List<Video>> findVideo(@Query("search") String request, @Query("token") String token);
+    Observable<List<Video>> getUserVideos(@Query("token") String token);
+
+    //gets number of pages of videos that matches query
+    @GET("queryVideosCount")
+    Observable<PagesCount> getQueryVideosPagesCount(@Query("query") String query, @Query("token") String token);
+
+    //gets videos that matches query
+    @GET("videos")
+    Observable<List<Video>> findVideo(@Query("query") String query, @Query("page") int page, @Query("token") String token);
 
     @GET("users")
-    Observable<User> getUser(@Query("user_id") int id, @Query("token") String token);
+    Observable<User> getUser(@Query("token") String token);
 
     @POST("signup")
-    Observable<User> signUp(@Body SignUpData data);
+    Observable<UserToken> signUp(@Body SignUpData data);
 
     @POST("signin")
-    Observable<User> signIn(@Body SignUpData data);
+    Observable<UserToken> signIn(@Body SignUpData data);
 
     @GET("signout")
-    Observable<User> signOut(@Query("token") String token);
+    Observable<ResponseBody> signOut(@Query("token") String token);
 
     @PUT("users")
-    Observable<User> changePassword(@Query("token") String token, @Body SignUpData data);
+    Observable<ResponseBody> changePassword(@Query("token") String token, @Body SignUpData data);
 
     @PUT("marks")
     Observable<Video> addMark(@Query("token") String token, @Body MarkData data);
@@ -37,6 +53,5 @@ public interface Api {
     @PUT("videos")
     Observable<Video> addVideo(@Query("token") String token, @Body VideoUrl videoUrl);
 
-    @GET("videos")
-    Observable<List<Video>> getUserVideos(@Query("token") String token);
+
 }
