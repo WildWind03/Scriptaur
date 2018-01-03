@@ -10,28 +10,23 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
+import android.widget.*;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import okhttp3.ResponseBody;
+import org.json.JSONException;
+import org.json.JSONObject;
 import retrofit2.Response;
 import ru.nsu.fit.scriptaur.R;
 import ru.nsu.fit.scriptaur.common.DefaultObserver;
 import ru.nsu.fit.scriptaur.network.RetrofitServiceFactory;
 import ru.nsu.fit.scriptaur.network.YoutubeApi;
 import ru.nsu.fit.scriptaur.network.entities.Video;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 
 public class VideoListFragment extends Fragment {
@@ -106,7 +101,21 @@ public class VideoListFragment extends Fragment {
                 return view;
             }
         };
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getActivity(), videos.get(position).getVideoUrl(), Toast.LENGTH_LONG).show();
+                Fragment fragment = new SingleVideoFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(SingleVideoFragment.VIDEO_ID_KEY, videos.get(position).getVideoUrl());
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.content_drawer, fragment).addToBackStack(null)
+                        .commit();
+            }
+        });
         listView.setAdapter(adapter);
+
 
         @SuppressLint("StaticFieldLeak")
         AsyncTask<Video, Void, Void> loadTask = new AsyncTask<Video, Void, Void>() {

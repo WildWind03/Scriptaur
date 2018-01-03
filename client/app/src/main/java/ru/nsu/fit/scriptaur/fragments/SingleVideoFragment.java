@@ -150,9 +150,10 @@ public class SingleVideoFragment extends Fragment {
         return view;
     }
 
+
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onStop() {
+        super.onStop();
         timer.cancel();
     }
 

@@ -4,8 +4,21 @@ package ru.nsu.fit.scriptaur.network.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import com.google.gson.annotations.SerializedName;
 
 public class Video implements Parcelable, Comparable<Video> {
+    public static final Parcelable.Creator<Video> CREATOR = new Parcelable.Creator<Video>() {
+
+        @Override
+        public Video createFromParcel(Parcel source) {
+            return new Video(source);
+        }
+
+        @Override
+        public Video[] newArray(int size) {
+            return new Video[size];
+        }
+    };
     private int videoId;
     private String videoUrl;
     private int addedBy;
@@ -17,11 +30,6 @@ public class Video implements Parcelable, Comparable<Video> {
     public Video() {
     }
 
-    @Override
-    public int compareTo(@NonNull Video video) {
-        return hashCode() - video.hashCode();
-    }
-
     public Video(int videoId, String videoUrl, int addedBy, String addedOn, float rating, int evaluationsCount, boolean isRated) {
         this.videoId = videoId;
         this.videoUrl = videoUrl;
@@ -30,6 +38,21 @@ public class Video implements Parcelable, Comparable<Video> {
         this.rating = rating;
         this.evaluationsCount = evaluationsCount;
         this.isRated = isRated;
+    }
+
+    public Video(Parcel source) {
+        videoId = source.readInt();
+        videoUrl = source.readString();
+        addedBy = source.readInt();
+        addedOn = source.readString();
+        rating = source.readFloat();
+        evaluationsCount = source.readInt();
+        isRated = source.readInt() == 1;
+    }
+
+    @Override
+    public int compareTo(@NonNull Video video) {
+        return hashCode() - video.hashCode();
     }
 
     public int getVideoId() {
@@ -60,7 +83,6 @@ public class Video implements Parcelable, Comparable<Video> {
         return isRated;
     }
 
-
     @Override
     public int describeContents() {
         return 0;
@@ -77,27 +99,4 @@ public class Video implements Parcelable, Comparable<Video> {
         // Why there is no write bool :I
         dest.writeInt(isRated ? 1 : 0);
     }
-
-    public Video(Parcel source) {
-        videoId = source.readInt();
-        videoUrl = source.readString();
-        addedBy = source.readInt();
-        addedOn = source.readString();
-        rating = source.readFloat();
-        evaluationsCount = source.readInt();
-        isRated = source.readInt() == 1;
-    }
-
-    public static final Parcelable.Creator<Video> CREATOR = new Parcelable.Creator<Video>() {
-
-        @Override
-        public Video createFromParcel(Parcel source) {
-            return new Video(source);
-        }
-
-        @Override
-        public Video[] newArray(int size) {
-            return new Video[size];
-        }
-    };
 }
