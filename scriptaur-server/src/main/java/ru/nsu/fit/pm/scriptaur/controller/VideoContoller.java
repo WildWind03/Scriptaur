@@ -26,8 +26,8 @@ public class VideoContoller {
     public ResponseEntity getVideo(@RequestParam(value = "video_id") int id, @RequestParam(value = "token") String token) {
         System.out.println("one");
 
-        Video video = new Video();
-        //toDo: find video by id
+        Video video = videoService.getVideoById(id);
+        //toDo: process token
 
         if (video == null) return new ResponseEntity(HttpStatus.BAD_REQUEST);
 

@@ -2,14 +2,8 @@ package ru.nsu.fit.pm.scriptaur.controller;
 
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +11,6 @@ import ru.nsu.fit.pm.scriptaur.entity.SignUpData;
 import ru.nsu.fit.pm.scriptaur.entity.User;
 import ru.nsu.fit.pm.scriptaur.service.UserService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -50,7 +43,7 @@ public class UserController {
     public ResponseEntity get(@RequestParam(value = "user_id") int id, @RequestParam(value = "token") String token) {
         System.out.println("get one user");
 
-        // find user by id
+        // toDo: process token
         User user = userService.getUserById(id);
         System.out.println(user);
 
@@ -68,7 +61,7 @@ public class UserController {
         SignUpData signUpData= gson.fromJson(signUpJson, SignUpData.class);
         System.out.println(signUpData);
 
-        //toDo: process User with SignUpData
+        //toDo: process User with SignUpData, token
 
         User user = new User();
 

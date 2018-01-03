@@ -52,7 +52,10 @@ public class UserDaoImpl implements UserDao {
 
     public void updateUser(User user) {
         Session session = getSession();
-        session.update(user);
+        Transaction transaction = session.beginTransaction();
+        session.merge(user);
+        transaction.commit();
+
     }
 
     @SuppressWarnings("unchecked")
@@ -66,12 +69,20 @@ public class UserDaoImpl implements UserDao {
         }
 
         trans.commit();
+        System.out.println("user" + trans.getStatus());
         return userList;
     }
 
     public User getUserById(int id) {
         Session session = getSession();
-        Transaction trans = session.beginTransaction();
+        Transaction trans;
+        try {
+
+        trans = session.beginTransaction();
+        } catch (Exception e) {
+            trans = session.getTransaction();
+        }
+
         User user = (User) session.load(User.class, id);
         System.out.println(user.getUsername());
         trans.commit();
@@ -89,6 +100,18 @@ public class UserDaoImpl implements UserDao {
         } else {
             System.out.println("nothing");
         }
+
+        trans.commit();
+    }
+
+    @Override
+    public void updateTtustFactor(int userId, float trustFactor) {
+        Session session = getSession();
+        Transaction trans = session.beginTransaction();
+
+        User user = session.get(User.class, userId);
+        user.setTrustFactor(trustFactor);
+        session.merge(user);
 
         trans.commit();
     }

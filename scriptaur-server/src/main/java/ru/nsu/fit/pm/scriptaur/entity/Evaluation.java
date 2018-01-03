@@ -1,5 +1,6 @@
 package ru.nsu.fit.pm.scriptaur.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sun.javafx.beans.IDProperty;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -8,6 +9,7 @@ import lombok.Value;
 import javax.persistence.*;
 import java.io.Serializable;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "evaluations")
 public class Evaluation {

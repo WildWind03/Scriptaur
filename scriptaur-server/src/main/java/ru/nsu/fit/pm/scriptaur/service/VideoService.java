@@ -11,4 +11,14 @@ public interface VideoService {
     List<Video> getVideoList(int page);
 
     void removeVideo(int id);
+
+    Video getVideoById(int id);
+
+    Video updateVideoRating(int id, float rating);
+
+    int getEvaluationCount(int id);
+
+    void updateEvaluationsCount(int videoId);
+
+    List<Video> getVideoListByUserId(int userId);
 }

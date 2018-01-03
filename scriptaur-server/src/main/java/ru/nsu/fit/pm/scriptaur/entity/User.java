@@ -1,28 +1,45 @@
 package ru.nsu.fit.pm.scriptaur.entity;
 
 
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
+
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Serializable {
+
 
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userId;
 
-
-
     private String username;
 
     @Column(name = "trust_factor")
     private float trustFactor;
 
+    @Column(name = "trust_factor_updated", columnDefinition = "timestamp without time zone")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date trustFactorUpdated;
+
     @Column(name = "password_hash")
     private String hash;
 
     private String salt;
+
+
+    public Date getTrustFactorUpdated() {
+        return trustFactorUpdated;
+    }
+
+    public void setTrustFactorUpdated(Date trustFactorUpdated) {
+        this.trustFactorUpdated = trustFactorUpdated;
+    }
 
     public int getUserId() {
         return userId;
@@ -83,6 +100,7 @@ public class User {
                 ", trustFactor=" + trustFactor +
                 ", hash='" + hash + '\'' +
                 ", salt='" + salt + '\'' +
+                ", trustFactorUpdated='" + trustFactorUpdated + '\'' +
                 '}';
     }
 }

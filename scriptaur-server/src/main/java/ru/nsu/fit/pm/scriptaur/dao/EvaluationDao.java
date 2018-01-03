@@ -12,4 +12,5 @@ public interface EvaluationDao {
 
     List<Evaluation> getEvaluationList(int page);
 
+
 }

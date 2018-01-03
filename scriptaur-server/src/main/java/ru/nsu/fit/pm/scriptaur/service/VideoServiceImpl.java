@@ -35,4 +35,29 @@ public class VideoServiceImpl implements VideoService {
     public void removeVideo(int id) {
         this.videoDao.removeVideo(id);
     }
+
+    @Override
+    public Video getVideoById(int id) {
+        return this.videoDao.getVideoById(id);
+    }
+
+    @Override
+    public Video updateVideoRating(int id, float rating) {
+        return this.videoDao.updateVideoRating(id, rating);
+    }
+
+    @Override
+    public int getEvaluationCount(int id) {
+        return this.videoDao.getEvaluationCount(id);
+    }
+
+    @Override
+    public void updateEvaluationsCount(int videoId) {
+        this.videoDao.updateEvaluationCount(videoId);
+    }
+
+    @Override
+    public List<Video> getVideoListByUserId(int userId) {
+        return this.videoDao.getVideoListByUserId(userId);
+    }
 }

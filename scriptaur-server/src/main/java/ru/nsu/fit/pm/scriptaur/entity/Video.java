@@ -1,8 +1,13 @@
 package ru.nsu.fit.pm.scriptaur.entity;
 
 
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import javax.persistence.*;
+import java.sql.Timestamp;
+import java.util.Date;
+
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "videos")
 public class Video {
@@ -18,8 +23,10 @@ public class Video {
     @Column(name = "added_by")
     private int addedBy;
 
-    @Column(name = "added_on")
-    private String addedOn;
+
+    @Column(name = "added_on", columnDefinition = "timestamp without time zone")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date addedOn;
 
     @Column(name = "rating")
     private float rating;
@@ -47,11 +54,11 @@ public class Video {
         this.addedBy = addedBy;
     }
 
-    public String getAddedOn() {
+    public Date getAddedOn() {
         return addedOn;
     }
 
-    public void setAddedOn(String addedOn) {
+    public void setAddedOn(Date addedOn) {
         this.addedOn = addedOn;
     }
 

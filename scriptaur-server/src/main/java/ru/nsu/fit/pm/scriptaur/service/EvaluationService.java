@@ -11,4 +11,5 @@ public interface EvaluationService {
     Evaluation getEvaluationByVideoId(int userId, int videoId);
 
     List<Evaluation> getEvaluationList(int page);
+
 }

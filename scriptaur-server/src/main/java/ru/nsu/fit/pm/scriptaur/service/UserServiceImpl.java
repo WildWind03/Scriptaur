@@ -48,4 +48,9 @@ public class UserServiceImpl implements UserService{
     public void removeUser(int id) {
         this.userDao.removeUser(id);
     }
+
+    @Override
+    public void updateTrustFactor(int userId, float trustFactor) {
+        this.userDao.updateTtustFactor(userId, trustFactor);
+    }
 }

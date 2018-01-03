@@ -13,4 +13,13 @@ public interface VideoDao {
     void removeVideo(int id);
 
     Video getVideoById(int id);
+
+    Video updateVideoRating(int id, float rating);
+
+
+    int getEvaluationCount(int id);
+
+    void updateEvaluationCount(int videoId);
+
+    List<Video> getVideoListByUserId(int userId);
 }

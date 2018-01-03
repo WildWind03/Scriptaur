@@ -16,7 +16,7 @@ import java.util.List;
 @ComponentScan("ru.nsu.fit.scriptaur.dao")
 public class EvaluationServiceImpl implements EvaluationService {
 
-    //@Autowired
+    @Autowired
     private EvaluationDao evaluationDao;
 
     @Transactional
@@ -36,4 +36,6 @@ public class EvaluationServiceImpl implements EvaluationService {
     public List<Evaluation> getEvaluationList(int page) {
         return this.evaluationDao.getEvaluationList(page);
     }
+
+
 }
