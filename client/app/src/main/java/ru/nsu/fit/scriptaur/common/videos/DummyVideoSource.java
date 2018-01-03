@@ -10,6 +10,7 @@ import java.util.TreeMap;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
+import ru.nsu.fit.scriptaur.network.entities.PagesCount;
 import ru.nsu.fit.scriptaur.network.entities.Video;
 
 public class DummyVideoSource extends VideosSource {
@@ -34,11 +35,11 @@ public class DummyVideoSource extends VideosSource {
     }
 
     @Override
-    public Observable<Integer> pagesCount() {
-        return new Observable<Integer>() {
+    public Observable<PagesCount> pagesCount() {
+        return new Observable<PagesCount>() {
             @Override
-            protected void subscribeActual(Observer<? super Integer> observer) {
-                observer.onNext(3);
+            protected void subscribeActual(Observer<? super PagesCount> observer) {
+                observer.onNext(new PagesCount(3));
                 observer.onComplete();
             }
         };

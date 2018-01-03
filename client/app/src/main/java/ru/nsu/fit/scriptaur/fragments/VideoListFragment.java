@@ -40,6 +40,7 @@ import ru.nsu.fit.scriptaur.common.DefaultObserver;
 import ru.nsu.fit.scriptaur.common.videos.VideosSource;
 import ru.nsu.fit.scriptaur.network.ApiHolder;
 import ru.nsu.fit.scriptaur.network.YoutubeApi;
+import ru.nsu.fit.scriptaur.network.entities.PagesCount;
 import ru.nsu.fit.scriptaur.network.entities.Video;
 
 
@@ -204,10 +205,10 @@ public class VideoListFragment extends Fragment {
 
         videosSource.pagesCount()
                 .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DefaultObserver<Integer>() {
+                .subscribe(new DefaultObserver<PagesCount>() {
                     @Override
-                    public void onNext(Integer sourceMaxPage) {
-                        maxPage = sourceMaxPage;
+                    public void onNext(PagesCount pagesCount) {
+                        maxPage = pagesCount.getPagesCount();
                         switchToPage(0);
                     }
                 });

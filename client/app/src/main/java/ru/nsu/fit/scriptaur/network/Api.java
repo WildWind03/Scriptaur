@@ -22,7 +22,7 @@ public interface Api {
 
     //gets all videos added by specified user
     @GET("videos")
-    Observable<List<Video>> getUserVideos(@Query("token") String token);
+    Observable<List<Video>> getUserVideos(@Query("page") int page, @Query("token") String token);
 
     //gets number of pages of videos that matches query
     @GET("queryVideosCount")

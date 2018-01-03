@@ -1,5 +1,7 @@
 package ru.nsu.fit.scriptaur.activity;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -13,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import pub.devrel.easypermissions.EasyPermissions;
 import ru.nsu.fit.scriptaur.R;
+import ru.nsu.fit.scriptaur.common.videos.AllVideosSource;
 import ru.nsu.fit.scriptaur.common.videos.DummyVideoSource;
 import ru.nsu.fit.scriptaur.fragments.VideoListFragment;
 import ru.nsu.fit.scriptaur.network.entities.Video;
@@ -71,6 +74,11 @@ public class DrawerActivity extends AppCompatActivity
             case R.id.nav_video: {
                 Fragment fragment = new VideoListFragment();
                 Bundle bundle = new Bundle();
+
+                // Todo: how now storing token?
+                //SharedPreferences sharedPreferences = getSharedPreferences("user_info", Context.MODE_PRIVATE);
+                //String userToken = sharedPreferences.getString("token", "");
+                //bundle.putParcelable(VideoListFragment.VIDEOS_SOURCE_KEY, new AllVideosSource(userToken));
 
                 bundle.putParcelable(VideoListFragment.VIDEOS_SOURCE_KEY, new DummyVideoSource());
                 fragment.setArguments(bundle);
