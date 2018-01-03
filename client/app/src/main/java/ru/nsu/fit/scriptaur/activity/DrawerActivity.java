@@ -11,17 +11,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import pub.devrel.easypermissions.EasyPermissions;
 import ru.nsu.fit.scriptaur.R;
-import ru.nsu.fit.scriptaur.fragments.SingleVideoFragment;
 import ru.nsu.fit.scriptaur.fragments.VideoListFragment;
 import ru.nsu.fit.scriptaur.network.entities.Video;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class DrawerActivity extends AppCompatActivity
@@ -45,13 +41,6 @@ public class DrawerActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         switchToFragment(R.id.nav_video);
-        /*Fragment fragment = new SingleVideoFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(SingleVideoFragment.VIDEO_ID_KEY, "VNqNnUJVcVs");
-        fragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.content_drawer, fragment)
-                .commit();*/
     }
 
     @Override
@@ -84,7 +73,7 @@ public class DrawerActivity extends AppCompatActivity
 
                 ArrayList<Video> videos = new ArrayList<>();
                 // Todo: only for debug
-                for(int i = 0; i < 10; ++i) {
+                for (int i = 0; i < 10; ++i) {
                     videos.addAll(Arrays.asList(
                             new Video(1, "VNqNnUJVcVs", 0, "0", 4.5f, 10, false),
                             new Video(2, "CW5oGRx9CLM", 0, "0", 5.0f, 15, true),
@@ -103,6 +92,7 @@ public class DrawerActivity extends AppCompatActivity
                         .replace(R.id.content_drawer, new SingleVideoFragment())
                         .commit();
             }*/
+            //TODO user profile fragment, add video
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

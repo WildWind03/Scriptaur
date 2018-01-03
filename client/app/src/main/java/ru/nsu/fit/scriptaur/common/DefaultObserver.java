@@ -1,7 +1,6 @@
 package ru.nsu.fit.scriptaur.common;
 
 import android.util.Log;
-
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
@@ -13,15 +12,14 @@ public class DefaultObserver<T> implements Observer<T> {
 
     @Override
     public void onNext(T t) {
-        try{
+        try {
             onNextElement(t);
-        }
-        catch (Throwable e){
+        } catch (Throwable e) {
             onError(e);
         }
     }
 
-    public void onNextElement(T t) throws Throwable{
+    public void onNextElement(T t) throws Throwable {
 
     }
 

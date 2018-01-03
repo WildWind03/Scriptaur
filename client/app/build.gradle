@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
     defaultConfig {
-        applicationId "ru.evtushenko.english"
+        applicationId "ru.nsu.fir.scriptaur"
         minSdkVersion 21
         targetSdkVersion 25
         versionCode 1
@@ -41,7 +41,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:10.2.6'
     compile 'pub.devrel:easypermissions:0.3.0'
     compile 'com.android.support:support-v4:25.3.1'
-
+    compile group: 'joda-time', name: 'joda-time', version: '2.3'
     compile 'com.jakewharton:butterknife:8.8.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.0'
 
