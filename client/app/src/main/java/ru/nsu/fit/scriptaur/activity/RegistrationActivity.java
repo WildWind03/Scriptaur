@@ -5,10 +5,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -17,15 +15,12 @@ import com.google.gson.Gson;
 import ru.nsu.fit.scriptaur.R;
 import ru.nsu.fit.scriptaur.common.DefaultObserver;
 import ru.nsu.fit.scriptaur.network.Api;
-import ru.nsu.fit.scriptaur.network.RetrofitServiceFactory;
+import ru.nsu.fit.scriptaur.network.ApiHolder;
 import ru.nsu.fit.scriptaur.network.entities.SignUpData;
 import ru.nsu.fit.scriptaur.network.entities.User;
+import ru.nsu.fit.scriptaur.network.entities.UserToken;
 
 public class RegistrationActivity extends AppCompatActivity {
-
-    //TODO real server ip
-    private final String BASE_URL = "http://vk.com";
-
     @BindView(R.id.new_login)
     EditText login;
 
@@ -50,13 +45,13 @@ public class RegistrationActivity extends AppCompatActivity {
 
     @OnClick(R.id.confirm_registration_button)
     void signUp() {
-        Api api = RetrofitServiceFactory.createRetrofitService(Api.class, BASE_URL);
+        Api api = ApiHolder.getBackendApi();
         if (password.getText().toString().equals(repeatedPassword.getText().toString())) {
             api.signUp(new SignUpData(login.getText().toString(),
                     password.getText().toString(),
-                    name.getText().toString())).subscribe(new DefaultObserver<User>() {
+                    name.getText().toString())).subscribe(new DefaultObserver<UserToken>() {
                 @Override
-                public void onNextElement(User user) throws Throwable {
+                public void onNextElement(UserToken userToken) throws Throwable {
                     Toast.makeText(RegistrationActivity.this, "Sign up", Toast.LENGTH_LONG).show();
                     setResult(RESULT_OK);
                     finish();

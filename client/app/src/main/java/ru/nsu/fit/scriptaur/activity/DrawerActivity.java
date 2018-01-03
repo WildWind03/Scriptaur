@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import pub.devrel.easypermissions.EasyPermissions;
 import ru.nsu.fit.scriptaur.R;
+import ru.nsu.fit.scriptaur.common.videos.DummyVideoSource;
 import ru.nsu.fit.scriptaur.fragments.VideoListFragment;
 import ru.nsu.fit.scriptaur.network.entities.Video;
 
@@ -71,16 +72,7 @@ public class DrawerActivity extends AppCompatActivity
                 Fragment fragment = new VideoListFragment();
                 Bundle bundle = new Bundle();
 
-                ArrayList<Video> videos = new ArrayList<>();
-                // Todo: only for debug
-                for (int i = 0; i < 10; ++i) {
-                    videos.addAll(Arrays.asList(
-                            new Video(1, "VNqNnUJVcVs", 0, "0", 4.5f, 10, false),
-                            new Video(2, "CW5oGRx9CLM", 0, "0", 5.0f, 15, true),
-                            new Video(3, "FBnAZnfNB6U", 0, "0", 1.25f, 1, false)));
-                }
-
-                bundle.putParcelableArrayList(VideoListFragment.VIDEOS_LIST_KEY, videos);
+                bundle.putParcelable(VideoListFragment.VIDEOS_SOURCE_KEY, new DummyVideoSource());
                 fragment.setArguments(bundle);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.content_drawer, fragment)

@@ -38,8 +38,7 @@
             android:id="@+id/pageHint"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="Page 3 of 5" />
+            android:gravity="center"/>
 
         <Button
             android:id="@+id/nextPage"
