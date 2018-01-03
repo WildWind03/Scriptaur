@@ -3,11 +3,20 @@ package ru.nsu.fit.scriptaur.network.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import com.google.gson.annotations.SerializedName;
 
 public class Video implements Parcelable, Comparable<Video> {
 
+    public static final Creator<Video> CREATOR = new Creator<Video>() {
+        @Override
+        public Video createFromParcel(Parcel in) {
+            return new Video(in);
+        }
+
+        @Override
+        public Video[] newArray(int size) {
+            return new Video[size];
+        }
+    };
     private int videoId;
     private String videoUrl;
     private String name;
@@ -31,6 +40,19 @@ public class Video implements Parcelable, Comparable<Video> {
         this.rating = rating;
         this.evaluationsCount = evaluationsCount;
         this.isRated = isRated;
+    }
+
+    protected Video(Parcel in) {
+        videoId = in.readInt();
+        videoUrl = in.readString();
+        name = in.readString();
+        imageUrl = in.readString();
+        length = in.readInt();
+        addedBy = in.readInt();
+        addedOn = in.readString();
+        rating = in.readFloat();
+        evaluationsCount = in.readInt();
+        isRated = in.readByte() != 0;
     }
 
     public int getVideoId() {
@@ -72,31 +94,6 @@ public class Video implements Parcelable, Comparable<Video> {
     public boolean isRated() {
         return isRated;
     }
-
-    protected Video(Parcel in) {
-        videoId = in.readInt();
-        videoUrl = in.readString();
-        name = in.readString();
-        imageUrl = in.readString();
-        length = in.readInt();
-        addedBy = in.readInt();
-        addedOn = in.readString();
-        rating = in.readFloat();
-        evaluationsCount = in.readInt();
-        isRated = in.readByte() != 0;
-    }
-
-    public static final Creator<Video> CREATOR = new Creator<Video>() {
-        @Override
-        public Video createFromParcel(Parcel in) {
-            return new Video(in);
-        }
-
-        @Override
-        public Video[] newArray(int size) {
-            return new Video[size];
-        }
-    };
 
     @Override
     public int describeContents() {

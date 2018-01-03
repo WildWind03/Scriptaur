@@ -4,6 +4,17 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class SignUpData implements Parcelable {
+    public static final Creator<SignUpData> CREATOR = new Creator<SignUpData>() {
+        @Override
+        public SignUpData createFromParcel(Parcel in) {
+            return new SignUpData(in);
+        }
+
+        @Override
+        public SignUpData[] newArray(int size) {
+            return new SignUpData[size];
+        }
+    };
     private String username;
     private String password;
     private String name;
@@ -31,16 +42,4 @@ public class SignUpData implements Parcelable {
     public int describeContents() {
         return 0;
     }
-
-    public static final Creator<SignUpData> CREATOR = new Creator<SignUpData>() {
-        @Override
-        public SignUpData createFromParcel(Parcel in) {
-            return new SignUpData(in);
-        }
-
-        @Override
-        public SignUpData[] newArray(int size) {
-            return new SignUpData[size];
-        }
-    };
 }
