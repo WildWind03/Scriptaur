@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -38,6 +39,9 @@ public class VideoListFragment extends Fragment {
     public static final String API_KEY = "AIzaSyB1EKAPqyzYEDcLmTK5ZaqmRLwzgHB8kmc";
     public static final String VIDEOS_LIST_KEY = "videos_list";
     private static final String BASE_URL = "https://www.googleapis.com/youtube/v3/";
+
+    // https://www.googleapis.com/youtube/v3/videos?key=AIzaSyB1EKAPqyzYEDcLmTK5ZaqmRLwzgHB8kmc&part=snippet&id=CW5oGRx9CLM
+
     private static List<Video> videos;
     private static Map<Video, Bitmap> icons = new TreeMap<>();
     private static Map<Video, String> names = new TreeMap<>();
@@ -90,14 +94,14 @@ public class VideoListFragment extends Fragment {
                 Video video = (Video) getItem(position);
 
                 TextView link = ((TextView) view.findViewById(R.id.link));
-                TextView rating = ((TextView) view.findViewById(R.id.rating));
+                RatingBar rating = ((RatingBar) view.findViewById(R.id.rating));
                 ImageView icon = ((ImageView) view.findViewById(R.id.icon));
 
                 if (names.containsKey(video)) {
                     link.setText(names.get(video));
                 }
 
-                rating.setText(String.format("Рейтинг %.2f", video.getRating()));
+                rating.setRating(video.getRating());
 
                 if (icons.containsKey(video)) {
                     icon.setImageBitmap(icons.get(video));

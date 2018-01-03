@@ -88,7 +88,7 @@ public class DrawerActivity extends AppCompatActivity
                     videos.addAll(Arrays.asList(
                             new Video(1, "VNqNnUJVcVs", 0, "0", 4.5f, 10, false),
                             new Video(2, "CW5oGRx9CLM", 0, "0", 5.0f, 15, true),
-                            new Video(3, "FBnAZnfNB6U", 0, "0", 1.488f, 1, false)));
+                            new Video(3, "FBnAZnfNB6U", 0, "0", 1.25f, 1, false)));
                 }
 
                 bundle.putParcelableArrayList(VideoListFragment.VIDEOS_LIST_KEY, videos);
