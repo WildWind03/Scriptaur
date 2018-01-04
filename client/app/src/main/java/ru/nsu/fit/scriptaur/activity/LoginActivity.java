@@ -67,8 +67,6 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         });
-        startActivity(new Intent(this, DrawerActivity.class));
-        finish();
     }
 
     @Override

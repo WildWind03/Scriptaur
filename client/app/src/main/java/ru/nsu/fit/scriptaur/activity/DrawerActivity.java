@@ -15,15 +15,21 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.widget.TextView;
 import pub.devrel.easypermissions.EasyPermissions;
 import ru.nsu.fit.scriptaur.R;
+import ru.nsu.fit.scriptaur.common.DefaultObserver;
+import ru.nsu.fit.scriptaur.common.PreferencesUtils;
 import ru.nsu.fit.scriptaur.common.videos.AllVideosSource;
 import ru.nsu.fit.scriptaur.common.videos.DummyVideoSource;
 import ru.nsu.fit.scriptaur.common.videos.SearchQueryVideosSource;
 import ru.nsu.fit.scriptaur.fragments.VideoListFragment;
+import ru.nsu.fit.scriptaur.network.ApiHolder;
+import ru.nsu.fit.scriptaur.network.entities.User;
 import ru.nsu.fit.scriptaur.network.entities.Video;
 
 import java.util.ArrayList;
@@ -33,6 +39,7 @@ import java.util.List;
 public class DrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         EasyPermissions.PermissionCallbacks {
+
 
     private SearchView searchView;
     private VideoListFragment videoListFragment;
@@ -53,7 +60,17 @@ public class DrawerActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        switchToFragment(R.id.nav_video);
+        switchToFragment(R.id.nav_videos);
+
+        final TextView usernameView = (TextView) findViewById(R.id.drawer_username);
+        ApiHolder.getBackendApi().getUser(PreferencesUtils.getToken(this)).subscribe(
+                new DefaultObserver<User>(){
+                    @Override
+                    public void onNext(User user) {
+                        usernameView.setText(user.getUserName());
+                    }
+                }
+        );
     }
 
     @Override
@@ -66,6 +83,8 @@ public class DrawerActivity extends AppCompatActivity
         }
     }
 
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.drawer, menu);
@@ -77,11 +96,12 @@ public class DrawerActivity extends AppCompatActivity
             public boolean onQueryTextSubmit(String query) {
                 SearchQueryVideosSource searchQueryVideosSource = new SearchQueryVideosSource(query, "");
                 Log.d("Search", query);
-
                 if(videoListFragment != null){
                     videoListFragment.setVideoSource(searchQueryVideosSource);
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.content_drawer, videoListFragment)
+                            .commit();
                 }
-
                 return false;
             }
 
@@ -101,7 +121,7 @@ public class DrawerActivity extends AppCompatActivity
 
     private void switchToFragment(int fragmentId) {
         switch (fragmentId) {
-            case R.id.nav_video: {
+            case R.id.nav_videos: {
                 videoListFragment = new VideoListFragment();
                 Bundle bundle = new Bundle();
 
@@ -115,14 +135,20 @@ public class DrawerActivity extends AppCompatActivity
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.content_drawer, videoListFragment)
                         .commit();
-
+                break;
             }
-            /*case R.id.nav_api: {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.content_drawer, new SingleVideoFragment())
-                        .commit();
-            }*/
-            //TODO user profile fragment, add video
+            case R.id.nav_profile:{
+                //TODO
+                break;
+            }
+            case R.id.nav_add_video: {
+                // TODO
+                break;
+            }
+            case R.id.nav_my_videos:{
+                //TODO
+                break;
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -134,6 +160,7 @@ public class DrawerActivity extends AppCompatActivity
         switchToFragment(item.getItemId());
         return true;
     }
+
 
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {

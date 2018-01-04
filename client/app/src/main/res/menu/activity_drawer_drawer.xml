@@ -3,17 +3,21 @@
 
     <group android:checkableBehavior="single">
         <item
-                android:id="@+id/nav_video"
+                android:id="@+id/nav_videos"
                 android:icon="@drawable/ic_video_library_black_24dp"
                 android:title="Videos"/>
         <item
-                android:id="@+id/nav_api"
+                android:id="@+id/nav_profile"
                 android:icon="@drawable/ic_perm_identity_black_24dp"
                 android:title="My profile"/>
         <item
-                android:id="@+id/nav_register"
+                android:id="@+id/nav_add_video"
                 android:icon="@drawable/ic_add_circle_outline_black_24dp"
                 android:title="Add video"/>
+        <item
+                android:id="@+id/nav_my_videos"
+                android:icon="@drawable/ic_video_library_black_24dp"
+                android:title="My videos"/>
     </group>
 
 </menu>

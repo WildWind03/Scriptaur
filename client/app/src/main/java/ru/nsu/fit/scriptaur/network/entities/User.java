@@ -46,4 +46,20 @@ public class User implements Parcelable {
         dest.writeFloat(trustFactor);
         dest.writeString(trustFactorUpdated);
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public float getTrustFactor() {
+        return trustFactor;
+    }
+
+    public String getTrustFactorUpdated() {
+        return trustFactorUpdated;
+    }
 }
