@@ -7,64 +7,131 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import org.joda.time.Duration;
 import org.joda.time.LocalTime;
-import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.ISOPeriodFormat;
-import org.joda.time.format.PeriodFormatter;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.*;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import okhttp3.ResponseBody;
-import org.json.JSONException;
-import org.json.JSONObject;
-import retrofit2.Response;
-import ru.nsu.fit.scriptaur.R;
-import ru.nsu.fit.scriptaur.common.DefaultObserver;
-import ru.nsu.fit.scriptaur.network.RetrofitServiceFactory;
-import ru.nsu.fit.scriptaur.network.YoutubeApi;
-import ru.nsu.fit.scriptaur.network.entities.Video;
-
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.ResponseBody;
+import retrofit2.Response;
+import ru.nsu.fit.scriptaur.R;
+import ru.nsu.fit.scriptaur.common.DefaultObserver;
+import ru.nsu.fit.scriptaur.common.videos.VideosSource;
+import ru.nsu.fit.scriptaur.network.ApiHolder;
+import ru.nsu.fit.scriptaur.network.YoutubeApi;
+import ru.nsu.fit.scriptaur.network.entities.PagesCount;
+import ru.nsu.fit.scriptaur.network.entities.Video;
+
 
 public class VideoListFragment extends Fragment {
-    public static final String API_KEY = "AIzaSyB1EKAPqyzYEDcLmTK5ZaqmRLwzgHB8kmc";
-    public static final String VIDEOS_LIST_KEY = "videos_list";
-    private static final String BASE_URL = "https://www.googleapis.com/youtube/v3/";
+    public static final String VIDEOS_SOURCE_KEY = "videos_source";
 
-    // https://www.googleapis.com/youtube/v3/videos?key=AIzaSyB1EKAPqyzYEDcLmTK5ZaqmRLwzgHB8kmc&part=snippet,contentDetails&id=CW5oGRx9CLM
-
-    private static List<Video> videos;
-    private static Map<Video, Bitmap> icons = new HashMap<>();
-    private static Map<Video, String> names = new HashMap<>();
-    private static Map<Video, Integer> durations = new HashMap<>();
+    private static VideosSource videosSource;
+    private static List<Video> videos = new ArrayList();
+    private static Map<Integer, Bitmap> icons = new TreeMap<>();
     @BindView(R.id.listView)
     ListView listView;
     @BindView(R.id.emptyListHint)
     TextView emptyListHint;
+    @BindView(R.id.prevPage)
+    Button prevPageButton;
+    @BindView(R.id.nextPage)
+    Button nextPageButton;
+    @BindView(R.id.pageHint)
+    TextView pageHint;
+    private int currentPage = 0;
+    private int maxPage = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        videos = getArguments().getParcelableArrayList(VIDEOS_LIST_KEY);
+        videosSource = getArguments().getParcelable(VIDEOS_SOURCE_KEY);
+    }
+
+    public void setVideoSource(VideosSource videoSource){
+        getArguments().putParcelable(VIDEOS_SOURCE_KEY, videoSource);
+        videosSource = videoSource;
+        getDataFromVideoSource();
+    }
+
+    private void switchToPage(final int page) {
+
+        videosSource.getPage(page)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DefaultObserver<List<Video>>() {
+                    @Override
+                    public void onNext(List<Video> videosFromPage) {
+                        prevPageButton.setEnabled(page > 0);
+                        nextPageButton.setEnabled(page < maxPage - 1);
+
+                        currentPage = page;
+                        pageHint.setText(String.format("Page %d from %d", currentPage + 1, maxPage));
+
+                        videos = videosFromPage;
+
+                        @SuppressLint("StaticFieldLeak")
+                        AsyncTask<Video, Void, Void> loadTask = new AsyncTask<Video, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Video[] videos) {
+
+                                final YoutubeApi youtubeApi = ApiHolder.getYoutubeApi();
+
+                                for (final Video video : videos) {
+                                    String iconUrl = video.getImageUrl();
+                                    youtubeApi.getIcon(iconUrl).subscribe(new DefaultObserver<Response<ResponseBody>>() {
+                                        @Override
+                                        public void onNextElement(Response<ResponseBody> iconResponce) throws IOException {
+                                            if (iconResponce.body() == null) {
+                                                Log.e("Incorrect icon url", video.getImageUrl());
+                                                return;
+                                            }
+
+                                            byte[] bytes = iconResponce.body().bytes();
+                                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                            icons.put(video.getVideoId(), bitmap);
+                                            publishProgress();
+                                        }
+                                    });
+                                }
+
+                                return null;
+                            }
+
+                            @Override
+                            protected void onProgressUpdate(Void... values) {
+                                listView.invalidateViews();
+                            }
+                        };
+
+                        loadTask.execute(videos.toArray(new Video[videos.size()]));
+
+                        listView.invalidateViews();
+                        emptyListHint.setVisibility(videos.isEmpty() ? View.VISIBLE : View.INVISIBLE);
+                    }
+                });
     }
 
     @Override
@@ -75,6 +142,8 @@ public class VideoListFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         emptyListHint.setVisibility(videos.isEmpty() ? View.VISIBLE : View.INVISIBLE);
+        nextPageButton.setEnabled(false);
+        prevPageButton.setEnabled(false);
 
         final BaseAdapter adapter = new BaseAdapter() {
 
@@ -109,19 +178,17 @@ public class VideoListFragment extends Fragment {
                 RatingBar rating = ((RatingBar) view.findViewById(R.id.rating));
                 ImageView icon = ((ImageView) view.findViewById(R.id.icon));
 
-                if (names.containsKey(video)) {
-                    link.setText(names.get(video));
+                link.setText(video.getName());
+
+                if (icons.containsKey(video.getVideoId())) {
+                    icon.setImageBitmap(icons.get(video.getVideoId()));
+                } else {
+                    icon.setImageBitmap(null);
                 }
 
-                if (icons.containsKey(video)) {
-                    icon.setImageBitmap(icons.get(video));
-                }
-
-                if(durations.containsKey(video)){
-                    LocalTime time = new LocalTime(0, 0); // midnight
-                    time = time.plusSeconds(durations.get(video));
-                    duration.setText(DateTimeFormat.forPattern("HH:mm:ss").print(time));
-                }
+                LocalTime time = new LocalTime(0, 0); // midnight
+                time = time.plusSeconds(video.getLength());
+                duration.setText(DateTimeFormat.forPattern("HH:mm:ss").print(time));
 
                 rating.setRating(video.getRating());
                 return view;
@@ -144,66 +211,29 @@ public class VideoListFragment extends Fragment {
 
         listView.setAdapter(adapter);
 
-        @SuppressLint("StaticFieldLeak")
-        AsyncTask<Video, Void, Void> loadTask = new AsyncTask<Video, Void, Void>() {
-            @Override
-            protected Void doInBackground(Video[] videos) {
-
-                final YoutubeApi youtubeApi = RetrofitServiceFactory
-                        .createRetrofitService(YoutubeApi.class, BASE_URL);
-
-                for (final Video video : videos) {
-                    youtubeApi.getMetaInfo(API_KEY, "snippet,contentDetails", video.getVideoUrl()).subscribe(new DefaultObserver<Response<ResponseBody>>() {
-                        @Override
-                        public void onNextElement(final Response<ResponseBody> response) throws JSONException, IOException {
-
-                            String body = response.body().string();
-                            JSONObject jsonObject = new JSONObject(body);
-                            String title = jsonObject.getJSONArray("items")
-                                    .getJSONObject(0)
-                                    .getJSONObject("snippet")
-                                    .getString("title");
-                            names.put(video, title);
-
-
-                            String duration = jsonObject.getJSONArray("items")
-                                    .getJSONObject(0)
-                                    .getJSONObject("contentDetails")
-                                    .getString("duration");
-
-                            PeriodFormatter formatter = ISOPeriodFormat.standard();
-                            int seconds = formatter.parsePeriod(duration).toStandardSeconds().getSeconds();
-                            durations.put(video, seconds);
-
-
-                            String iconUrl = jsonObject.getJSONArray("items")
-                                    .getJSONObject(0)
-                                    .getJSONObject("snippet")
-                                    .getJSONObject("thumbnails")
-                                    .getJSONObject("medium")
-                                    .getString("url");
-                            youtubeApi.getIcon(iconUrl).subscribe(new DefaultObserver<Response<ResponseBody>>() {
-                                @Override
-                                public void onNextElement(Response<ResponseBody> iconResponce) throws IOException {
-                                    byte[] bytes = iconResponce.body().bytes();
-                                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                    icons.put(video, bitmap);
-                                    publishProgress();
-                                }
-                            });
-                        }
-                    });
-                }
-                return null;
-            }
-
-            @Override
-            protected void onProgressUpdate(Void... values) {
-                listView.invalidateViews();
-            }
-        };
-
-        loadTask.execute(videos.toArray(new Video[videos.size()]));
+        getDataFromVideoSource();
         return view;
     }
+
+    @OnClick(R.id.prevPage)
+    void gotoPrevPage() {
+        switchToPage(currentPage - 1);
+    }
+
+    @OnClick(R.id.nextPage)
+    void gotoNextPage() {
+        switchToPage(currentPage + 1);
+    }
+
+    private void getDataFromVideoSource(){
+        videosSource.pagesCount()
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DefaultObserver<PagesCount>() {
+                    @Override
+                    public void onNext(PagesCount pagesCount) {
+                        maxPage = pagesCount.getPagesCount();
+                        switchToPage(0);
+                    }
+                });
+    };
 }

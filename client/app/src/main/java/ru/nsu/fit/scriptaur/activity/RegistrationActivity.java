@@ -45,7 +45,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
     @OnClick(R.id.confirm_registration_button)
     void signUp() {
-        Api api = ApiHolder.getInstance();
+        Api api = ApiHolder.getBackendApi();
         if (password.getText().toString().equals(repeatedPassword.getText().toString())) {
             api.signUp(new SignUpData(login.getText().toString(),
                     password.getText().toString(),

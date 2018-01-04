@@ -4,7 +4,7 @@ package ru.nsu.fit.scriptaur.network.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Video implements Parcelable, Comparable<Video> {
+public class Video implements Parcelable{
 
     public static final Creator<Video> CREATOR = new Creator<Video>() {
         @Override
@@ -112,10 +112,5 @@ public class Video implements Parcelable, Comparable<Video> {
         dest.writeFloat(rating);
         dest.writeInt(evaluationsCount);
         dest.writeByte((byte) (isRated ? 1 : 0));
-    }
-
-    @Override
-    public int compareTo(Video o) {
-        return 0;
     }
 }

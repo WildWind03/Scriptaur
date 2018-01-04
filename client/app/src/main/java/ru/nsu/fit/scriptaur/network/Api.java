@@ -22,7 +22,7 @@ public interface Api {
 
     //gets all videos added by specified user
     @GET("videos")
-    Observable<List<Video>> getUserVideos(@Query("token") String token);
+    Observable<List<Video>> getUserVideos(@Query("page") int page, @Query("token") String token);
 
     //gets number of pages of videos that matches query
     @GET("queryVideosCount")
@@ -42,9 +42,11 @@ public interface Api {
     Observable<UserToken> signIn(@Body SignUpData data);
 
     @GET("signout")
+
     Observable<ResponseBody> signOut(@Query("token") String token);
 
     @PUT("users")
+
     Observable<ResponseBody> changePassword(@Query("token") String token, @Body SignUpData data);
 
     @PUT("marks")
@@ -53,5 +55,6 @@ public interface Api {
     @PUT("videos")
     Observable<Video> addVideo(@Query("token") String token, @Body VideoUrl videoUrl);
 
+  
 
 }
