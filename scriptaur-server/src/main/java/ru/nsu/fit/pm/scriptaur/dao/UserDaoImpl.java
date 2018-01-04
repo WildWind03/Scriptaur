@@ -48,6 +48,7 @@ public class UserDaoImpl implements UserDao {
         session.persist(user);
 
         trans.commit();
+        session.close();
     }
 
     public void updateUser(User user) {
@@ -55,7 +56,7 @@ public class UserDaoImpl implements UserDao {
         Transaction transaction = session.beginTransaction();
         session.merge(user);
         transaction.commit();
-
+        session.close();
     }
 
     @SuppressWarnings("unchecked")
@@ -69,7 +70,7 @@ public class UserDaoImpl implements UserDao {
         }
 
         trans.commit();
-        System.out.println("user" + trans.getStatus());
+        session.close();
         return userList;
     }
 
@@ -94,6 +95,7 @@ public class UserDaoImpl implements UserDao {
         User user = (User) list.get(0);
 
         trans.commit();
+        session.close();
         return user;
     }
 
@@ -108,8 +110,9 @@ public class UserDaoImpl implements UserDao {
         }
 
         User user = (User) session.load(User.class, id);
-        System.out.println(user.getUsername());
+
         trans.commit();
+        session.close();
         return user;
     }
 
@@ -126,6 +129,7 @@ public class UserDaoImpl implements UserDao {
         }
 
         trans.commit();
+        session.close();
     }
 
     @Override
@@ -138,5 +142,6 @@ public class UserDaoImpl implements UserDao {
         session.merge(user);
 
         trans.commit();
+        session.close();
     }
 }

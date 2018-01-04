@@ -37,6 +37,7 @@ public class EvaluationDaoImpl implements EvaluationDao {
         session.persist(evaluation);
 
         transaction.commit();
+        session.close();
     }
 
     @Override
@@ -45,6 +46,7 @@ public class EvaluationDaoImpl implements EvaluationDao {
         Transaction trans = session.beginTransaction();
         Evaluation evaluation = (Evaluation) session.load(Evaluation.class, new Evaluation.EvaluationId(videoId, userId));
         trans.commit();
+        session.close();
         return evaluation;
     }
 
@@ -57,6 +59,7 @@ public class EvaluationDaoImpl implements EvaluationDao {
         List<Evaluation> evaluations = session.createQuery("from ru.nsu.fit.pm.scriptaur.entity.Evaluation").list();
 
         trans.commit();
+        session.close();
         return evaluations;
     }
 

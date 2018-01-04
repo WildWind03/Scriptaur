@@ -53,6 +53,7 @@ public class VideoDaoImpl implements VideoDao {
         Transaction trans = session.beginTransaction();
         List<Video> videoList = session.createQuery("from ru.nsu.fit.pm.scriptaur.entity.Video").list();
         trans.commit();
+        session.close();
 
         return videoList;
     }
@@ -71,6 +72,7 @@ public class VideoDaoImpl implements VideoDao {
         }
 
         trans.commit();
+        session.close();
 
     }
 
@@ -81,6 +83,7 @@ public class VideoDaoImpl implements VideoDao {
         Video video = (Video) session.load(Video.class, id);
         System.out.println(video);
         trans.commit();
+        session.close();
         return video;
     }
 
@@ -94,6 +97,7 @@ public class VideoDaoImpl implements VideoDao {
         session.merge(video);
 
         trans.commit();
+        session.close();
 
         return video;
     }
@@ -106,6 +110,7 @@ public class VideoDaoImpl implements VideoDao {
         int count = session.get(Video.class, id).getEvaluationsCount();
 
         trans.commit();
+        session.close();
         return count;
     }
 
@@ -120,6 +125,7 @@ public class VideoDaoImpl implements VideoDao {
         session.merge(video);
 
         trans.commit();
+        session.close();
     }
 
     @SuppressWarnings("unchecked")
@@ -133,7 +139,7 @@ public class VideoDaoImpl implements VideoDao {
         List<Video> videos = query.list();
 
         trans.commit();
-        System.out.println("video" + trans.getStatus());
+        session.close();
 
         return videos;
     }
@@ -152,6 +158,7 @@ public class VideoDaoImpl implements VideoDao {
 
 
         ts.commit();
+        session.close();
 
 
         return videos;
@@ -169,6 +176,7 @@ public class VideoDaoImpl implements VideoDao {
         List<Video> videos = cr.list();
 
         tr.commit();
+        session.close();
 
         return videos;
     }
@@ -182,6 +190,7 @@ public class VideoDaoImpl implements VideoDao {
         Long count = (Long) cr.uniqueResult();
 
         tr.commit();
+        session.close();
 
         return (int) (count / VIDEO_PRO_PAGE);
     }
@@ -195,6 +204,7 @@ public class VideoDaoImpl implements VideoDao {
         Long count = (Long) cr.uniqueResult();
 
         tr.commit();
+        session.close();
 
         return (int) (count / VIDEO_PRO_PAGE);
     }
@@ -208,6 +218,7 @@ public class VideoDaoImpl implements VideoDao {
         Long count = (Long) cr.uniqueResult();
 
         tr.commit();
+        session.close();
 
         return (int) (count / VIDEO_PRO_PAGE);
     }
@@ -226,6 +237,7 @@ public class VideoDaoImpl implements VideoDao {
         List<Video> videos = cr.list();
 
         tr.commit();
+        session.close();
 
         return videos;
 

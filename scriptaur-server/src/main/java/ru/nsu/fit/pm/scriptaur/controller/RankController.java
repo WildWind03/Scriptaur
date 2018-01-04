@@ -2,7 +2,6 @@ package ru.nsu.fit.pm.scriptaur.controller;
 
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +10,7 @@ import ru.nsu.fit.pm.scriptaur.entity.MarkData;
 import ru.nsu.fit.pm.scriptaur.entity.User;
 import ru.nsu.fit.pm.scriptaur.entity.Video;
 import ru.nsu.fit.pm.scriptaur.service.EvaluationService;
+import ru.nsu.fit.pm.scriptaur.service.TokenService;
 import ru.nsu.fit.pm.scriptaur.service.UserService;
 import ru.nsu.fit.pm.scriptaur.service.VideoService;
 
@@ -21,24 +21,20 @@ import java.util.List;
 @ComponentScan("ru.nsu.fit.pm.scriptaur.service")
 public class RankController {
     @Autowired
-    EvaluationService evaluationService;
+    private EvaluationService evaluationService;
 
     @Autowired
-    VideoService videoService;
+    private VideoService videoService;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Autowired
-    ApplicationContext context;
+    TokenService tokenService;
 
-    public void update(MarkData markData, String token) {
+    public void update(MarkData markData, int userId) {
 
-        //toDo: process token
-
-        User user = findUser(token);
-
-        evaluationService.addMark(user.getUserId(), markData.getVideoId(), markData.getMark());
+        evaluationService.addMark(userId, markData.getVideoId(), markData.getMark());
         videoService.updateEvaluationsCount(markData.getVideoId());
 
 
@@ -48,13 +44,10 @@ public class RankController {
         float new_rating = (rating * evaluations_count + new_mark) / (evaluations_count + 1);
         videoService.updateVideoRating(markData.getVideoId(), new_rating);
 
-        updateTrustFactor(user.getUserId());
+        updateTrustFactor(userId);
 
     }
 
-    private User findUser(String token) {
-        return userService.getUserById(1);
-    }
 
     private void updateTrustFactor(int userId) {
 
@@ -78,11 +71,13 @@ public class RankController {
     @ResponseBody
     public ResponseEntity addMark(@RequestParam(value = "token") String token, @RequestBody(required = true) String data) {
 
+        if (!tokenService.checkTokenValidity(token)) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+
         Gson gson = new Gson();
         MarkData markData = gson.fromJson(data, MarkData.class);
 
 
-        update(markData, token);
+        update(markData, tokenService.getUserIdByToken(token));
 
         return new ResponseEntity(HttpStatus.ACCEPTED);
     }

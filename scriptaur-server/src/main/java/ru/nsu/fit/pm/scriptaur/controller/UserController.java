@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.nsu.fit.pm.scriptaur.entity.SignUpData;
 import ru.nsu.fit.pm.scriptaur.entity.User;
+import ru.nsu.fit.pm.scriptaur.service.TokenService;
 import ru.nsu.fit.pm.scriptaur.service.UserService;
 
 import java.util.List;
@@ -22,6 +23,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private TokenService tokenService;
 
     // example
     @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -57,10 +60,10 @@ public class UserController {
     @RequestMapping(method = RequestMethod.GET, params = {"token"})
     @ResponseBody
     public ResponseEntity get(@RequestParam(value = "token") String token) {
-        System.out.println("get one user");
 
-        // toDo: find by token
-        User user = userService.getUserById(1);
+        if (!tokenService.checkTokenValidity(token)) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+
+        User user = userService.getUserById(tokenService.getUserIdByToken(token));
 
         if (user == null) return new ResponseEntity(HttpStatus.BAD_REQUEST);
 
@@ -71,6 +74,9 @@ public class UserController {
     @RequestMapping(method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity putUser(@RequestParam(value = "token") String token, @RequestBody(required = true) String signUpJson) {
+
+
+        if (!tokenService.checkTokenValidity(token)) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 
         Gson gson = new Gson();
         SignUpData signUpData= gson.fromJson(signUpJson, SignUpData.class);

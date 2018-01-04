@@ -20,6 +20,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ru.nsu.fit.pm.scriptaur.entity.User;
 import ru.nsu.fit.pm.scriptaur.entity.Video;
+import ru.nsu.fit.pm.scriptaur.service.TokenService;
 import ru.nsu.fit.pm.scriptaur.service.VideoService;
 import ru.nsu.fit.pm.scriptaur.entity.VideoUrl;
 import ru.nsu.fit.pm.scriptaur.util.YoutubeApi;
@@ -37,13 +38,16 @@ public class VideoContoller {
     @Autowired
     private VideoService videoService;
 
+    @Autowired
+    private TokenService tokenService;
+
     @RequestMapping(method = RequestMethod.GET, params = {"video_id", "token"})
     @ResponseBody
     public ResponseEntity getVideo(@RequestParam(value = "video_id") int id, @RequestParam(value = "token") String token) {
-        System.out.println("one");
+
+        if (!tokenService.checkTokenValidity(token)) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 
         Video video = videoService.getVideoById(id);
-        //toDo: process token
 
         if (video == null) return new ResponseEntity(HttpStatus.BAD_REQUEST);
 
@@ -54,21 +58,9 @@ public class VideoContoller {
     @ResponseBody
     public ResponseEntity getVideos(@RequestParam(value = "page") int page, @RequestParam(value = "token") String token) {
 
+        if (!tokenService.checkTokenValidity(token)) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+
         List<Video> videos = videoService.getAllVideosByPage(page);
-        //toDo: find list of videos by page number
-
-        if (videos == null) return new ResponseEntity(HttpStatus.BAD_REQUEST);
-
-        return new ResponseEntity<>(videos, HttpStatus.OK);
-
-    }
-
-    @RequestMapping(method = RequestMethod.GET, params = {"request", "token"})
-    @ResponseBody
-    public ResponseEntity findVideo(@RequestParam(value = "search") String request, @RequestParam(value = "token") String token) {
-
-        List<Video> videos = new ArrayList<>();
-        //toDo: find list of videos by name (!!!)
 
         if (videos == null) return new ResponseEntity(HttpStatus.BAD_REQUEST);
 
@@ -82,14 +74,13 @@ public class VideoContoller {
     public ResponseEntity addVideo(@RequestParam(value = "token") String token, @RequestBody(required = true) String videoUrl) {
 
 
+        if (!tokenService.checkTokenValidity(token)) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+
         Gson gson = new Gson();
         VideoUrl url = gson.fromJson(videoUrl, VideoUrl.class);
 
-        Video video = videoCreator(url, 1);
-
+        Video video = videoCreator(url, tokenService.getUserIdByToken(token));
         Video addedVideo = videoService.addVideo(video);
-
-        //toDo: adding new Video url (have only user's token??)
 
         if (addedVideo == null) return new ResponseEntity(HttpStatus.BAD_REQUEST);
 
@@ -153,10 +144,11 @@ public class VideoContoller {
     @ResponseBody
     public ResponseEntity getUserVideos(@RequestParam(value = "token") String token, @RequestParam(value = "page") int page) {
 
-        //List<Video> videos = new ArrayList<>();
-        //toDo: find user's video by token
 
-        int userId = 1;
+        if (!tokenService.checkTokenValidity(token)) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+
+        int userId = tokenService.getUserIdByToken(token);
+
         List<Video> videos = videoService.getVideoListByUserId(userId, page);
 
         if (videos == null) return new ResponseEntity(HttpStatus.BAD_REQUEST);
@@ -169,6 +161,8 @@ public class VideoContoller {
     @RequestMapping(method = RequestMethod.GET, params = {"token", "page", "query"})
     @ResponseBody
     public ResponseEntity findVideo(@RequestParam(value = "token") String token, @RequestParam(value = "page") int page, @RequestParam(value = "query") String query) {
+
+        if (!tokenService.checkTokenValidity(token)) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 
         List<Video> videos = videoService.findVideoList(page, query);
 

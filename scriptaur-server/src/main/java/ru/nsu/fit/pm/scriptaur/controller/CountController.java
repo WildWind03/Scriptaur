@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.nsu.fit.pm.scriptaur.entity.PagesCount;
+import ru.nsu.fit.pm.scriptaur.service.TokenService;
 import ru.nsu.fit.pm.scriptaur.service.VideoService;
 
 @RestController
@@ -14,20 +15,24 @@ import ru.nsu.fit.pm.scriptaur.service.VideoService;
 public class CountController {
 
     @Autowired
-    VideoService videoService;
+    private VideoService videoService;
+
+    @Autowired
+    private TokenService tokenService;
+
 
     @RequestMapping(method = RequestMethod.GET, value = "videosCount", params = {"token"})
     @ResponseBody
     public ResponseEntity getVideosPagesCount(@RequestParam(value = "token") String token) {
+
+        if (!tokenService.checkTokenValidity(token)) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 
         int count = videoService.getCountOfPagesVideos();
 
         PagesCount pagesCount = new PagesCount();
         pagesCount.setPagesCount(count);
 
-        System.out.println(pagesCount.getPagesCount());
-
-        return new ResponseEntity<PagesCount>(pagesCount, HttpStatus.OK);
+        return new ResponseEntity<>(pagesCount, HttpStatus.OK);
 
     }
 
@@ -36,18 +41,16 @@ public class CountController {
     @ResponseBody
     public ResponseEntity getUserVideosPagesCount(@RequestParam(value = "token") String token) {
 
-        //toDo: get id by token
-        int user_id = 1;
+        if (!tokenService.checkTokenValidity(token)) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+
+        int user_id = tokenService.getUserIdByToken(token);
 
         int count = videoService.getCountOfPagesVideosByUserId(user_id);
-
 
         PagesCount pagesCount = new PagesCount();
         pagesCount.setPagesCount(count);
 
-        System.out.println(pagesCount.getPagesCount());
-
-        return new ResponseEntity<PagesCount>(pagesCount, HttpStatus.OK);
+        return new ResponseEntity<>(pagesCount, HttpStatus.OK);
 
     }
 
@@ -55,14 +58,15 @@ public class CountController {
     @ResponseBody
     public ResponseEntity getUserVideosPagesCount(@RequestParam(value = "token") String token, @RequestParam(value = "query") String query) {
 
+
+        if (!tokenService.checkTokenValidity(token)) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+
         int count = videoService.getCountOfPagesVideosByQuery(query);
 
         PagesCount pagesCount = new PagesCount();
         pagesCount.setPagesCount(count);
 
-        System.out.println(pagesCount.getPagesCount());
-
-        return new ResponseEntity<PagesCount>(pagesCount, HttpStatus.OK);
+        return new ResponseEntity<>(pagesCount, HttpStatus.OK);
 
 
     }
