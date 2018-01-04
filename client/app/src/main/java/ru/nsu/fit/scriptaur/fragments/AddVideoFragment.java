@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import ru.nsu.fit.scriptaur.R;
+import ru.nsu.fit.scriptaur.common.DefaultObserver;
 import ru.nsu.fit.scriptaur.common.PreferencesUtils;
 import ru.nsu.fit.scriptaur.network.ApiHolder;
 import ru.nsu.fit.scriptaur.network.entities.VideoUrl;
@@ -52,7 +53,9 @@ public class AddVideoFragment extends AppCompatDialogFragment {
                             Toast.makeText(getContext(), "Incorrect URL", Toast.LENGTH_LONG).show();
                             return;
                         }
-                        ApiHolder.getBackendApi().addVideo(PreferencesUtils.getToken(getContext()), new VideoUrl(videoUrl));
+                        ApiHolder.getBackendApi()
+                                .addVideo(PreferencesUtils.getToken(getContext()), new VideoUrl(videoUrl))
+                                .subscribe(new DefaultObserver<>());
                         dialog.dismiss();
                     }
                 });

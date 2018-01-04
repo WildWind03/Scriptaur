@@ -22,6 +22,7 @@ import ru.nsu.fit.scriptaur.common.videos.DummyVideoSource;
 import ru.nsu.fit.scriptaur.common.videos.SearchQueryVideosSource;
 import ru.nsu.fit.scriptaur.common.videos.UsersVideosSource;
 import ru.nsu.fit.scriptaur.fragments.AddVideoFragment;
+import ru.nsu.fit.scriptaur.fragments.InfiniteVideoListFragment;
 import ru.nsu.fit.scriptaur.fragments.VideoListFragment;
 import ru.nsu.fit.scriptaur.network.ApiHolder;
 import ru.nsu.fit.scriptaur.network.entities.User;
@@ -34,7 +35,7 @@ public class DrawerActivity extends AppCompatActivity
 
 
     private SearchView searchView;
-    private VideoListFragment videoListFragment;
+    private InfiniteVideoListFragment videoListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,15 +114,9 @@ public class DrawerActivity extends AppCompatActivity
     private void switchToFragment(int fragmentId) {
         switch (fragmentId) {
             case R.id.nav_videos: {
-                videoListFragment = new VideoListFragment();
+                videoListFragment = new InfiniteVideoListFragment();
                 Bundle bundle = new Bundle();
-
-                // Todo: how now storing token?
-                //SharedPreferences sharedPreferences = getSharedPreferences("user_info", Context.MODE_PRIVATE);
-                //String userToken = sharedPreferences.getString("token", "");
-                //bundle.putParcelable(VideoListFragment.VIDEOS_SOURCE_KEY, new AllVideosSource(userToken));
-
-                bundle.putParcelable(VideoListFragment.VIDEOS_SOURCE_KEY, new DummyVideoSource());
+                bundle.putParcelable(InfiniteVideoListFragment.VIDEOS_SOURCE_KEY, new DummyVideoSource());
                 videoListFragment.setArguments(bundle);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.content_drawer, videoListFragment)
@@ -138,10 +133,10 @@ public class DrawerActivity extends AppCompatActivity
                 break;
             }
             case R.id.nav_my_videos: {
-                videoListFragment = new VideoListFragment();
+                videoListFragment = new InfiniteVideoListFragment();
                 Bundle bundle = new Bundle();
                 String token = PreferencesUtils.getToken(this);
-                bundle.putParcelable(VideoListFragment.VIDEOS_SOURCE_KEY, new UsersVideosSource(token));
+                bundle.putParcelable(InfiniteVideoListFragment.VIDEOS_SOURCE_KEY, new UsersVideosSource(token));
                 videoListFragment.setArguments(bundle);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.content_drawer, videoListFragment)
