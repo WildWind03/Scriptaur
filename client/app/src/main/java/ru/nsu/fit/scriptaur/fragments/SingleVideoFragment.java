@@ -155,6 +155,7 @@ public class SingleVideoFragment extends Fragment {
     public void onStop() {
         super.onStop();
         timer.cancel();
+        timer.purge();
     }
 
     @OnTextChanged(value = R.id.editText, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
