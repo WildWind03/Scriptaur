@@ -21,4 +21,16 @@ public interface VideoService {
     void updateEvaluationsCount(int videoId);
 
     List<Video> getVideoListByUserId(int userId);
+
+    List<Video> getVideoListByUserId(int userId, int page);
+
+    List<Video> getAllVideosByPage(int page);
+
+    int getCountOfPagesVideos();
+
+    int getCountOfPagesVideosByUserId(int user_id);
+
+    int getCountOfPagesVideosByQuery(String query);
+
+    List<Video> findVideoList(int page, String query);
 }
