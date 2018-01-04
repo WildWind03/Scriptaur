@@ -50,4 +50,22 @@ public class CountController {
         return new ResponseEntity<PagesCount>(pagesCount, HttpStatus.OK);
 
     }
+
+    @RequestMapping(method = RequestMethod.GET, value = "queryVideosCount", params = {"token", "query"})
+    @ResponseBody
+    public ResponseEntity getUserVideosPagesCount(@RequestParam(value = "token") String token, @RequestParam(value = "query") String query) {
+
+        int count = videoService.getCountOfPagesVideosByQuery(query);
+
+        PagesCount pagesCount = new PagesCount();
+        pagesCount.setPagesCount(count);
+
+        System.out.println(pagesCount.getPagesCount());
+
+        return new ResponseEntity<PagesCount>(pagesCount, HttpStatus.OK);
+
+
+    }
+
+
 }

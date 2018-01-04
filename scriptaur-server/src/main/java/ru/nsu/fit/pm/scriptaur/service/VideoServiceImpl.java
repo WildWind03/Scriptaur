@@ -80,4 +80,14 @@ public class VideoServiceImpl implements VideoService {
     public int getCountOfPagesVideosByUserId(int user_id) {
         return videoDao.getCountOfPagesVideosByUserId(user_id);
     }
+
+    @Override
+    public int getCountOfPagesVideosByQuery(String query) {
+        return videoDao.getCountOfPagesVideosByQuery(query);
+    }
+
+    @Override
+    public List<Video> findVideoList(int page, String query) {
+        return videoDao.findVideoList(page, query);
+    }
 }

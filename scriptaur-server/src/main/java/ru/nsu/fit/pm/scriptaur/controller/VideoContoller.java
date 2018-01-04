@@ -166,4 +166,19 @@ public class VideoContoller {
     }
 
 
+    @RequestMapping(method = RequestMethod.GET, params = {"token", "page", "query"})
+    @ResponseBody
+    public ResponseEntity findVideo(@RequestParam(value = "token") String token, @RequestParam(value = "page") int page, @RequestParam(value = "query") String query) {
+
+        List<Video> videos = videoService.findVideoList(page, query);
+
+        if (videos == null) return new ResponseEntity(HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(videos, HttpStatus.OK);
+
+    }
+
+
+
+
 }

@@ -30,4 +30,8 @@ public interface VideoDao {
     int getCountOfPagesVideo();
 
     int getCountOfPagesVideosByUserId(int user_id);
+
+    int getCountOfPagesVideosByQuery(String query);
+
+    List<Video> findVideoList(int page, String query);
 }

@@ -1,6 +1,7 @@
 package ru.nsu.fit.pm.scriptaur.dao;
 
 import org.hibernate.*;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import ru.nsu.fit.pm.scriptaur.entity.Video;
 
 import java.util.List;
+import java.util.TreeSet;
 
 
 @Component
@@ -195,5 +197,37 @@ public class VideoDaoImpl implements VideoDao {
         tr.commit();
 
         return (int) (count / VIDEO_PRO_PAGE);
+    }
+
+    @Override
+    public int getCountOfPagesVideosByQuery(String query) {
+        Session session = getSession();
+        Transaction tr = session.beginTransaction();
+
+        Criteria cr = session.createCriteria(Video.class).add(Restrictions.like("name", query, MatchMode.ANYWHERE).ignoreCase()).setProjection(Projections.rowCount());
+        Long count = (Long) cr.uniqueResult();
+
+        tr.commit();
+
+        return (int) (count / VIDEO_PRO_PAGE);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Video> findVideoList(int page, String query) {
+        Session session = getSession();
+        Transaction tr = session.beginTransaction();
+
+        Criteria cr = session.createCriteria(Video.class)
+                .add(Restrictions.like("name", query, MatchMode.ANYWHERE).ignoreCase())
+                .setFirstResult(VIDEO_PRO_PAGE * page)
+                .setMaxResults(VIDEO_PRO_PAGE);
+
+        List<Video> videos = cr.list();
+
+        tr.commit();
+
+        return videos;
+
     }
 }
