@@ -8,9 +8,12 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import ru.nsu.fit.scriptaur.R;
 import ru.nsu.fit.scriptaur.common.DefaultObserver;
 import ru.nsu.fit.scriptaur.common.PreferencesUtils;
@@ -51,7 +54,10 @@ public class LoginActivity extends AppCompatActivity {
     void signIn() {
         Api api = ApiHolder.getBackendApi();
         api.signIn(new SignInData(loginField.getText().toString(),
-                passwordField.getText().toString())).subscribe(new DefaultObserver<UserToken>() {
+                passwordField.getText().toString()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DefaultObserver<UserToken>() {
             @Override
             public void onNextElement(UserToken userToken) throws Throwable {
                 PreferencesUtils.setToken(LoginActivity.this, userToken.getToken());

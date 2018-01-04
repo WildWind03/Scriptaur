@@ -6,9 +6,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import ru.nsu.fit.scriptaur.R;
 import ru.nsu.fit.scriptaur.common.DefaultObserver;
 import ru.nsu.fit.scriptaur.common.PreferencesUtils;
@@ -48,22 +51,25 @@ public class RegistrationActivity extends AppCompatActivity {
         if (passwordText.equals(passwordRepeatText)) {
             api.signUp(new SignUpData(login.getText().toString(),
                     passwordText,
-                    name.getText().toString())).subscribe(new DefaultObserver<UserToken>() {
-                @Override
-                public void onNextElement(UserToken userToken) throws Throwable {
-                    PreferencesUtils.setToken(RegistrationActivity.this, userToken.getToken());
-                    setResult(RESULT_OK);
-                    finish();
-                }
+                    name.getText().toString()))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new DefaultObserver<UserToken>() {
+                        @Override
+                        public void onNextElement(UserToken userToken) throws Throwable {
+                            PreferencesUtils.setToken(RegistrationActivity.this, userToken.getToken());
+                            setResult(RESULT_OK);
+                            finish();
+                        }
 
-                @Override
-                public void onError(Throwable e) {
-                    Toast.makeText(RegistrationActivity.this, "Failed to sign up", Toast.LENGTH_LONG).show();
-                    //todo for degug only
-                    setResult(RESULT_OK);
-                    finish();
-                }
-            });
+                        @Override
+                        public void onError(Throwable e) {
+                            Toast.makeText(RegistrationActivity.this, "Failed to sign up", Toast.LENGTH_LONG).show();
+                            //todo for degug only
+                            setResult(RESULT_OK);
+                            finish();
+                        }
+                    });
         }
     }
 
