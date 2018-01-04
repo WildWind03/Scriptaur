@@ -16,7 +16,6 @@ import java.util.Date;
 
 @RestController
 public class AuthController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class.getName());
     private static final int DEFAULT_TRUST_FACTOR = 0;
     private static final String DEFAULT_SALT = "Russia";
 
