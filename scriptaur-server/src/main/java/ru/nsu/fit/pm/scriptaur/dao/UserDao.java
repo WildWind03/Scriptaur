@@ -14,6 +14,8 @@ public interface UserDao {
 
     User getUserById(int id);
 
+    User getUserByUsername(String username);
+
     void removeUser(int id);
 
     void updateTtustFactor(int userId, float trustFactor);

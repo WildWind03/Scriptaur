@@ -21,18 +21,26 @@ public class AuthController {
     private static final String DEFAULT_SALT = "Russia";
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @RequestMapping(path = "/signin", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity signIn(@RequestBody String data) {
         Gson gson = new Gson();
         SignInData signInData = gson.fromJson(data, SignInData.class);
-        //userService.getUserById()
-        return null;
+        User user = userService.getUserByUsername(signInData.getUsername());
+
+        if (null == user) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<> (new TokenString(Jwts.builder()
+                    .setSubject(user.getUsername())
+                    .setIssuedAt(new Date())
+                    .compact()), HttpStatus.OK);
+        }
 
     }
 
@@ -46,10 +54,10 @@ public class AuthController {
         userService.addUser(new User(signUpData.getUsername(), DEFAULT_TRUST_FACTOR,
                 hashedPassword, DEFAULT_SALT));
 
-        return new ResponseEntity<> (Jwts.builder()
+        return new ResponseEntity<> (new TokenString(Jwts.builder()
                 .setSubject(signUpData.getUsername())
                 .setIssuedAt(new Date())
-                .compact(), HttpStatus.OK);
+                .compact()), HttpStatus.OK);
 
     }
 }

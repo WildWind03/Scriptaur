@@ -1,9 +1,9 @@
 package ru.nsu.fit.pm.scriptaur.dao;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.*;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.engine.query.spi.sql.NativeSQLQueryReturn;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
@@ -71,6 +71,30 @@ public class UserDaoImpl implements UserDao {
         trans.commit();
         System.out.println("user" + trans.getStatus());
         return userList;
+    }
+
+    @Override
+    public User getUserByUsername(String username) {
+        Session session = getSession();
+        Transaction trans;
+        try {
+            trans = session.beginTransaction();
+        } catch (Exception e) {
+            trans = session.getTransaction();
+        }
+
+        SQLQuery sqlQuery = session.createSQLQuery("SELECT * from users WHERE username = '" + username + "'")
+                .addEntity(User.class);
+
+        List list = sqlQuery.list();
+
+        if (1 != list.size()) {
+            return null;
+        }
+        User user = (User) list.get(0);
+
+        trans.commit();
+        return user;
     }
 
     public User getUserById(int id) {

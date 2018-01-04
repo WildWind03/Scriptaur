@@ -1,9 +1,11 @@
 package ru.nsu.fit.pm.scriptaur.auth;
 
+import lombok.Getter;
 import lombok.Value;
 
 @Value
+@Getter
 class SignInData {
-    String username;
-    String password;
+    private String username;
+    private String password;
 }

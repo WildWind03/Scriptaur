@@ -14,6 +14,8 @@ public interface UserService {
 
     User getUserById(int id);
 
+    User getUserByUsername(String username);
+
     void removeUser(int id);
 
     void updateTrustFactor(int userId, float trustFactor);

@@ -4,7 +4,7 @@ import lombok.Value;
 
 @Value
 public class SignUpData {
-    String password;
-    String username;
-    String name;
+    private String password;
+    private String username;
+    private String name;
 }
