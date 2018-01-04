@@ -4,6 +4,8 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 
 import javax.persistence.EntityManagerFactory;
 
@@ -22,6 +24,11 @@ public class AppConfig {
             throw new NullPointerException("factory is not a hibernate factory");
         }
         return entityManagerFactory.unwrap(SessionFactory.class);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new ShaPasswordEncoder();
     }
 
 

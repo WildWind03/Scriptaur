@@ -76,7 +76,7 @@ public class UserController {
         SignUpData signUpData= gson.fromJson(signUpJson, SignUpData.class);
         System.out.println(signUpData);
 
-        //toDo: process User with SignUpData, token
+        //toDo: process SignUpData with SignUpData, token
 
         User user = new User();
 

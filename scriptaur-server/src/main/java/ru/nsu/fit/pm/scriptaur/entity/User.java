@@ -94,7 +94,7 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "SignUpData{" +
                 "userId=" + userId +
                 ", username='" + username + '\'' +
                 ", trustFactor=" + trustFactor +
