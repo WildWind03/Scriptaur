@@ -227,12 +227,19 @@ public class VideoListFragment extends Fragment {
 
     private void getDataFromVideoSource(){
         videosSource.pagesCount()
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new DefaultObserver<PagesCount>() {
                     @Override
                     public void onNext(PagesCount pagesCount) {
                         maxPage = pagesCount.getPagesCount();
                         switchToPage(0);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        Toast.makeText(getContext(), "Request failed", Toast.LENGTH_LONG).show();
                     }
                 });
     };

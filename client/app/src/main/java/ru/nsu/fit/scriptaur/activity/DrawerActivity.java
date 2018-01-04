@@ -72,6 +72,7 @@ public class DrawerActivity extends AppCompatActivity
         searchView = (SearchView) menu.findItem(R.id.search).getActionView();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
             @Override
             public boolean onQueryTextSubmit(String query) {
                 SearchQueryVideosSource searchQueryVideosSource = new SearchQueryVideosSource(query, "");
@@ -89,7 +90,6 @@ public class DrawerActivity extends AppCompatActivity
                 return false;
             }
         });
-
         return true;
     }
 
