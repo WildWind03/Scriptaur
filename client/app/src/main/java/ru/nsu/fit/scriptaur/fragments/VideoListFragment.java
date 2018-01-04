@@ -25,9 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,9 +53,9 @@ public class VideoListFragment extends Fragment {
     // https://www.googleapis.com/youtube/v3/videos?key=AIzaSyB1EKAPqyzYEDcLmTK5ZaqmRLwzgHB8kmc&part=snippet,contentDetails&id=CW5oGRx9CLM
 
     private static List<Video> videos;
-    private static Map<Video, Bitmap> icons = new TreeMap<>();
-    private static Map<Video, String> names = new TreeMap<>();
-    private static Map<Video, Integer> durations = new TreeMap<>();
+    private static Map<Video, Bitmap> icons = new HashMap<>();
+    private static Map<Video, String> names = new HashMap<>();
+    private static Map<Video, Integer> durations = new HashMap<>();
     @BindView(R.id.listView)
     ListView listView;
     @BindView(R.id.emptyListHint)
