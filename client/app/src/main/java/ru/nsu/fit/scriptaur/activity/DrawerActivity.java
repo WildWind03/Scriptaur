@@ -19,6 +19,7 @@ import ru.nsu.fit.scriptaur.common.DefaultObserver;
 import ru.nsu.fit.scriptaur.common.PreferencesUtils;
 import ru.nsu.fit.scriptaur.common.videos.DummyVideoSource;
 import ru.nsu.fit.scriptaur.common.videos.SearchQueryVideosSource;
+import ru.nsu.fit.scriptaur.common.videos.UsersVideosSource;
 import ru.nsu.fit.scriptaur.fragments.VideoListFragment;
 import ru.nsu.fit.scriptaur.network.ApiHolder;
 import ru.nsu.fit.scriptaur.network.entities.User;
@@ -134,7 +135,14 @@ public class DrawerActivity extends AppCompatActivity
                 break;
             }
             case R.id.nav_my_videos: {
-                //TODO
+                videoListFragment = new VideoListFragment();
+                Bundle bundle = new Bundle();
+                String token = PreferencesUtils.getToken(this);
+                bundle.putParcelable(VideoListFragment.VIDEOS_SOURCE_KEY, new UsersVideosSource(token));
+                videoListFragment.setArguments(bundle);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.content_drawer, videoListFragment)
+                        .commit();
                 break;
             }
         }
