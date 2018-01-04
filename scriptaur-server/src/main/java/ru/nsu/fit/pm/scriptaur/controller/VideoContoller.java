@@ -50,11 +50,11 @@ public class VideoContoller {
         return new ResponseEntity<>(video, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, params = {"page", "token"})
+    @RequestMapping(value = "/", method = RequestMethod.GET, params = {"page", "token"})
     @ResponseBody
     public ResponseEntity getVideos(@RequestParam(value = "page") int page, @RequestParam(value = "token") String token) {
 
-        List<Video> videos = new ArrayList<>();
+        List<Video> videos = videoService.getAllVideosByPage(page);
         //toDo: find list of videos by page number
 
         if (videos == null) return new ResponseEntity(HttpStatus.BAD_REQUEST);
@@ -77,7 +77,7 @@ public class VideoContoller {
     }
 
 
-    @RequestMapping(method = RequestMethod.PUT)
+    @RequestMapping(method = RequestMethod.PUT, params = {"token", "videoUrl"})
     @ResponseBody
     public ResponseEntity addVideo(@RequestParam(value = "token") String token, @RequestBody(required = true) String videoUrl) {
 
@@ -98,7 +98,6 @@ public class VideoContoller {
 
 
     private static String API_KEY = "AIzaSyB1EKAPqyzYEDcLmTK5ZaqmRLwzgHB8kmc";
-
 
     private Video videoCreator(VideoUrl url, int userId) {
         Video video = new Video();
@@ -150,12 +149,15 @@ public class VideoContoller {
     }
 
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET, params = {"token", "page"})
     @ResponseBody
-    public ResponseEntity getUserVideos(@RequestParam(value = "token") String token) {
+    public ResponseEntity getUserVideos(@RequestParam(value = "token") String token, @RequestParam(value = "page") int page) {
 
-        List<Video> videos = new ArrayList<>();
+        //List<Video> videos = new ArrayList<>();
         //toDo: find user's video by token
+
+        int userId = 1;
+        List<Video> videos = videoService.getVideoListByUserId(userId, page);
 
         if (videos == null) return new ResponseEntity(HttpStatus.BAD_REQUEST);
 

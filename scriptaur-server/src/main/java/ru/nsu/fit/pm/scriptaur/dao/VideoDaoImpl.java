@@ -1,6 +1,9 @@
 package ru.nsu.fit.pm.scriptaur.dao;
 
 import org.hibernate.*;
+import org.hibernate.criterion.Projection;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,5 +134,66 @@ public class VideoDaoImpl implements VideoDao {
         System.out.println("video" + trans.getStatus());
 
         return videos;
+    }
+
+    public static int VIDEO_PRO_PAGE = 2;
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Video> getVideoListByUserId(int userId, int page) {
+
+        Session session = getSession();
+        Transaction ts = session.beginTransaction();
+
+        Criteria cr = session.createCriteria(Video.class).add(Restrictions.eq("addedBy", userId)).setFirstResult(VIDEO_PRO_PAGE * page).setMaxResults(VIDEO_PRO_PAGE);
+        List<Video> videos = cr.list();
+
+
+        ts.commit();
+
+
+        return videos;
+    }
+
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Video> getAllVideosByPage(int page) {
+
+        Session session = getSession();
+        Transaction tr = session.beginTransaction();
+
+        Criteria cr = session.createCriteria(Video.class).setFirstResult(VIDEO_PRO_PAGE * page).setMaxResults(VIDEO_PRO_PAGE);
+        List<Video> videos = cr.list();
+
+        tr.commit();
+
+        return videos;
+    }
+
+    @Override
+    public int getCountOfPagesVideo() {
+        Session session = getSession();
+        Transaction tr = session.beginTransaction();
+
+        Criteria cr = session.createCriteria(Video.class).setProjection(Projections.rowCount());
+        Long count = (Long) cr.uniqueResult();
+
+        tr.commit();
+
+        return (int) (count / VIDEO_PRO_PAGE);
+    }
+
+    @Override
+    public int getCountOfPagesVideosByUserId(int user_id) {
+        Session session = getSession();
+        Transaction tr = session.beginTransaction();
+
+        Criteria cr = session.createCriteria(Video.class).add(Restrictions.eq("addedBy", user_id)).setProjection(Projections.rowCount());
+        Long count = (Long) cr.uniqueResult();
+
+        tr.commit();
+
+        return (int) (count / VIDEO_PRO_PAGE);
     }
 }

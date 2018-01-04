@@ -22,4 +22,12 @@ public interface VideoDao {
     void updateEvaluationCount(int videoId);
 
     List<Video> getVideoListByUserId(int userId);
+
+    List<Video> getVideoListByUserId(int userId, int page);
+
+    List<Video> getAllVideosByPage(int page);
+
+    int getCountOfPagesVideo();
+
+    int getCountOfPagesVideosByUserId(int user_id);
 }
