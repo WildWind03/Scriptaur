@@ -7,6 +7,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -20,6 +21,7 @@ import ru.nsu.fit.scriptaur.common.PreferencesUtils;
 import ru.nsu.fit.scriptaur.common.videos.DummyVideoSource;
 import ru.nsu.fit.scriptaur.common.videos.SearchQueryVideosSource;
 import ru.nsu.fit.scriptaur.common.videos.UsersVideosSource;
+import ru.nsu.fit.scriptaur.fragments.AddVideoFragment;
 import ru.nsu.fit.scriptaur.fragments.VideoListFragment;
 import ru.nsu.fit.scriptaur.network.ApiHolder;
 import ru.nsu.fit.scriptaur.network.entities.User;
@@ -131,7 +133,8 @@ public class DrawerActivity extends AppCompatActivity
                 break;
             }
             case R.id.nav_add_video: {
-                // TODO
+                AppCompatDialogFragment dialog = new AddVideoFragment();
+                dialog.show(getSupportFragmentManager(), "Add video");
                 break;
             }
             case R.id.nav_my_videos: {
