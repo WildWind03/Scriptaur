@@ -4,7 +4,7 @@ package ru.nsu.fit.scriptaur.network.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Video implements Parcelable{
+public class Video implements Parcelable {
 
     public static final Creator<Video> CREATOR = new Creator<Video>() {
         @Override

@@ -1,12 +1,8 @@
 package ru.nsu.fit.scriptaur.activity;
 
-import android.app.SearchManager;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,25 +11,18 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-
 import android.widget.TextView;
 import pub.devrel.easypermissions.EasyPermissions;
 import ru.nsu.fit.scriptaur.R;
 import ru.nsu.fit.scriptaur.common.DefaultObserver;
 import ru.nsu.fit.scriptaur.common.PreferencesUtils;
-import ru.nsu.fit.scriptaur.common.videos.AllVideosSource;
 import ru.nsu.fit.scriptaur.common.videos.DummyVideoSource;
 import ru.nsu.fit.scriptaur.common.videos.SearchQueryVideosSource;
 import ru.nsu.fit.scriptaur.fragments.VideoListFragment;
 import ru.nsu.fit.scriptaur.network.ApiHolder;
 import ru.nsu.fit.scriptaur.network.entities.User;
-import ru.nsu.fit.scriptaur.network.entities.Video;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class DrawerActivity extends AppCompatActivity
@@ -64,7 +53,7 @@ public class DrawerActivity extends AppCompatActivity
 
         final TextView usernameView = (TextView) findViewById(R.id.drawer_username);
         ApiHolder.getBackendApi().getUser(PreferencesUtils.getToken(this)).subscribe(
-                new DefaultObserver<User>(){
+                new DefaultObserver<User>() {
                     @Override
                     public void onNext(User user) {
                         usernameView.setText(user.getUserName());
@@ -84,7 +73,6 @@ public class DrawerActivity extends AppCompatActivity
     }
 
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.drawer, menu);
@@ -96,7 +84,7 @@ public class DrawerActivity extends AppCompatActivity
             public boolean onQueryTextSubmit(String query) {
                 SearchQueryVideosSource searchQueryVideosSource = new SearchQueryVideosSource(query, "");
                 Log.d("Search", query);
-                if(videoListFragment != null){
+                if (videoListFragment != null) {
                     videoListFragment.setVideoSource(searchQueryVideosSource);
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.content_drawer, videoListFragment)
@@ -137,7 +125,7 @@ public class DrawerActivity extends AppCompatActivity
                         .commit();
                 break;
             }
-            case R.id.nav_profile:{
+            case R.id.nav_profile: {
                 //TODO
                 break;
             }
@@ -145,7 +133,7 @@ public class DrawerActivity extends AppCompatActivity
                 // TODO
                 break;
             }
-            case R.id.nav_my_videos:{
+            case R.id.nav_my_videos: {
                 //TODO
                 break;
             }

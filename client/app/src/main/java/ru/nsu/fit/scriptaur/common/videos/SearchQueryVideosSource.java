@@ -1,15 +1,13 @@
 package ru.nsu.fit.scriptaur.common.videos;
 
 import android.os.Parcel;
-
-import java.util.List;
-
 import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 import io.reactivex.schedulers.Schedulers;
 import ru.nsu.fit.scriptaur.network.ApiHolder;
 import ru.nsu.fit.scriptaur.network.entities.PagesCount;
 import ru.nsu.fit.scriptaur.network.entities.Video;
+
+import java.util.List;
 
 public class SearchQueryVideosSource extends VideosSource {
 

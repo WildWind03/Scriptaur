@@ -11,31 +11,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.RatingBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import org.joda.time.LocalTime;
-import org.joda.time.format.DateTimeFormat;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
+import android.widget.*;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
+import org.joda.time.LocalTime;
+import org.joda.time.format.DateTimeFormat;
 import retrofit2.Response;
 import ru.nsu.fit.scriptaur.R;
 import ru.nsu.fit.scriptaur.common.DefaultObserver;
@@ -44,6 +28,12 @@ import ru.nsu.fit.scriptaur.network.ApiHolder;
 import ru.nsu.fit.scriptaur.network.YoutubeApi;
 import ru.nsu.fit.scriptaur.network.entities.PagesCount;
 import ru.nsu.fit.scriptaur.network.entities.Video;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 
 public class VideoListFragment extends Fragment {
@@ -71,7 +61,7 @@ public class VideoListFragment extends Fragment {
         videosSource = getArguments().getParcelable(VIDEOS_SOURCE_KEY);
     }
 
-    public void setVideoSource(VideosSource videoSource){
+    public void setVideoSource(VideosSource videoSource) {
         getArguments().putParcelable(VIDEOS_SOURCE_KEY, videoSource);
         videosSource = videoSource;
         getDataFromVideoSource();
@@ -88,7 +78,7 @@ public class VideoListFragment extends Fragment {
                         nextPageButton.setEnabled(page < maxPage - 1);
 
                         currentPage = page;
-                        pageHint.setText(String.format("Page %d from %d", currentPage + 1, maxPage));
+                        pageHint.setText(String.format("Page %d of %d", currentPage + 1, maxPage));
 
                         videos = videosFromPage;
 
@@ -225,7 +215,7 @@ public class VideoListFragment extends Fragment {
         switchToPage(currentPage + 1);
     }
 
-    private void getDataFromVideoSource(){
+    private void getDataFromVideoSource() {
         videosSource.pagesCount()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -242,5 +232,7 @@ public class VideoListFragment extends Fragment {
                         Toast.makeText(getContext(), "Request failed", Toast.LENGTH_LONG).show();
                     }
                 });
-    };
+    }
+
+    ;
 }

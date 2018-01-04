@@ -42,11 +42,9 @@ public interface Api {
     Observable<UserToken> signIn(@Body SignInData data);
 
     @GET("signout")
-
     Observable<ResponseBody> signOut(@Query("token") String token);
 
     @PUT("users")
-
     Observable<ResponseBody> changePassword(@Query("token") String token, @Body SignUpData data);
 
     @PUT("marks")
@@ -55,6 +53,5 @@ public interface Api {
     @PUT("videos")
     Observable<Video> addVideo(@Query("token") String token, @Body VideoUrl videoUrl);
 
-  
 
 }
