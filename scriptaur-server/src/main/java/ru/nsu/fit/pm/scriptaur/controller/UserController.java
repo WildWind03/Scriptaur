@@ -38,7 +38,9 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+
+    //example
+    @RequestMapping(method = RequestMethod.GET, params = {"user_id", "token"})
     @ResponseBody
     public ResponseEntity get(@RequestParam(value = "user_id") int id, @RequestParam(value = "token") String token) {
         System.out.println("get one user");
@@ -46,6 +48,19 @@ public class UserController {
         // toDo: process token
         User user = userService.getUserById(id);
         System.out.println(user);
+
+        if (user == null) return new ResponseEntity(HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, params = {"token"})
+    @ResponseBody
+    public ResponseEntity get(@RequestParam(value = "token") String token) {
+        System.out.println("get one user");
+
+        // toDo: find by token
+        User user = userService.getUserById(1);
 
         if (user == null) return new ResponseEntity(HttpStatus.BAD_REQUEST);
 
