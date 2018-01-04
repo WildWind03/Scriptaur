@@ -32,7 +32,9 @@ import java.util.TreeMap;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 import ru.nsu.fit.scriptaur.R;
@@ -67,6 +69,12 @@ public class VideoListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         videosSource = getArguments().getParcelable(VIDEOS_SOURCE_KEY);
+    }
+
+    public void setVideoSource(VideosSource videoSource){
+        getArguments().putParcelable(VIDEOS_SOURCE_KEY, videoSource);
+        videosSource = videoSource;
+        getDataFromVideoSource();
     }
 
     private void switchToPage(final int page) {
@@ -203,16 +211,7 @@ public class VideoListFragment extends Fragment {
 
         listView.setAdapter(adapter);
 
-        videosSource.pagesCount()
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DefaultObserver<PagesCount>() {
-                    @Override
-                    public void onNext(PagesCount pagesCount) {
-                        maxPage = pagesCount.getPagesCount();
-                        switchToPage(0);
-                    }
-                });
-
+        getDataFromVideoSource();
         return view;
     }
 
@@ -225,4 +224,16 @@ public class VideoListFragment extends Fragment {
     void gotoNextPage() {
         switchToPage(currentPage + 1);
     }
+
+    private void getDataFromVideoSource(){
+        videosSource.pagesCount()
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DefaultObserver<PagesCount>() {
+                    @Override
+                    public void onNext(PagesCount pagesCount) {
+                        maxPage = pagesCount.getPagesCount();
+                        switchToPage(0);
+                    }
+                });
+    };
 }

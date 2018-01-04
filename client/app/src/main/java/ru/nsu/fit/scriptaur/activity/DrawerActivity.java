@@ -1,5 +1,6 @@
 package ru.nsu.fit.scriptaur.activity;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,13 +11,18 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
 import pub.devrel.easypermissions.EasyPermissions;
 import ru.nsu.fit.scriptaur.R;
 import ru.nsu.fit.scriptaur.common.videos.AllVideosSource;
 import ru.nsu.fit.scriptaur.common.videos.DummyVideoSource;
+import ru.nsu.fit.scriptaur.common.videos.SearchQueryVideosSource;
 import ru.nsu.fit.scriptaur.fragments.VideoListFragment;
 import ru.nsu.fit.scriptaur.network.entities.Video;
 
@@ -27,6 +33,9 @@ import java.util.List;
 public class DrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         EasyPermissions.PermissionCallbacks {
+
+    private SearchView searchView;
+    private VideoListFragment videoListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +69,27 @@ public class DrawerActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.drawer, menu);
+        searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                SearchQueryVideosSource searchQueryVideosSource = new SearchQueryVideosSource(query, "");
+                Log.d("Search", query);
+
+                if(videoListFragment != null){
+                    videoListFragment.setVideoSource(searchQueryVideosSource);
+                }
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
         return true;
     }
 
@@ -72,7 +102,7 @@ public class DrawerActivity extends AppCompatActivity
     private void switchToFragment(int fragmentId) {
         switch (fragmentId) {
             case R.id.nav_video: {
-                Fragment fragment = new VideoListFragment();
+                videoListFragment = new VideoListFragment();
                 Bundle bundle = new Bundle();
 
                 // Todo: how now storing token?
@@ -81,9 +111,9 @@ public class DrawerActivity extends AppCompatActivity
                 //bundle.putParcelable(VideoListFragment.VIDEOS_SOURCE_KEY, new AllVideosSource(userToken));
 
                 bundle.putParcelable(VideoListFragment.VIDEOS_SOURCE_KEY, new DummyVideoSource());
-                fragment.setArguments(bundle);
+                videoListFragment.setArguments(bundle);
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.content_drawer, fragment)
+                        .replace(R.id.content_drawer, videoListFragment)
                         .commit();
 
             }

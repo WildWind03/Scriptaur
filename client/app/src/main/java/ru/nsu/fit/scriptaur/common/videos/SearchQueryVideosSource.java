@@ -5,6 +5,8 @@ import android.os.Parcel;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.Scheduler;
+import io.reactivex.schedulers.Schedulers;
 import ru.nsu.fit.scriptaur.network.ApiHolder;
 import ru.nsu.fit.scriptaur.network.entities.PagesCount;
 import ru.nsu.fit.scriptaur.network.entities.Video;
@@ -37,12 +39,12 @@ public class SearchQueryVideosSource extends VideosSource {
 
     @Override
     public Observable<List<Video>> getPage(final int pageId) {
-        return ApiHolder.getBackendApi().findVideo(query, pageId, userToken);
+        return ApiHolder.getBackendApi().findVideo(query, pageId, userToken).observeOn(Schedulers.newThread());
     }
 
     @Override
     public Observable<PagesCount> pagesCount() {
-        return ApiHolder.getBackendApi().getQueryVideosPagesCount(query, userToken);
+        return ApiHolder.getBackendApi().getQueryVideosPagesCount(query, userToken).observeOn(Schedulers.newThread());
     }
 
     @Override
