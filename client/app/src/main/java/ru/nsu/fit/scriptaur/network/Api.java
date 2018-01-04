@@ -39,7 +39,7 @@ public interface Api {
     Observable<UserToken> signUp(@Body SignUpData data);
 
     @POST("signin")
-    Observable<UserToken> signIn(@Body SignUpData data);
+    Observable<UserToken> signIn(@Body SignInData data);
 
     @GET("signout")
 

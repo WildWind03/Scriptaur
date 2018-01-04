@@ -50,7 +50,7 @@ public class VideoListFragment extends Fragment {
     public static final String VIDEOS_SOURCE_KEY = "videos_source";
 
     private static VideosSource videosSource;
-    private static List<Video> videos = new ArrayList();
+    private static List<Video> videos = new ArrayList<>();
     private static Map<Integer, Bitmap> icons = new TreeMap<>();
     @BindView(R.id.listView)
     ListView listView;

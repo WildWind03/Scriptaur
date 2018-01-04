@@ -12,11 +12,16 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ru.nsu.fit.scriptaur.R;
+import ru.nsu.fit.scriptaur.common.DefaultObserver;
+import ru.nsu.fit.scriptaur.common.PreferencesUtils;
+import ru.nsu.fit.scriptaur.network.Api;
+import ru.nsu.fit.scriptaur.network.ApiHolder;
+import ru.nsu.fit.scriptaur.network.entities.SignInData;
+import ru.nsu.fit.scriptaur.network.entities.UserToken;
 
 
 public class LoginActivity extends AppCompatActivity {
     private final static int REGISTRATION_ACTIVITY_CODE = 1;
-
 
     @BindView(R.id.login)
     EditText loginField;
@@ -43,7 +48,25 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.goButton)
-    void startDrawerActivity() {
+    void signIn() {
+        Api api = ApiHolder.getBackendApi();
+        api.signIn(new SignInData(loginField.getText().toString(),
+                passwordField.getText().toString())).subscribe(new DefaultObserver<UserToken>() {
+            @Override
+            public void onNextElement(UserToken userToken) throws Throwable {
+                PreferencesUtils.setToken(LoginActivity.this, userToken.getToken());
+                startActivity(new Intent(LoginActivity.this, DrawerActivity.class));
+                finish();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Toast.makeText(LoginActivity.this, "Failed to sign up", Toast.LENGTH_LONG).show();
+                //todo debug only
+                startActivity(new Intent(LoginActivity.this, DrawerActivity.class));
+                finish();
+            }
+        });
         startActivity(new Intent(this, DrawerActivity.class));
         finish();
     }
@@ -52,8 +75,10 @@ public class LoginActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REGISTRATION_ACTIVITY_CODE) {
-            Toast.makeText(this, resultCode + "", Toast.LENGTH_LONG).show();
-            //TODO sign in
+            if (resultCode == RESULT_OK) {
+                startActivity(new Intent(this, DrawerActivity.class));
+                finish();
+            }
         }
     }
 }

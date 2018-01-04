@@ -14,6 +14,7 @@ import butterknife.OnClick;
 import com.google.gson.Gson;
 import ru.nsu.fit.scriptaur.R;
 import ru.nsu.fit.scriptaur.common.DefaultObserver;
+import ru.nsu.fit.scriptaur.common.PreferencesUtils;
 import ru.nsu.fit.scriptaur.network.Api;
 import ru.nsu.fit.scriptaur.network.ApiHolder;
 import ru.nsu.fit.scriptaur.network.entities.SignUpData;
@@ -46,24 +47,23 @@ public class RegistrationActivity extends AppCompatActivity {
     @OnClick(R.id.confirm_registration_button)
     void signUp() {
         Api api = ApiHolder.getBackendApi();
-        if (password.getText().toString().equals(repeatedPassword.getText().toString())) {
+        String passwordText = password.getText().toString();
+        String passwordRepeatText = repeatedPassword.getText().toString();
+        if (passwordText.equals(passwordRepeatText)) {
             api.signUp(new SignUpData(login.getText().toString(),
-                    password.getText().toString(),
+                    passwordText,
                     name.getText().toString())).subscribe(new DefaultObserver<UserToken>() {
                 @Override
                 public void onNextElement(UserToken userToken) throws Throwable {
-                    Toast.makeText(RegistrationActivity.this, "Sign up", Toast.LENGTH_LONG).show();
+                    PreferencesUtils.setToken(RegistrationActivity.this, userToken.getToken());
                     setResult(RESULT_OK);
                     finish();
                 }
 
                 @Override
                 public void onError(Throwable e) {
-                    //todo real sign up error handle
                     Toast.makeText(RegistrationActivity.this, "Failed to sign up", Toast.LENGTH_LONG).show();
-                    SharedPreferences sharedPreferences = getSharedPreferences("user_info", Context.MODE_PRIVATE);
-                    User user = new User(11, "name", 1.2f, "01/10/2007");
-                    sharedPreferences.edit().putString("user_info", new Gson().toJson(user)).apply();
+                    //todo for degug only
                     setResult(RESULT_OK);
                     finish();
                 }
