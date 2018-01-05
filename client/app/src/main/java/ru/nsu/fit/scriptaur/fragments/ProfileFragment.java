@@ -17,12 +17,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import ru.nsu.fit.scriptaur.R;
-import ru.nsu.fit.scriptaur.activity.DrawerActivity;
 import ru.nsu.fit.scriptaur.activity.LoginActivity;
 import ru.nsu.fit.scriptaur.common.DefaultObserver;
 import ru.nsu.fit.scriptaur.common.PreferencesUtils;
 import ru.nsu.fit.scriptaur.network.Api;
 import ru.nsu.fit.scriptaur.network.ApiHolder;
+import ru.nsu.fit.scriptaur.network.entities.SignUpData;
 
 
 public class ProfileFragment extends Fragment {
@@ -33,9 +33,9 @@ public class ProfileFragment extends Fragment {
     Button signOut;
 
     @BindView(R.id.new_password)
-    EditText text;
+    EditText password;
     @BindView(R.id.new_password_repeat)
-    EditText editText;
+    EditText repeatedPassword;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,13 +49,32 @@ public class ProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.account_fragment, container, false);
         ButterKnife.bind(this, view);
 
-
         return view;
     }
 
     @OnClick(R.id.save)
     public void save() {
+        Api api = ApiHolder.getBackendApi();
+        String passwordText = password.getText().toString();
+        String passwordRepeatText = repeatedPassword.getText().toString();
+        if (passwordText.equals(passwordRepeatText)) {
+            api.changePassword(PreferencesUtils.getToken(getActivity()), new SignUpData("", passwordText, ""))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new DefaultObserver<ResponseBody>() {
+                        @Override
+                        public void onNextElement(ResponseBody responseBody) throws Throwable {
+                            Toast.makeText(getActivity(), "Password successfully changed", Toast.LENGTH_LONG).show();
+                        }
 
+                        @Override
+                        public void onError(Throwable e) {
+                            Toast.makeText(getActivity(), "Failed to change password", Toast.LENGTH_LONG).show();
+                        }
+                    });
+        } else {
+            Toast.makeText(getActivity(), "Passwords are not equals", Toast.LENGTH_LONG).show();
+        }
     }
 
     @OnClick(R.id.signOut)
@@ -68,6 +87,7 @@ public class ProfileFragment extends Fragment {
                     @Override
                     public void onNextElement(ResponseBody userToken) throws Throwable {
                         startActivity(new Intent(getActivity(), LoginActivity.class));
+                        getActivity().finish();
                     }
 
                     @Override
@@ -75,6 +95,7 @@ public class ProfileFragment extends Fragment {
                         Toast.makeText(getActivity(), "Failed to sign out", Toast.LENGTH_LONG).show();
                         //todo for degug only
                         startActivity(new Intent(getActivity(), LoginActivity.class));
+                        getActivity().finish();
                     }
                 });
     }
