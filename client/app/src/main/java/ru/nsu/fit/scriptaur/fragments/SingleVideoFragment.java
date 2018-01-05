@@ -24,6 +24,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
+import org.apache.commons.text.StringEscapeUtils;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import retrofit2.Response;
@@ -127,6 +128,8 @@ public class SingleVideoFragment extends Fragment {
                                 String start = parser.getAttributeValue(null, "start");
                                 String duration = parser.getAttributeValue(null, "dur");
                                 text = readText(parser);
+                                text = StringEscapeUtils.unescapeHtml3(text);
+                                text = text.replaceAll("\\(.*\\)", "");
                                 result.add(new Caption(start, duration, text));
                             } else {
                                 throw new IOException("Unknown tag");
@@ -162,11 +165,8 @@ public class SingleVideoFragment extends Fragment {
     void onTextChanged(Editable s) {
         String s1 = s.toString().toLowerCase().replaceAll("[\\W]", "");
         String s2 = captions.get(curCaption).getText().toLowerCase().replaceAll("[\\W]", "");
-        System.out.println(s1);
-        System.out.println(s2);
         if (s1.equals(s2)) {
             answered = true;
-            System.out.println("CORRECT");
             editText.post(new Runnable() {
                 @Override
                 public void run() {
@@ -237,14 +237,20 @@ public class SingleVideoFragment extends Fragment {
                         } else {
                             player.pause();
                         }
-                        text.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                text.setText(captions.get(curCaption).getText());
-                            }
-                        });
+                        if (!"".equals(captions.get(curCaption).getText().trim())) {
+                            //todo degug
+                            text.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    text.setText(captions.get(curCaption).getText());
+                                }
+                            });
+                        } else {
+                            curCaption++;
+                            player.play();
+                            answered = false;
+                        }
                     }
-
                 }
             }, 0, 100);
 

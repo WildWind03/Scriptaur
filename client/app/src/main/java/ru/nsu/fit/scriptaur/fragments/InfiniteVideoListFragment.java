@@ -1,7 +1,6 @@
 package ru.nsu.fit.scriptaur.fragments;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -23,9 +22,7 @@ import ru.nsu.fit.scriptaur.network.entities.PagesCount;
 import ru.nsu.fit.scriptaur.network.entities.Video;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class InfiniteVideoListFragment extends Fragment {
@@ -93,13 +90,6 @@ public class InfiniteVideoListFragment extends Fragment {
             }
         };
 
-        videosSource.getPage(currentPage++).subscribe(new DefaultObserver<List<Video>>() {
-            @Override
-            public void onNext(List<Video> videos) {
-                InfiniteVideoListFragment.videos.addAll(videos);
-                adapter.notifyDataSetChanged();
-            }
-        });
 
     }
 
@@ -115,6 +105,15 @@ public class InfiniteVideoListFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.video_list_fragment_2, container, false);
         ButterKnife.bind(this, view);
+
+        getPagesCount();
+        videosSource.getPage(currentPage++).subscribe(new DefaultObserver<List<Video>>() {
+            @Override
+            public void onNext(List<Video> videos) {
+                InfiniteVideoListFragment.videos.addAll(videos);
+                adapter.notifyDataSetChanged();
+            }
+        });
 
         emptyListHint.setVisibility(videos.isEmpty() ? View.VISIBLE : View.INVISIBLE);
 
@@ -151,8 +150,14 @@ public class InfiniteVideoListFragment extends Fragment {
 
         listView.setAdapter(adapter);
 
-        getPagesCount();
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        currentPage = 0;
+        videos = new ArrayList<>();
     }
 
     private void getPagesCount() {

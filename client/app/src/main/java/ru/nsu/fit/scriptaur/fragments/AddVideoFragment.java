@@ -21,8 +21,6 @@ import java.net.URL;
 
 public class AddVideoFragment extends AppCompatDialogFragment {
 
-    private EditText videoUrlEdit;
-
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
