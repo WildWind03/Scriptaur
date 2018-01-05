@@ -23,6 +23,7 @@ import ru.nsu.fit.scriptaur.common.videos.SearchQueryVideosSource;
 import ru.nsu.fit.scriptaur.common.videos.UsersVideosSource;
 import ru.nsu.fit.scriptaur.fragments.AddVideoFragment;
 import ru.nsu.fit.scriptaur.fragments.InfiniteVideoListFragment;
+import ru.nsu.fit.scriptaur.fragments.ProfileFragment;
 import ru.nsu.fit.scriptaur.fragments.VideoListFragment;
 import ru.nsu.fit.scriptaur.network.ApiHolder;
 import ru.nsu.fit.scriptaur.network.entities.User;
@@ -124,7 +125,9 @@ public class DrawerActivity extends AppCompatActivity
                 break;
             }
             case R.id.nav_profile: {
-                //TODO
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.content_drawer, new ProfileFragment())
+                        .commit();
                 break;
             }
             case R.id.nav_add_video: {
