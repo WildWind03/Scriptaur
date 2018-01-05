@@ -70,7 +70,7 @@ public class VideoContoller {
     }
 
 
-    @RequestMapping(method = RequestMethod.PUT, params = {"token", "videoUrl"})
+    @RequestMapping(method = RequestMethod.PUT, params = {"token"})
     @ResponseBody
     public ResponseEntity addVideo(@RequestParam(value = "token") String token, @RequestBody(required = true) String videoUrl) {
 
@@ -116,7 +116,11 @@ public class VideoContoller {
         try {
             resp = call.execute();
             okhttp3.ResponseBody bodyResponse = resp.body();
-            json = bodyResponse.string();
+            if (bodyResponse != null) {
+                json = bodyResponse.string();
+            } else {
+                return null;
+            }
 
             JsonParser parser = new JsonParser();
             JsonObject object = parser.parse(json).getAsJsonObject();
@@ -136,7 +140,7 @@ public class VideoContoller {
             video.setName(title);
             video.setLength(seconds);
             if (!isCaptionAllowed) return null;
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -149,7 +153,6 @@ public class VideoContoller {
     @RequestMapping(method = RequestMethod.GET, params = {"token", "page"})
     @ResponseBody
     public ResponseEntity getUserVideos(@RequestParam(value = "token") String token, @RequestParam(value = "page") int page) {
-
 
         if (!tokenService.checkTokenValidity(token)) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 
@@ -182,8 +185,6 @@ public class VideoContoller {
         return new ResponseEntity<>(videos, HttpStatus.OK);
 
     }
-
-
 
 
 }

@@ -22,7 +22,6 @@ public class Video {
     @Column(name = "added_by")
     private int addedBy;
 
-
     @Column(name = "added_on", columnDefinition = "timestamp without time zone")
     @Temporal(TemporalType.TIMESTAMP)
     private Date addedOn;
@@ -38,6 +37,7 @@ public class Video {
 
     @Column(name = "name")
     private String name;
+
 
     @Column(name = "length")
     private int length;

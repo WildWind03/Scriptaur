@@ -1,6 +1,7 @@
 package ru.nsu.fit.pm.scriptaur.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -10,7 +11,7 @@ import java.util.Date;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "users",
-    uniqueConstraints = @UniqueConstraint(columnNames = "username"))
+        uniqueConstraints = @UniqueConstraint(columnNames = "username"))
 public class User implements Serializable {
 
 
@@ -28,9 +29,11 @@ public class User implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date trustFactorUpdated;
 
+    @JsonIgnore
     @Column(name = "password_hash")
     private String hash;
 
+    @JsonIgnore
     private String salt;
 
 
@@ -93,7 +96,7 @@ public class User implements Serializable {
     public User() {
     }
 
-    @Override
+   /* @Override
     public String toString() {
         return "SignUpData{" +
                 "userId=" + userId +
@@ -103,5 +106,10 @@ public class User implements Serializable {
                 ", salt='" + salt + '\'' +
                 ", trustFactorUpdated='" + trustFactorUpdated + '\'' +
                 '}';
+    }*/
+
+    @Override
+    public String toString() {
+        return username;
     }
 }

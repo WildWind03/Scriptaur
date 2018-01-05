@@ -49,7 +49,6 @@ public class UserController {
     public ResponseEntity get(@RequestParam(value = "user_id") int id, @RequestParam(value = "token") String token) {
         System.out.println("get one user");
 
-        // toDo: process token
         User user = userService.getUserById(id);
         System.out.println(user);
 

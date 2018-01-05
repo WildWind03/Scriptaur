@@ -1,6 +1,7 @@
 package ru.nsu.fit.pm.scriptaur.dao;
 
 import org.hibernate.*;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.nsu.fit.pm.scriptaur.entity.User;
@@ -14,12 +15,24 @@ public class UserDaoImpl implements UserDao {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public SessionFactory getSessionFactory() {
-        return sessionFactory;
-    }
-
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
+    }
+
+    private Session getSession() {
+        Session session = null;
+
+        try {
+
+            sessionFactory.getCurrentSession();
+        } catch (HibernateException e) {
+            session = sessionFactory.openSession();
+        }
+        return session;
+    }
+
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
     }
 
     public void addUser(User user) {
@@ -43,7 +56,6 @@ public class UserDaoImpl implements UserDao {
     @SuppressWarnings("unchecked")
     public List<User> getAllUsers() {
         Session session = getSession();
-
         Transaction trans = session.beginTransaction();
         List<User> userList = session.createQuery("from ru.nsu.fit.pm.scriptaur.entity.User").list();
         for (User user : userList) {
@@ -53,23 +65,6 @@ public class UserDaoImpl implements UserDao {
         trans.commit();
         session.close();
         return userList;
-    }
-
-    public User getUserById(int id) {
-        Session session = getSession();
-        Transaction trans;
-        try {
-
-            trans = session.beginTransaction();
-        } catch (Exception e) {
-            trans = session.getTransaction();
-        }
-
-        User user = (User) session.load(User.class, id);
-
-        trans.commit();
-        session.close();
-        return user;
     }
 
     @Override
@@ -97,8 +92,29 @@ public class UserDaoImpl implements UserDao {
         return user;
     }
 
-    public void removeUser(int id) {
+    public User getUserById(int id) {
         Session session = getSession();
+        Transaction trans;
+        try {
+            trans = session.beginTransaction();
+        } catch (Exception e) {
+            trans = session.getTransaction();
+        }
+
+        Criteria cr = session.createCriteria(User.class)
+                .add(Restrictions.gt("userId", id));
+
+        User user = (User) cr.list().get(0);
+
+        System.out.println("after");
+
+        trans.commit();
+        session.close();
+        return user;
+    }
+
+    public void removeUser(int id) {
+        /*Session session = getSession();
 
         Transaction trans = session.beginTransaction();
         User user = (User) session.load(User.class, id);
@@ -110,7 +126,7 @@ public class UserDaoImpl implements UserDao {
         }
 
         trans.commit();
-        session.close();
+        session.close();*/
     }
 
     @Override
@@ -124,17 +140,5 @@ public class UserDaoImpl implements UserDao {
 
         trans.commit();
         session.close();
-    }
-
-    private Session getSession() {
-        Session session = null;
-
-        try {
-
-            sessionFactory.getCurrentSession();
-        } catch (HibernateException e) {
-            session = sessionFactory.openSession();
-        }
-        return session;
     }
 }

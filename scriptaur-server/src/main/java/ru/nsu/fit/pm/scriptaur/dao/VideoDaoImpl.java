@@ -120,10 +120,10 @@ public class VideoDaoImpl implements VideoDao {
         Session session = getSession();
         Transaction trans = session.beginTransaction();
 
-        Query query = session.createQuery("from ru.nsu.fit.pm.scriptaur.entity.Video where added_by= :userId ");
-        query.setParameter("userId", userId);
-        List<Video> videos = query.list();
+        Criteria cr = session.createCriteria(Video.class)
+                .add(Restrictions.eq("addedBy", userId));
 
+        List<Video> videos = cr.list();
         trans.commit();
         session.close();
 
@@ -137,7 +137,10 @@ public class VideoDaoImpl implements VideoDao {
         Session session = getSession();
         Transaction ts = session.beginTransaction();
 
-        Criteria cr = session.createCriteria(Video.class).add(Restrictions.eq("addedBy", userId)).setFirstResult(VIDEO_PRO_PAGE * page).setMaxResults(VIDEO_PRO_PAGE);
+        Criteria cr = session.createCriteria(Video.class)
+                .add(Restrictions.eq("addedBy", userId))
+                .setFirstResult(VIDEO_PRO_PAGE * page)
+                .setMaxResults(VIDEO_PRO_PAGE);
         List<Video> videos = cr.list();
 
 
@@ -155,7 +158,9 @@ public class VideoDaoImpl implements VideoDao {
         Session session = getSession();
         Transaction tr = session.beginTransaction();
 
-        Criteria cr = session.createCriteria(Video.class).setFirstResult(VIDEO_PRO_PAGE * page).setMaxResults(VIDEO_PRO_PAGE);
+        Criteria cr = session.createCriteria(Video.class)
+                .setFirstResult(VIDEO_PRO_PAGE * page)
+                .setMaxResults(VIDEO_PRO_PAGE);
         List<Video> videos = cr.list();
 
         tr.commit();
@@ -169,7 +174,8 @@ public class VideoDaoImpl implements VideoDao {
         Session session = getSession();
         Transaction tr = session.beginTransaction();
 
-        Criteria cr = session.createCriteria(Video.class).setProjection(Projections.rowCount());
+        Criteria cr = session.createCriteria(Video.class)
+                .setProjection(Projections.rowCount());
         Long count = (Long) cr.uniqueResult();
 
         tr.commit();
@@ -183,7 +189,9 @@ public class VideoDaoImpl implements VideoDao {
         Session session = getSession();
         Transaction tr = session.beginTransaction();
 
-        Criteria cr = session.createCriteria(Video.class).add(Restrictions.eq("addedBy", user_id)).setProjection(Projections.rowCount());
+        Criteria cr = session.createCriteria(Video.class)
+                .add(Restrictions.eq("addedBy", user_id))
+                .setProjection(Projections.rowCount());
         Long count = (Long) cr.uniqueResult();
 
         tr.commit();
@@ -197,13 +205,15 @@ public class VideoDaoImpl implements VideoDao {
         Session session = getSession();
         Transaction tr = session.beginTransaction();
 
-        Criteria cr = session.createCriteria(Video.class).add(Restrictions.like("name", query, MatchMode.ANYWHERE).ignoreCase()).setProjection(Projections.rowCount());
+        Criteria cr = session.createCriteria(Video.class)
+                .add(Restrictions.like("name", query, MatchMode.ANYWHERE).ignoreCase())
+                .setProjection(Projections.rowCount());
         Long count = (Long) cr.uniqueResult();
 
         tr.commit();
         session.close();
 
-        return (int) (count / VIDEO_PRO_PAGE);
+        return (int) ((count + 1) / VIDEO_PRO_PAGE);
     }
 
     @SuppressWarnings("unchecked")
