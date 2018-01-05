@@ -19,4 +19,6 @@ public interface UserService {
     void removeUser(int id);
 
     void updateTrustFactor(int userId, float trustFactor);
+
+    float getUserTrustFactor(int userIdByToken);
 }

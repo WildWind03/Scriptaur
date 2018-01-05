@@ -58,4 +58,9 @@ public class UserServiceImpl implements UserService{
     public void updateTrustFactor(int userId, float trustFactor) {
         this.userDao.updateTtustFactor(userId, trustFactor);
     }
+
+    @Override
+    public float getUserTrustFactor(int userIdByToken) {
+        return userDao.getUserTrustFactor(userIdByToken);
+    }
 }

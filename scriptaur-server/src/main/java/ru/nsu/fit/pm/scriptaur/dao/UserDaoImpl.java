@@ -106,8 +106,6 @@ public class UserDaoImpl implements UserDao {
 
         User user = (User) cr.list().get(0);
 
-        System.out.println("after");
-
         trans.commit();
         session.close();
         return user;
@@ -140,5 +138,21 @@ public class UserDaoImpl implements UserDao {
 
         trans.commit();
         session.close();
+    }
+
+    @Override
+    public float getUserTrustFactor(int userIdByToken) {
+        Session session = getSession();
+        Transaction tr = session.beginTransaction();
+
+        Criteria cr = session.createCriteria(User.class)
+                .add(Restrictions.gt("userId", userIdByToken));
+
+        User user = (User) cr.list().get(0);
+
+        tr.commit();
+        session.close();
+
+        return user.getTrustFactor();
     }
 }

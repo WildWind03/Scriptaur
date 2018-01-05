@@ -19,4 +19,6 @@ public interface UserDao {
     void removeUser(int id);
 
     void updateTtustFactor(int userId, float trustFactor);
+
+    float getUserTrustFactor(int userIdByToken);
 }
