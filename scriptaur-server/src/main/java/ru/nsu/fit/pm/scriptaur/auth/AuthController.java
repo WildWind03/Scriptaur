@@ -2,14 +2,13 @@ package ru.nsu.fit.pm.scriptaur.auth;
 
 import com.google.gson.Gson;
 import io.jsonwebtoken.Jwts;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.nsu.fit.pm.scriptaur.entity.User;
+import ru.nsu.fit.pm.scriptaur.service.TokenService;
 import ru.nsu.fit.pm.scriptaur.service.UserService;
 
 import java.util.Date;
@@ -23,6 +22,9 @@ public class AuthController {
     private UserService userService;
 
     @Autowired
+    private TokenService tokenService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @RequestMapping(path = "/signin", method = RequestMethod.POST)
@@ -32,31 +34,48 @@ public class AuthController {
         SignInData signInData = gson.fromJson(data, SignInData.class);
         User user = userService.getUserByUsername(signInData.getUsername());
 
+
         if (null == user) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         } else {
-            return new ResponseEntity<> (new TokenString(Jwts.builder()
+            String token = Jwts.builder()
                     .setSubject(user.getUsername())
                     .setIssuedAt(new Date())
-                    .compact()), HttpStatus.OK);
+                    .compact();
+
+            tokenService.addTokenId(user.getUserId(), token);
+
+            return new ResponseEntity<>(new TokenString(token), HttpStatus.OK);
         }
 
     }
 
-    @RequestMapping(path = "/signup",  method = RequestMethod.POST)
+    @RequestMapping(path = "/signup", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity signUp(@RequestBody String data) {
         Gson gson = new Gson();
         SignUpData signUpData = gson.fromJson(data, SignUpData.class);
 
         String hashedPassword = passwordEncoder.encodePassword(signUpData.getPassword(), DEFAULT_SALT);
-        userService.addUser(new User(signUpData.getUsername(), DEFAULT_TRUST_FACTOR,
-                hashedPassword, DEFAULT_SALT));
 
-        return new ResponseEntity<> (new TokenString(Jwts.builder()
+        User user = new User(signUpData.getUsername(), DEFAULT_TRUST_FACTOR,
+                hashedPassword, DEFAULT_SALT);
+        userService.addUser(user);
+
+        String token = Jwts.builder()
                 .setSubject(signUpData.getUsername())
                 .setIssuedAt(new Date())
-                .compact()), HttpStatus.OK);
+                .compact();
 
+        tokenService.addTokenId(user.getUserId(), token);
+
+        return new ResponseEntity<>(new TokenString(token), HttpStatus.OK);
+    }
+
+    @RequestMapping(path = "/signout", method = RequestMethod.GET, params = "token")
+    @ResponseBody
+    public ResponseEntity signOut(@RequestParam(value = "token") String token) {
+        tokenService.deleteUser(token);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

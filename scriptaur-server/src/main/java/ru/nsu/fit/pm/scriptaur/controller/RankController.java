@@ -6,6 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.nsu.fit.pm.scriptaur.dao.NoEntityException;
 import ru.nsu.fit.pm.scriptaur.entity.MarkData;
 import ru.nsu.fit.pm.scriptaur.entity.User;
 import ru.nsu.fit.pm.scriptaur.entity.Video;
@@ -77,7 +78,11 @@ public class RankController {
         MarkData markData = gson.fromJson(data, MarkData.class);
 
 
-        update(markData, tokenService.getUserIdByToken(token));
+        try {
+            update(markData, tokenService.getUserIdByToken(token));
+        } catch (NoEntityException e) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
 
         return new ResponseEntity(HttpStatus.ACCEPTED);
     }

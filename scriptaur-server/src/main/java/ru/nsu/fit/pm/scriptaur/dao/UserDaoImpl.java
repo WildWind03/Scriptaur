@@ -1,17 +1,10 @@
 package ru.nsu.fit.pm.scriptaur.dao;
 
 import org.hibernate.*;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.engine.query.spi.sql.NativeSQLQueryReturn;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import ru.nsu.fit.pm.scriptaur.entity.User;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Component
@@ -21,24 +14,12 @@ public class UserDaoImpl implements UserDao {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
-    private Session getSession() {
-        Session session = null;
-
-        try {
-
-            sessionFactory.getCurrentSession();
-        } catch (HibernateException e) {
-            session = sessionFactory.openSession();
-        }
-        return session;
-    }
-
     public SessionFactory getSessionFactory() {
         return sessionFactory;
+    }
+
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     public void addUser(User user) {
@@ -74,6 +55,23 @@ public class UserDaoImpl implements UserDao {
         return userList;
     }
 
+    public User getUserById(int id) {
+        Session session = getSession();
+        Transaction trans;
+        try {
+
+            trans = session.beginTransaction();
+        } catch (Exception e) {
+            trans = session.getTransaction();
+        }
+
+        User user = (User) session.load(User.class, id);
+
+        trans.commit();
+        session.close();
+        return user;
+    }
+
     @Override
     public User getUserByUsername(String username) {
         Session session = getSession();
@@ -93,23 +91,6 @@ public class UserDaoImpl implements UserDao {
             return null;
         }
         User user = (User) list.get(0);
-
-        trans.commit();
-        session.close();
-        return user;
-    }
-
-    public User getUserById(int id) {
-        Session session = getSession();
-        Transaction trans;
-        try {
-
-        trans = session.beginTransaction();
-        } catch (Exception e) {
-            trans = session.getTransaction();
-        }
-
-        User user = (User) session.load(User.class, id);
 
         trans.commit();
         session.close();
@@ -143,5 +124,17 @@ public class UserDaoImpl implements UserDao {
 
         trans.commit();
         session.close();
+    }
+
+    private Session getSession() {
+        Session session = null;
+
+        try {
+
+            sessionFactory.getCurrentSession();
+        } catch (HibernateException e) {
+            session = sessionFactory.openSession();
+        }
+        return session;
     }
 }

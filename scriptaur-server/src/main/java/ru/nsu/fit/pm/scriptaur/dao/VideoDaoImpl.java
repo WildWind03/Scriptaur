@@ -2,7 +2,6 @@ package ru.nsu.fit.pm.scriptaur.dao;
 
 import org.hibernate.*;
 import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
@@ -12,27 +11,14 @@ import org.springframework.stereotype.Component;
 import ru.nsu.fit.pm.scriptaur.entity.Video;
 
 import java.util.List;
-import java.util.TreeSet;
 
 
 @Component
 public class VideoDaoImpl implements VideoDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(VideoDaoImpl.class.getName());
-
+    public static int VIDEO_PRO_PAGE = 2;
     @Autowired
     private SessionFactory sessionFactory;
-
-    private Session getSession() {
-        Session session = null;
-
-        try {
-
-            sessionFactory.getCurrentSession();
-        } catch (HibernateException e) {
-            session = sessionFactory.openSession();
-        }
-        return session;
-    }
 
     @Override
     public Video addVideo(Video video) {
@@ -144,8 +130,6 @@ public class VideoDaoImpl implements VideoDao {
         return videos;
     }
 
-    public static int VIDEO_PRO_PAGE = 2;
-
     @SuppressWarnings("unchecked")
     @Override
     public List<Video> getVideoListByUserId(int userId, int page) {
@@ -163,7 +147,6 @@ public class VideoDaoImpl implements VideoDao {
 
         return videos;
     }
-
 
     @SuppressWarnings("unchecked")
     @Override
@@ -241,5 +224,17 @@ public class VideoDaoImpl implements VideoDao {
 
         return videos;
 
+    }
+
+    private Session getSession() {
+        Session session = null;
+
+        try {
+
+            sessionFactory.getCurrentSession();
+        } catch (HibernateException e) {
+            session = sessionFactory.openSession();
+        }
+        return session;
     }
 }

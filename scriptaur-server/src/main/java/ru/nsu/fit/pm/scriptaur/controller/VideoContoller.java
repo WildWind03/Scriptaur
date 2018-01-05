@@ -18,6 +18,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import ru.nsu.fit.pm.scriptaur.dao.NoEntityException;
 import ru.nsu.fit.pm.scriptaur.entity.User;
 import ru.nsu.fit.pm.scriptaur.entity.Video;
 import ru.nsu.fit.pm.scriptaur.service.TokenService;
@@ -79,7 +80,12 @@ public class VideoContoller {
         Gson gson = new Gson();
         VideoUrl url = gson.fromJson(videoUrl, VideoUrl.class);
 
-        Video video = videoCreator(url, tokenService.getUserIdByToken(token));
+        Video video = null;
+        try {
+            video = videoCreator(url, tokenService.getUserIdByToken(token));
+        } catch (NoEntityException e) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
         Video addedVideo = videoService.addVideo(video);
 
         if (addedVideo == null) return new ResponseEntity(HttpStatus.BAD_REQUEST);
@@ -147,7 +153,12 @@ public class VideoContoller {
 
         if (!tokenService.checkTokenValidity(token)) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 
-        int userId = tokenService.getUserIdByToken(token);
+        int userId = 0;
+        try {
+            userId = tokenService.getUserIdByToken(token);
+        } catch (NoEntityException e) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
 
         List<Video> videos = videoService.getVideoListByUserId(userId, page);
 

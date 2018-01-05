@@ -1,6 +1,9 @@
 package ru.nsu.fit.pm.scriptaur.dao;
 
-import org.hibernate.*;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.nsu.fit.pm.scriptaur.entity.Evaluation;
@@ -14,19 +17,6 @@ public class EvaluationDaoImpl implements EvaluationDao {
 
     @Autowired
     private SessionFactory sessionFactory;
-
-    private Session getSession() {
-        Session session = null;
-
-        try {
-
-            sessionFactory.getCurrentSession();
-        } catch (HibernateException e) {
-            session = sessionFactory.openSession();
-        }
-        return session;
-    }
-
 
     @Override
     public void addMark(int userId, int videoId, int mark) {
@@ -61,6 +51,18 @@ public class EvaluationDaoImpl implements EvaluationDao {
         trans.commit();
         session.close();
         return evaluations;
+    }
+
+    private Session getSession() {
+        Session session = null;
+
+        try {
+
+            sessionFactory.getCurrentSession();
+        } catch (HibernateException e) {
+            session = sessionFactory.openSession();
+        }
+        return session;
     }
 
 

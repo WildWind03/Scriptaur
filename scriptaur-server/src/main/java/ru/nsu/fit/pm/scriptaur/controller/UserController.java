@@ -7,6 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.nsu.fit.pm.scriptaur.dao.NoEntityException;
 import ru.nsu.fit.pm.scriptaur.entity.SignUpData;
 import ru.nsu.fit.pm.scriptaur.entity.User;
 import ru.nsu.fit.pm.scriptaur.service.TokenService;
@@ -63,7 +64,12 @@ public class UserController {
 
         if (!tokenService.checkTokenValidity(token)) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 
-        User user = userService.getUserById(tokenService.getUserIdByToken(token));
+        User user = null;
+        try {
+            user = userService.getUserById(tokenService.getUserIdByToken(token));
+        } catch (NoEntityException e) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
 
         if (user == null) return new ResponseEntity(HttpStatus.BAD_REQUEST);
 
