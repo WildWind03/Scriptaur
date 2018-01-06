@@ -1,34 +1,16 @@
 package ru.nsu.fit.pm.scriptaur.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import okhttp3.*;
-import org.joda.time.format.ISOPeriodFormat;
-import org.joda.time.format.PeriodFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import ru.nsu.fit.pm.scriptaur.dao.NoEntityException;
-import ru.nsu.fit.pm.scriptaur.entity.User;
 import ru.nsu.fit.pm.scriptaur.entity.Video;
 import ru.nsu.fit.pm.scriptaur.service.TokenService;
 import ru.nsu.fit.pm.scriptaur.service.VideoService;
-import ru.nsu.fit.pm.scriptaur.entity.VideoUrl;
-import ru.nsu.fit.pm.scriptaur.util.YoutubeApi;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -84,7 +66,7 @@ public class VideoContoller {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
 
-        List<Video> videos = videoService.getVideoListByUserId(userId, page);
+        List<Video> videos = videoService.getVideoListLastMonthByUserId(userId, page);
 
         if (videos == null) return new ResponseEntity(HttpStatus.BAD_REQUEST);
 

@@ -6,15 +6,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.nsu.fit.pm.scriptaur.dao.NoEntityException;
 import ru.nsu.fit.pm.scriptaur.entity.MarkData;
-import ru.nsu.fit.pm.scriptaur.entity.User;
 import ru.nsu.fit.pm.scriptaur.entity.Video;
 import ru.nsu.fit.pm.scriptaur.service.EvaluationService;
 import ru.nsu.fit.pm.scriptaur.service.TokenService;
 import ru.nsu.fit.pm.scriptaur.service.UserService;
 import ru.nsu.fit.pm.scriptaur.service.VideoService;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -31,7 +30,7 @@ public class RankController {
     private UserService userService;
 
     @Autowired
-    TokenService tokenService;
+    private TokenService tokenService;
 
     public void update(MarkData markData, int userId) {
 
@@ -45,14 +44,18 @@ public class RankController {
         float new_rating = (rating * evaluations_count + new_mark) / (evaluations_count + 1);
         videoService.updateVideoRating(markData.getVideoId(), new_rating);
 
-        updateTrustFactor(userId);
 
     }
 
 
     private void updateTrustFactor(int userId) {
 
-        List<Video> videos = videoService.getVideoListByUserId(userId);
+        List<Video> videos = videoService.getVideoListLastMonthByUserId(userId);
+
+        if (videos.size() == 0) {
+            userService.updateTrustFactor(userId, 1);
+            return;
+        }
 
         float trustFactor = 0;
 
@@ -66,6 +69,8 @@ public class RankController {
         trustFactor /= sum;
 
         userService.updateTrustFactor(userId, trustFactor);
+
+        userService.updateTrustFactorDay(userId);
     }
 
     @RequestMapping(method = RequestMethod.PUT)
@@ -79,8 +84,23 @@ public class RankController {
 
 
         try {
-            update(markData, tokenService.getUserIdByToken(token));
-        } catch (NoEntityException e) {
+            int userId = tokenService.getUserIdByToken(token);
+            update(markData, userId);
+            Date trustFactorUpdated = userService.getDateOfTrustFactorUpdated(userId);
+
+            if (trustFactorUpdated == null) {
+                updateTrustFactor(userId);
+            } else {
+
+                Date curDate = new Date();
+                long dif = (curDate.getTime() - trustFactorUpdated.getTime()) / (1000 * 60 * 60 * 24);
+
+                if (dif > 3) {
+                    updateTrustFactor(userId);
+                }
+            }
+
+        } catch (Exception e) {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
 

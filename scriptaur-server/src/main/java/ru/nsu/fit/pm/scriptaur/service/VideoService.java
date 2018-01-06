@@ -20,9 +20,9 @@ public interface VideoService {
 
     void updateEvaluationsCount(int videoId);
 
-    List<Video> getVideoListByUserId(int userId);
+    List<Video> getVideoListLastMonthByUserId(int userId);
 
-    List<Video> getVideoListByUserId(int userId, int page);
+    List<Video> getVideoListLastMonthByUserId(int userId, int page);
 
     List<Video> getAllVideosByPage(int page);
 

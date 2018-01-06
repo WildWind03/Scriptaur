@@ -8,8 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ru.nsu.fit.pm.scriptaur.entity.User;
 import ru.nsu.fit.pm.scriptaur.entity.Video;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 
@@ -120,10 +124,23 @@ public class VideoDaoImpl implements VideoDao {
         Session session = getSession();
         Transaction trans = session.beginTransaction();
 
+
+        Date today = new Date();
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(today);
+        calendar.add(Calendar.MONTH, -1);
+        Date monthAgo = calendar.getTime();
+
+
         Criteria cr = session.createCriteria(Video.class)
-                .add(Restrictions.eq("addedBy", userId));
+                .add(Restrictions.eq("addedBy", userId))
+                .add(Restrictions.between("addedOn", monthAgo, today));
+
 
         List<Video> videos = cr.list();
+        for (Video video : videos) {
+            System.out.println(video);
+        }
         trans.commit();
         session.close();
 
@@ -181,7 +198,7 @@ public class VideoDaoImpl implements VideoDao {
         tr.commit();
         session.close();
 
-        return (int) (count / VIDEO_PRO_PAGE);
+        return (int) ((count + 1) / VIDEO_PRO_PAGE);
     }
 
     @Override
@@ -197,7 +214,7 @@ public class VideoDaoImpl implements VideoDao {
         tr.commit();
         session.close();
 
-        return (int) (count / VIDEO_PRO_PAGE);
+        return (int) ((count + 1) / VIDEO_PRO_PAGE);
     }
 
     @Override

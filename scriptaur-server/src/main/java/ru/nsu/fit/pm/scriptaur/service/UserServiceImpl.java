@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.nsu.fit.pm.scriptaur.dao.UserDao;
 import ru.nsu.fit.pm.scriptaur.entity.User;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -60,7 +61,17 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    public void updateTrustFactorDay(int userId) {
+        this.userDao.updateTrustFactorDay(userId);
+    }
+
+    @Override
     public float getUserTrustFactor(int userIdByToken) {
         return userDao.getUserTrustFactor(userIdByToken);
+    }
+
+    @Override
+    public Date getDateOfTrustFactorUpdated(int userId) {
+        return userDao.getDateOfTrustFactorUpdated(userId);
     }
 }

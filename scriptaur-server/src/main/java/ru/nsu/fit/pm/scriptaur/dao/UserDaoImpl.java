@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.nsu.fit.pm.scriptaur.entity.User;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 @Component
@@ -141,8 +144,23 @@ public class UserDaoImpl implements UserDao {
         Session session = getSession();
         Transaction trans = session.beginTransaction();
 
+
         User user = session.get(User.class, userId);
         user.setTrustFactor(trustFactor);
+        session.merge(user);
+
+        trans.commit();
+        session.close();
+    }
+
+    @Override
+    public void updateTrustFactorDay(int userId) {
+        Session session = getSession();
+        Transaction trans = session.beginTransaction();
+
+
+        User user = session.get(User.class, userId);
+        user.setTrustFactorUpdated(new Date());
         session.merge(user);
 
         trans.commit();
@@ -163,5 +181,31 @@ public class UserDaoImpl implements UserDao {
         session.close();
 
         return user.getTrustFactor();
+    }
+
+    @Override
+    public Date getDateOfTrustFactorUpdated(int userId) {
+        Session session = getSession();
+        Transaction tr = session.beginTransaction();
+
+
+        /*SQLQuery sqlQuery = session.createSQLQuery("SELECT trust_factor_updated from users WHERE user_id =" + userId)
+                .addEntity(User.class);
+        List list = sqlQuery.list();
+*/
+        Criteria cr = session.createCriteria(User.class).add(Restrictions.eq("userId", userId));
+        List list = cr.list();
+
+
+        if (1 != list.size()) {
+            return null;
+        }
+        User user = (User) list.get(0);
+        Date date = user.getTrustFactorUpdated();
+
+        tr.commit();
+        session.close();
+
+        return date;
     }
 }
