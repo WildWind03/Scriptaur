@@ -26,9 +26,9 @@ public class DummyVideoSource extends VideosSource {
     private static final Map<Integer, Video> dummyVideos = new TreeMap<>();
 
     static {
-        dummyVideos.put(0, new Video(1, "VNqNnUJVcVs", "video 1", "image url 1", 100, 0, "0", 4.5f, 10, false));
-        dummyVideos.put(1, new Video(2, "CW5oGRx9CLM", "video 2", "https://i.ytimg.com/vi/CW5oGRx9CLM/mqdefault.jpg", 200, 0, "0", 5.0f, 15, true));
-        dummyVideos.put(2, new Video(3, "FBnAZnfNB6U", "video 3", "image url 3", 300, 0, "0", 1.488f, 1, false));
+        dummyVideos.put(0, new Video(1, "VNqNnUJVcVs", "video 1", "image url 1", 100, 0, "0", 4.5f, 10, 1));
+        dummyVideos.put(1, new Video(2, "CW5oGRx9CLM", "video 2", "https://i.ytimg.com/vi/CW5oGRx9CLM/mqdefault.jpg", 200, 0, "0", 5.0f, 15, 2));
+        dummyVideos.put(2, new Video(3, "FBnAZnfNB6U", "video 3", "image url 3", 300, 0, "0", 1.488f, 1, 5));
     }
 
     public DummyVideoSource() {

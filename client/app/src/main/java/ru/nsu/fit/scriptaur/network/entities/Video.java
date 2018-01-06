@@ -26,10 +26,10 @@ public class Video implements Parcelable {
     private String imageUrl;
     private String name;
     private int length;
-    private boolean isRated;
+    private int userMark;
 
     public Video(int videoId, String videoUrl, String name, String imageUrl, int length,
-                 int addedBy, String addedOn, float rating, int evaluationsCount, boolean isRated) {
+                 int addedBy, String addedOn, float rating, int evaluationsCount, int userMark) {
         this.videoId = videoId;
         this.videoUrl = videoUrl;
         this.name = name;
@@ -39,7 +39,7 @@ public class Video implements Parcelable {
         this.addedOn = addedOn;
         this.rating = rating;
         this.evaluationsCount = evaluationsCount;
-        this.isRated = isRated;
+        this.userMark = userMark;
     }
 
     protected Video(Parcel in) {
@@ -52,7 +52,7 @@ public class Video implements Parcelable {
         addedOn = in.readString();
         rating = in.readFloat();
         evaluationsCount = in.readInt();
-        isRated = in.readByte() != 0;
+        userMark = in.readInt();
     }
 
     public int getVideoId() {
@@ -91,8 +91,8 @@ public class Video implements Parcelable {
         return evaluationsCount;
     }
 
-    public boolean isRated() {
-        return isRated;
+    public int getUserMark() {
+        return userMark;
     }
 
     @Override
@@ -111,6 +111,6 @@ public class Video implements Parcelable {
         dest.writeString(addedOn);
         dest.writeFloat(rating);
         dest.writeInt(evaluationsCount);
-        dest.writeByte((byte) (isRated ? 1 : 0));
+        dest.writeInt(userMark);
     }
 }
