@@ -34,7 +34,6 @@ public class AuthController {
         SignInData signInData = gson.fromJson(data, SignInData.class);
         User user = userService.getUserByUsername(signInData.getUsername());
 
-
         if (null == user) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         } else {

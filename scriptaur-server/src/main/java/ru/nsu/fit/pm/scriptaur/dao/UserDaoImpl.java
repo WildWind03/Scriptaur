@@ -101,10 +101,19 @@ public class UserDaoImpl implements UserDao {
             trans = session.getTransaction();
         }
 
-        Criteria cr = session.createCriteria(User.class)
-                .add(Restrictions.gt("userId", id));
+        SQLQuery sqlQuery = session.createSQLQuery("SELECT * from users WHERE user_id = '" + id + "'")
+                .addEntity(User.class);
 
-        User user = (User) cr.list().get(0);
+        List list = sqlQuery.list();
+
+        if (1 != list.size()) {
+            return null;
+        }
+        User user = (User) list.get(0);
+//        Criteria cr = session.createCriteria(User.class)
+//                .add(Restrictions.gt("userId", id));
+//
+//        User user = (User) cr.list().get(0);
 
         trans.commit();
         session.close();
