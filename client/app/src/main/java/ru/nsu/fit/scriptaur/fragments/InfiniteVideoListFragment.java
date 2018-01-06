@@ -136,7 +136,7 @@ public class InfiniteVideoListFragment extends Fragment {
                 Toast.makeText(getActivity(), videos.get(position).getVideoUrl(), Toast.LENGTH_LONG).show();
                 Fragment fragment = new SingleVideoFragment();
                 Bundle bundle = new Bundle();
-                bundle.putString(SingleVideoFragment.VIDEO_ID_KEY, videos.get(position).getVideoUrl());
+                bundle.putParcelable(SingleVideoFragment.VIDEO_KEY, videos.get(position));
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.content_drawer, fragment)

@@ -25,6 +25,7 @@ import ru.nsu.fit.scriptaur.network.entities.UserToken;
 
 
 public class LoginActivity extends AppCompatActivity {
+    public final static String USERNAME_KEY = "USER_NAME";
     private final static int REGISTRATION_ACTIVITY_CODE = 1;
 
     @BindView(R.id.login)
@@ -47,8 +48,10 @@ public class LoginActivity extends AppCompatActivity {
                     .subscribe(new DefaultObserver<User>() {
                                    @Override
                                    public void onNext(User user) {
-                                       startActivity(new Intent(LoginActivity.this,
-                                               DrawerActivity.class));
+                                       Intent intent = new Intent(LoginActivity.this,
+                                               DrawerActivity.class);
+                                       intent.putExtra(USERNAME_KEY, user.getUserName());
+                                       startActivity(intent);
                                        finish();
                                    }
 

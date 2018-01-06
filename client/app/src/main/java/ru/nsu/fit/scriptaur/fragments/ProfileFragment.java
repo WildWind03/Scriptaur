@@ -13,7 +13,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import ru.nsu.fit.scriptaur.R;
@@ -83,7 +82,7 @@ public class ProfileFragment extends Fragment {
         api.signOut(PreferencesUtils.getToken(getActivity()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DefaultObserver<ResponseBody>(){
+                .subscribe(new DefaultObserver<ResponseBody>() {
                     @Override
                     public void onError(Throwable e) {
                         PreferencesUtils.setToken(getActivity(), null);

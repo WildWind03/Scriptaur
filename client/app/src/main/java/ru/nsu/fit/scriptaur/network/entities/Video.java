@@ -3,7 +3,6 @@ package ru.nsu.fit.scriptaur.network.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import com.google.gson.annotations.Expose;
 
 public class Video implements Parcelable {
 

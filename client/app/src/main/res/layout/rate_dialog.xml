@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content">
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="4dp"
+            android:text="Congratulations\nDont't forget to rate this video"/>
+    <RatingBar
+            android:theme="@style/RatingBar"
+            android:id="@+id/new_rating"
+            android:stepSize="1"
+            android:scaleX="0.5"
+            android:scaleY="0.5"
+            android:transformPivotX="0dp"
+            android:isIndicator="false"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:numStars="5"/>
+</LinearLayout>

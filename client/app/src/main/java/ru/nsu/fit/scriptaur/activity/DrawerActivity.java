@@ -14,22 +14,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import pub.devrel.easypermissions.EasyPermissions;
 import ru.nsu.fit.scriptaur.R;
-import ru.nsu.fit.scriptaur.common.DefaultObserver;
 import ru.nsu.fit.scriptaur.common.PreferencesUtils;
 import ru.nsu.fit.scriptaur.common.videos.AllVideosSource;
-import ru.nsu.fit.scriptaur.common.videos.DummyVideoSource;
 import ru.nsu.fit.scriptaur.common.videos.SearchQueryVideosSource;
 import ru.nsu.fit.scriptaur.common.videos.UsersVideosSource;
 import ru.nsu.fit.scriptaur.fragments.AddVideoFragment;
 import ru.nsu.fit.scriptaur.fragments.InfiniteVideoListFragment;
 import ru.nsu.fit.scriptaur.fragments.ProfileFragment;
-import ru.nsu.fit.scriptaur.fragments.VideoListFragment;
-import ru.nsu.fit.scriptaur.network.ApiHolder;
-import ru.nsu.fit.scriptaur.network.entities.User;
 
 import java.util.List;
 
@@ -58,17 +51,7 @@ public class DrawerActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         final TextView usernameView = (TextView) navigationView.getHeaderView(0).findViewById(R.id.drawer_username);
-        ApiHolder.getBackendApi().getUser(PreferencesUtils.getToken(this))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DefaultObserver<User>() {
-                    @Override
-                    public void onNext(User user) {
-                        usernameView.setText(user.getUserName());
-                    }
-                }
-        );
-
+        usernameView.setText(getIntent().getStringExtra(LoginActivity.USERNAME_KEY));
         switchToFragment(R.id.nav_videos);
     }
 

@@ -2,6 +2,7 @@ package ru.nsu.fit.scriptaur.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.text.Editable;
 import android.util.Log;
 import android.util.Xml;
@@ -33,6 +34,7 @@ import ru.nsu.fit.scriptaur.model.AbstractPlayerListener;
 import ru.nsu.fit.scriptaur.model.Caption;
 import ru.nsu.fit.scriptaur.network.CaptionsClient;
 import ru.nsu.fit.scriptaur.network.RetrofitServiceFactory;
+import ru.nsu.fit.scriptaur.network.entities.Video;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -43,11 +45,10 @@ import java.util.TimerTask;
 
 
 public class SingleVideoFragment extends Fragment {
-    public static final String API_KEY = "AIzaSyB1EKAPqyzYEDcLmTK5ZaqmRLwzgHB8kmc";
     public static final String VIDEO_ID_KEY = "video_id";
-
+    public static final String VIDEO_KEY = "video";
+    private static final String API_KEY = "AIzaSyB1EKAPqyzYEDcLmTK5ZaqmRLwzgHB8kmc";
     private static final String BASE_URL = "http://video.google.com/";
-    private static String videoId;
     @BindView(R.id.repeatButton)
     Button repeatButton;
     @BindView(R.id.skipButton)
@@ -56,6 +57,8 @@ public class SingleVideoFragment extends Fragment {
     TextView text;
     @BindView(R.id.editText)
     EditText editText;
+    private Video video;
+    private String videoId;
     private List<Caption> captions;
     private int curCaption = -1;
     private boolean answered = true;
@@ -65,8 +68,9 @@ public class SingleVideoFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        videoId = getArguments().getString(VIDEO_ID_KEY);
-        videoId = videoId.substring(videoId.lastIndexOf('/')+1);
+        video = getArguments().getParcelable(VIDEO_KEY);
+        videoId = video.getVideoUrl();
+        videoId = videoId.substring(videoId.lastIndexOf('/') + 1);
     }
 
     @Override
@@ -185,15 +189,17 @@ public class SingleVideoFragment extends Fragment {
 
     @OnClick(R.id.skipButton)
     public void skip() {
-        curCaption++;
-        player.seekToMillis(captions.get(curCaption).getStart() - 50);
-        text.post(new Runnable() {
-            @Override
-            public void run() {
-                text.setText(captions.get(curCaption).getText());
-            }
-        });
-        player.play();
+        if (curCaption + 1 < captions.size()) {
+            curCaption++;
+            player.seekToMillis(captions.get(curCaption).getStart() - 50);
+            text.post(new Runnable() {
+                @Override
+                public void run() {
+                    text.setText(captions.get(curCaption).getText());
+                }
+            });
+            player.play();
+        }
     }
 
 
@@ -260,6 +266,15 @@ public class SingleVideoFragment extends Fragment {
         @Override
         public void onLoaded(String s) {
             player.play();
+        }
+
+        @Override
+        public void onVideoEnded() {
+            AppCompatDialogFragment dialog = new VideoEndFragment();
+            Bundle bundle = new Bundle();
+            bundle.putInt(VIDEO_ID_KEY, video.getVideoId());
+            dialog.setArguments(bundle);
+            dialog.show(getActivity().getSupportFragmentManager(), "Rate video");
         }
     }
 
