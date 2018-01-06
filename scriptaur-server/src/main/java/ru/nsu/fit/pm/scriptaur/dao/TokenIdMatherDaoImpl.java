@@ -1,14 +1,15 @@
 package ru.nsu.fit.pm.scriptaur.dao;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.nsu.fit.pm.scriptaur.entity.TokenIdMather;
+import ru.nsu.fit.pm.scriptaur.entity.User;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 @Component
 public class TokenIdMatherDaoImpl implements TokenIdMatherDao {
@@ -56,6 +57,30 @@ public class TokenIdMatherDaoImpl implements TokenIdMatherDao {
         } else {
             LOGGER.error("Token Id Mather doesn't exist");
         }
+
+        trans.commit();
+        session.close();
+    }
+
+    @Override
+    public void delete(int userId) {
+        Session session = getSession();
+        Transaction trans;
+        try {
+            trans = session.beginTransaction();
+        } catch (Exception e) {
+            trans = session.getTransaction();
+        }
+
+        SQLQuery sqlQuery = session.createSQLQuery("SELECT * from token_id_mather WHERE id = '" + userId + "'")
+                .addEntity(TokenIdMather.class);
+
+        List list = sqlQuery.list();
+        list.forEach(session::delete);
+//        Criteria cr = session.createCriteria(User.class)
+//                .add(Restrictions.gt("userId", id));
+//
+//        User user = (User) cr.list().get(0);
 
         trans.commit();
         session.close();

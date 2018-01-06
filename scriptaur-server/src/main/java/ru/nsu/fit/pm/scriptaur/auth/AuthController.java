@@ -12,6 +12,7 @@ import ru.nsu.fit.pm.scriptaur.service.TokenService;
 import ru.nsu.fit.pm.scriptaur.service.UserService;
 
 import java.util.Date;
+import java.util.Random;
 
 @RestController
 public class AuthController {
@@ -40,8 +41,10 @@ public class AuthController {
             String token = Jwts.builder()
                     .setSubject(user.getUsername())
                     .setIssuedAt(new Date())
+                    .setId(Integer.toString(new Random(System.currentTimeMillis()).nextInt()))
                     .compact();
 
+            tokenService.deleteUser(user.getUserId());
             tokenService.addTokenId(user.getUserId(), token);
 
             return new ResponseEntity<>(new TokenString(token), HttpStatus.OK);
@@ -64,6 +67,7 @@ public class AuthController {
         String token = Jwts.builder()
                 .setSubject(signUpData.getUsername())
                 .setIssuedAt(new Date())
+                .setId(Integer.toString(new Random(System.currentTimeMillis()).nextInt()))
                 .compact();
 
         tokenService.addTokenId(user.getUserId(), token);

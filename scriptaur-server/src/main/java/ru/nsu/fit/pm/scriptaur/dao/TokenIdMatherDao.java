@@ -6,4 +6,6 @@ public interface TokenIdMatherDao {
     void addNew(int id, String token);
 
     void delete(String token);
+
+    void delete(int userId);
 }

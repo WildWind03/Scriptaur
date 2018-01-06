@@ -11,4 +11,6 @@ public interface TokenService {
     void deleteUser(String token);
 
     void addTokenId(int id, String token);
+
+    void deleteUser(int userId);
 }

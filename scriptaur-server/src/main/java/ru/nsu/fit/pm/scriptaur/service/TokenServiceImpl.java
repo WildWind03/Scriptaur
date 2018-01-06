@@ -36,4 +36,9 @@ public class TokenServiceImpl implements TokenService {
         tokenIdMatherDao.addNew(id, token);
     }
 
+    @Override
+    public void deleteUser(int userId) {
+        tokenIdMatherDao.delete(userId);
+    }
+
 }
