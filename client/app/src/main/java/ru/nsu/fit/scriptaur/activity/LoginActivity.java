@@ -64,6 +64,11 @@ public class LoginActivity extends AppCompatActivity {
                                    }
                                }
                     );
+        } else {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            setContentView(R.layout.login_activity_layout);
+            ButterKnife.bind(LoginActivity.this);
         }
     }
 
