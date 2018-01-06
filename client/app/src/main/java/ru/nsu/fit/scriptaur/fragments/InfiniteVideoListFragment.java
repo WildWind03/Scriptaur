@@ -95,7 +95,7 @@ public class InfiniteVideoListFragment extends Fragment {
     public void setVideoSource(VideosSource videoSource) {
         getArguments().putParcelable(VIDEOS_SOURCE_KEY, videoSource);
         videosSource = videoSource;
-        getPagesCount();
+        loadFirstPage();
     }
 
     @Override
@@ -105,20 +105,22 @@ public class InfiniteVideoListFragment extends Fragment {
         View view = inflater.inflate(R.layout.video_list_fragment_2, container, false);
         ButterKnife.bind(this, view);
 
-        getPagesCount();
-
+        loadFirstPage();
 
 
         listView.setOnScrollListener(new EndlessScrollListener() {
             public boolean onLoadMore() {
                 if (currentPage < maxPage) {
-                    videosSource.getPage(currentPage++).subscribe(new DefaultObserver<List<Video>>() {
-                        @Override
-                        public void onNext(List<Video> videos) {
-                            InfiniteVideoListFragment.videos.addAll(videos);
-                            adapter.notifyDataSetChanged();
-                        }
-                    });
+                    videosSource.getPage(currentPage++)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new DefaultObserver<List<Video>>() {
+                                @Override
+                                public void onNext(List<Video> videos) {
+                                    InfiniteVideoListFragment.videos.addAll(videos);
+                                    adapter.notifyDataSetChanged();
+                                }
+                            });
                     return true;
                 } else {
                     return false;
@@ -135,7 +137,8 @@ public class InfiniteVideoListFragment extends Fragment {
                 bundle.putString(SingleVideoFragment.VIDEO_ID_KEY, videos.get(position).getVideoUrl());
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.content_drawer, fragment).addToBackStack(null)
+                        .replace(R.id.content_drawer, fragment)
+                        .addToBackStack(null)
                         .commit();
             }
         });
@@ -152,7 +155,7 @@ public class InfiniteVideoListFragment extends Fragment {
         videos = new ArrayList<>();
     }
 
-    private void getPagesCount() {
+    private void loadFirstPage() {
         videosSource.pagesCount()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -162,20 +165,25 @@ public class InfiniteVideoListFragment extends Fragment {
                         videosSource.getPage(currentPage++)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(new DefaultObserver<List<Video>>() {
+                                .doOnComplete(new Action() {
                                     @Override
-                                    public void onNext(List<Video> videos) {
-                                        InfiniteVideoListFragment.videos.addAll(videos);
-                                        adapter.notifyDataSetChanged();
+                                    public void run() throws Exception {
+                                        emptyListHint.setVisibility(videos.isEmpty() ? View.VISIBLE : View.INVISIBLE);
                                     }
+                                }).subscribe(new DefaultObserver<List<Video>>() {
+                            @Override
+                            public void onNext(List<Video> videos) {
+                                InfiniteVideoListFragment.videos.addAll(videos);
+                                adapter.notifyDataSetChanged();
+                            }
 
-                                    @Override
-                                    public void onError(Throwable e) {
-                                        super.onError(e);
-                                    }
-                                });
+                            @Override
+                            public void onError(Throwable e) {
+                                super.onError(e);
+                            }
+                        });
 
-                        emptyListHint.setVisibility(videos.isEmpty() ? View.VISIBLE : View.INVISIBLE);
+
                     }
                 })
                 .subscribe(new DefaultObserver<PagesCount>() {
@@ -183,6 +191,7 @@ public class InfiniteVideoListFragment extends Fragment {
                     public void onNext(PagesCount pagesCount) {
                         maxPage = pagesCount.getPagesCount();
                     }
+
                     @Override
                     public void onError(Throwable e) {
                         super.onError(e);
