@@ -66,6 +66,7 @@ public class SingleVideoFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         videoId = getArguments().getString(VIDEO_ID_KEY);
+        videoId = videoId.substring(videoId.lastIndexOf('/')+1);
     }
 
     @Override

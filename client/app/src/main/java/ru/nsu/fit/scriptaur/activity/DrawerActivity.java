@@ -92,7 +92,8 @@ public class DrawerActivity extends AppCompatActivity
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                SearchQueryVideosSource searchQueryVideosSource = new SearchQueryVideosSource(query, "");
+                SearchQueryVideosSource searchQueryVideosSource = new SearchQueryVideosSource(
+                        PreferencesUtils.getToken(DrawerActivity.this), query);
                 Log.d("Search", query);
                 if (videoListFragment != null) {
                     videoListFragment.setVideoSource(searchQueryVideosSource);

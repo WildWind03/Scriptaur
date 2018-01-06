@@ -16,6 +16,6 @@ public class PreferencesUtils {
 
     public static void setToken(Context context, String newToken) {
         PreferenceManager.getDefaultSharedPreferences(context)
-                .edit().putString(TOKEN_KEY, newToken).apply();
+                .edit().putString(TOKEN_KEY, newToken).commit();
     }
 }

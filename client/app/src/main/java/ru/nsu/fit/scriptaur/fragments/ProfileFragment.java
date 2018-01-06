@@ -9,11 +9,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import ru.nsu.fit.scriptaur.R;
@@ -83,17 +83,17 @@ public class ProfileFragment extends Fragment {
         api.signOut(PreferencesUtils.getToken(getActivity()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DefaultObserver<ResponseBody>() {
+                .subscribe(new DefaultObserver<ResponseBody>(){
                     @Override
-                    public void onNextElement(ResponseBody userToken) throws Throwable {
+                    public void onError(Throwable e) {
+                        PreferencesUtils.setToken(getActivity(), null);
                         startActivity(new Intent(getActivity(), LoginActivity.class));
                         getActivity().finish();
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "Failed to sign out", Toast.LENGTH_LONG).show();
-                        //todo for degug only
+                    public void onComplete() {
+                        PreferencesUtils.setToken(getActivity(), null);
                         startActivity(new Intent(getActivity(), LoginActivity.class));
                         getActivity().finish();
                     }
