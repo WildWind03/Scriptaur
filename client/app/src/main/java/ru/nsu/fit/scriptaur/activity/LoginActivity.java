@@ -20,6 +20,7 @@ import ru.nsu.fit.scriptaur.common.PreferencesUtils;
 import ru.nsu.fit.scriptaur.network.Api;
 import ru.nsu.fit.scriptaur.network.ApiHolder;
 import ru.nsu.fit.scriptaur.network.entities.SignInData;
+import ru.nsu.fit.scriptaur.network.entities.User;
 import ru.nsu.fit.scriptaur.network.entities.UserToken;
 
 
@@ -38,14 +39,29 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (PreferencesUtils.getToken(this) != null){
-            startActivity(new Intent(this, DrawerActivity.class));
-            finish();
+        String token = PreferencesUtils.getToken(this);
+        if (token != null) {
+            ApiHolder.getBackendApi().getUser(token)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new DefaultObserver<User>() {
+                                   @Override
+                                   public void onNext(User user) {
+                                       startActivity(new Intent(LoginActivity.this,
+                                               DrawerActivity.class));
+                                       finish();
+                                   }
+
+                                   @Override
+                                   public void onError(Throwable e) {
+                                       getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                                               WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                                       setContentView(R.layout.login_activity_layout);
+                                       ButterKnife.bind(LoginActivity.this);
+                                   }
+                               }
+                    );
         }
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.login_activity_layout);
-        ButterKnife.bind(this);
     }
 
     @OnClick(R.id.signUpButton)
