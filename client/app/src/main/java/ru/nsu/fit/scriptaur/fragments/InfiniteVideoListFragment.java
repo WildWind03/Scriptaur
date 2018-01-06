@@ -95,6 +95,8 @@ public class InfiniteVideoListFragment extends Fragment {
     public void setVideoSource(VideosSource videoSource) {
         getArguments().putParcelable(VIDEOS_SOURCE_KEY, videoSource);
         videosSource = videoSource;
+        currentPage = 0;
+        videos.clear();
         loadFirstPage();
     }
 
@@ -152,7 +154,7 @@ public class InfiniteVideoListFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         currentPage = 0;
-        videos = new ArrayList<>();
+        videos.clear();
     }
 
     private void loadFirstPage() {
@@ -195,7 +197,7 @@ public class InfiniteVideoListFragment extends Fragment {
                     @Override
                     public void onError(Throwable e) {
                         super.onError(e);
-                        Toast.makeText(getContext(), "Request failed", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "Request failed", Toast.LENGTH_LONG).show();
                     }
                 });
     }
