@@ -1,7 +1,7 @@
 package ru.nsu.fit.scriptaur.network.entities;
 
 public class VideoUrl {
-    String videoUrl;
+    private String videoUrl;
 
     public VideoUrl(String videoUrl) {
         this.videoUrl = videoUrl;
