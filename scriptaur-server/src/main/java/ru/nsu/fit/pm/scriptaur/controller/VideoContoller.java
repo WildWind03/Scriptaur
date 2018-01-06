@@ -6,8 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.ResponseBody;
+import ru.nsu.fit.pm.scriptaur.dao.EvaluationDao;
 import ru.nsu.fit.pm.scriptaur.dao.NoEntityException;
 import ru.nsu.fit.pm.scriptaur.entity.Video;
+import ru.nsu.fit.pm.scriptaur.service.EvaluationService;
 import ru.nsu.fit.pm.scriptaur.service.TokenService;
 import ru.nsu.fit.pm.scriptaur.service.VideoService;
 
@@ -37,6 +39,9 @@ public class VideoContoller {
         return new ResponseEntity<>(video, HttpStatus.OK);
     }
 
+    @Autowired
+    private EvaluationService evaluationService;
+
     @RequestMapping(value = "/", method = RequestMethod.GET, params = {"page", "token"})
     @ResponseBody
     public ResponseEntity getVideos(@RequestParam(value = "page") int page, @RequestParam(value = "token") String token) {
@@ -45,12 +50,27 @@ public class VideoContoller {
 
         List<Video> videos = videoService.getAllVideosByPage(page);
 
+        int userId;
+        try {
+            userId = tokenService.getUserIdByToken(token);
+        } catch (NoEntityException e) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
+
+        setUserMarks(videos, userId);
+
         if (videos == null) return new ResponseEntity(HttpStatus.BAD_REQUEST);
 
         return new ResponseEntity<>(videos, HttpStatus.OK);
 
     }
 
+    private void setUserMarks(List<Video> videos, int userId) {
+        for (Video video : videos) {
+            Integer mark = evaluationService.getUserMarkByVideoId(userId, video.getVideoId());
+            video.setUserMark(mark);
+        }
+    }
 
 
     @RequestMapping(method = RequestMethod.GET, params = {"token", "page"})
@@ -70,6 +90,8 @@ public class VideoContoller {
 
         if (videos == null) return new ResponseEntity(HttpStatus.BAD_REQUEST);
 
+        setUserMarks(videos, userId);
+
         return new ResponseEntity<>(videos, HttpStatus.OK);
 
     }
@@ -84,6 +106,15 @@ public class VideoContoller {
         List<Video> videos = videoService.findVideoList(page, query);
 
         if (videos == null) return new ResponseEntity(HttpStatus.BAD_REQUEST);
+
+        int userId = 0;
+        try {
+            userId = tokenService.getUserIdByToken(token);
+        } catch (NoEntityException e) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
+
+        setUserMarks(videos, userId);
 
         return new ResponseEntity<>(videos, HttpStatus.OK);
 

@@ -1,11 +1,10 @@
 package ru.nsu.fit.pm.scriptaur.dao;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.*;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.nsu.fit.pm.scriptaur.entity.Evaluation;
 
 import java.util.List;
@@ -51,6 +50,40 @@ public class EvaluationDaoImpl implements EvaluationDao {
         trans.commit();
         session.close();
         return evaluations;
+    }
+
+
+    @Override
+    public Integer getUserMarkByVideoId(int userId, int videoId) {
+        Session session = getSession();
+        Transaction tr = session.beginTransaction();
+
+        Criteria cr = session.createCriteria(Evaluation.class)
+                .add(Restrictions.eq("EvaluationId.userId", userId))
+                .add(Restrictions.eq("EvaluationId.videoId", videoId));
+
+        //SQLQuery sqlQuery = session.createSQLQuery("SELECT * FROM evaluations WHERE user_id=" + userId + " AND video_id=" + videoId)
+               /* .addEntity(Evaluation.class)*/;
+
+        Query query = session.createQuery("from ru.nsu.fit.pm.scriptaur.entity.Evaluation where user_id = :userId and video_id = :videoId");
+        query.setParameter("userId", userId);
+        query.setParameter("videoId", videoId);
+
+        List<Evaluation> list = query.list();
+
+
+        tr.commit();
+        session.close();
+
+        Integer mark;
+        try {
+            Evaluation evaluation = list.get(0);
+            mark = evaluation.getMark();
+            //mark = (Object)(list.get(0))[3];
+        } catch (Exception e) {
+            return null;
+        }
+        return mark;
     }
 
     private Session getSession() {

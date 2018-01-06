@@ -42,6 +42,17 @@ public class Video {
     @Column(name = "length")
     private int length;
 
+    @Transient
+    private Integer userMark;
+
+    public Integer getUserMark() {
+        return userMark;
+    }
+
+    public void setUserMark(Integer userMark) {
+        this.userMark = userMark;
+    }
+
     public void setVideoId(int videoId) {
         this.videoId = videoId;
     }

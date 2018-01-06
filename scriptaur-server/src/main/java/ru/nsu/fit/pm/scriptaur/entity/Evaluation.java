@@ -15,7 +15,7 @@ import java.io.Serializable;
 public class Evaluation {
 
     @Column(name = "mark")
-    private int mark;
+    private Integer mark;
 
     @EmbeddedId
     private EvaluationId evaluationId;
@@ -43,6 +43,9 @@ public class Evaluation {
 
     @Embeddable
     public static class EvaluationId implements Serializable {
+        public EvaluationId() {
+        }
+
         @Column(name = "video_id")
         private int videoId;
         @Column(name = "user_id")

@@ -12,5 +12,6 @@ public interface EvaluationDao {
 
     List<Evaluation> getEvaluationList(int page);
 
+    Integer getUserMarkByVideoId(int userId, int videoId);
 
 }
