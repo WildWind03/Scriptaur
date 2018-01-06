@@ -14,10 +14,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import pub.devrel.easypermissions.EasyPermissions;
 import ru.nsu.fit.scriptaur.R;
 import ru.nsu.fit.scriptaur.common.DefaultObserver;
 import ru.nsu.fit.scriptaur.common.PreferencesUtils;
+import ru.nsu.fit.scriptaur.common.videos.AllVideosSource;
 import ru.nsu.fit.scriptaur.common.videos.DummyVideoSource;
 import ru.nsu.fit.scriptaur.common.videos.SearchQueryVideosSource;
 import ru.nsu.fit.scriptaur.common.videos.UsersVideosSource;
@@ -54,17 +57,19 @@ public class DrawerActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        switchToFragment(R.id.nav_videos);
-
-        final TextView usernameView = (TextView) findViewById(R.id.drawer_username);
-        ApiHolder.getBackendApi().getUser(PreferencesUtils.getToken(this)).subscribe(
-                new DefaultObserver<User>() {
+        final TextView usernameView = (TextView) navigationView.getHeaderView(0).findViewById(R.id.drawer_username);
+        ApiHolder.getBackendApi().getUser(PreferencesUtils.getToken(this))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DefaultObserver<User>() {
                     @Override
                     public void onNext(User user) {
                         usernameView.setText(user.getUserName());
                     }
                 }
         );
+
+        switchToFragment(R.id.nav_videos);
     }
 
     @Override
@@ -117,7 +122,8 @@ public class DrawerActivity extends AppCompatActivity
             case R.id.nav_videos: {
                 videoListFragment = new InfiniteVideoListFragment();
                 Bundle bundle = new Bundle();
-                bundle.putParcelable(InfiniteVideoListFragment.VIDEOS_SOURCE_KEY, new DummyVideoSource());
+                bundle.putParcelable(InfiniteVideoListFragment.VIDEOS_SOURCE_KEY,
+                        new AllVideosSource(PreferencesUtils.getToken(this)));
                 videoListFragment.setArguments(bundle);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.content_drawer, videoListFragment)

@@ -15,21 +15,21 @@ public class User implements Parcelable {
             return new User[size];
         }
     };
-    int id;
-    String userName;
+    int userId;
+    String username;
     float trustFactor;
     String trustFactorUpdated;
 
     public User(int id, String userName, float trustFactor, String trustFactorUpdated) {
-        this.id = id;
-        this.userName = userName;
+        this.userId = id;
+        this.username = userName;
         this.trustFactor = trustFactor;
         this.trustFactorUpdated = trustFactorUpdated;
     }
 
     protected User(Parcel in) {
-        id = in.readInt();
-        userName = in.readString();
+        userId = in.readInt();
+        username = in.readString();
         trustFactor = in.readFloat();
         trustFactorUpdated = in.readString();
     }
@@ -41,18 +41,18 @@ public class User implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeString(userName);
+        dest.writeInt(userId);
+        dest.writeString(username);
         dest.writeFloat(trustFactor);
         dest.writeString(trustFactorUpdated);
     }
 
     public int getId() {
-        return id;
+        return userId;
     }
 
     public String getUserName() {
-        return userName;
+        return username;
     }
 
     public float getTrustFactor() {

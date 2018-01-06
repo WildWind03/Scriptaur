@@ -3,6 +3,7 @@ package ru.nsu.fit.scriptaur.network.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.google.gson.annotations.Expose;
 
 public class Video implements Parcelable {
 
@@ -19,13 +20,13 @@ public class Video implements Parcelable {
     };
     private int videoId;
     private String videoUrl;
-    private String name;
-    private String imageUrl;
-    private int length;
     private int addedBy;
     private String addedOn;
     private float rating;
     private int evaluationsCount;
+    private String imageUrl;
+    private String name;
+    private int length;
     private boolean isRated;
 
     public Video(int videoId, String videoUrl, String name, String imageUrl, int length,

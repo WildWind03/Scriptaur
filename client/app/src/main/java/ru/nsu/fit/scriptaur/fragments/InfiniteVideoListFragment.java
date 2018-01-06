@@ -11,6 +11,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.bumptech.glide.Glide;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
@@ -89,8 +90,6 @@ public class InfiniteVideoListFragment extends Fragment {
                 return view;
             }
         };
-
-
     }
 
     public void setVideoSource(VideosSource videoSource) {
@@ -107,15 +106,8 @@ public class InfiniteVideoListFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         getPagesCount();
-        videosSource.getPage(currentPage++).subscribe(new DefaultObserver<List<Video>>() {
-            @Override
-            public void onNext(List<Video> videos) {
-                InfiniteVideoListFragment.videos.addAll(videos);
-                adapter.notifyDataSetChanged();
-            }
-        });
 
-        emptyListHint.setVisibility(videos.isEmpty() ? View.VISIBLE : View.INVISIBLE);
+
 
         listView.setOnScrollListener(new EndlessScrollListener() {
             public boolean onLoadMore() {
@@ -162,14 +154,35 @@ public class InfiniteVideoListFragment extends Fragment {
 
     private void getPagesCount() {
         videosSource.pagesCount()
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnComplete(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        videosSource.getPage(currentPage++)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new DefaultObserver<List<Video>>() {
+                                    @Override
+                                    public void onNext(List<Video> videos) {
+                                        InfiniteVideoListFragment.videos.addAll(videos);
+                                        adapter.notifyDataSetChanged();
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable e) {
+                                        super.onError(e);
+                                    }
+                                });
+
+                        emptyListHint.setVisibility(videos.isEmpty() ? View.VISIBLE : View.INVISIBLE);
+                    }
+                })
                 .subscribe(new DefaultObserver<PagesCount>() {
                     @Override
                     public void onNext(PagesCount pagesCount) {
                         maxPage = pagesCount.getPagesCount();
                     }
-
                     @Override
                     public void onError(Throwable e) {
                         super.onError(e);

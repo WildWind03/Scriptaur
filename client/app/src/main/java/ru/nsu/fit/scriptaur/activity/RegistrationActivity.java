@@ -58,6 +58,7 @@ public class RegistrationActivity extends AppCompatActivity {
                         @Override
                         public void onNextElement(UserToken userToken) throws Throwable {
                             PreferencesUtils.setToken(RegistrationActivity.this, userToken.getToken());
+                            Toast.makeText(RegistrationActivity.this, "Sign up", Toast.LENGTH_LONG).show();
                             setResult(RESULT_OK);
                             finish();
                         }

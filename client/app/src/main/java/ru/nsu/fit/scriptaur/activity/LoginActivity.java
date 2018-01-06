@@ -4,11 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -38,6 +38,10 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (PreferencesUtils.getToken(this) != null){
+            startActivity(new Intent(this, DrawerActivity.class));
+            finish();
+        }
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.login_activity_layout);
@@ -58,21 +62,19 @@ public class LoginActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new DefaultObserver<UserToken>() {
-            @Override
-            public void onNextElement(UserToken userToken) throws Throwable {
-                PreferencesUtils.setToken(LoginActivity.this, userToken.getToken());
-                startActivity(new Intent(LoginActivity.this, DrawerActivity.class));
-                finish();
-            }
+                    @Override
+                    public void onNextElement(UserToken userToken) throws Throwable {
+                        PreferencesUtils.setToken(LoginActivity.this, userToken.getToken());
+                        startActivity(new Intent(LoginActivity.this, DrawerActivity.class));
+                        finish();
+                    }
 
-            @Override
-            public void onError(Throwable e) {
-                Toast.makeText(LoginActivity.this, "Failed to sign up", Toast.LENGTH_LONG).show();
-                //todo debug only
-                startActivity(new Intent(LoginActivity.this, DrawerActivity.class));
-                finish();
-            }
-        });
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(LoginActivity.this, "Failed to sign in", Toast.LENGTH_LONG).show();
+                        Log.e("LOGIN", "fail", e);
+                    }
+                });
     }
 
     @Override

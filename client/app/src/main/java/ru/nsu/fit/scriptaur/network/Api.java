@@ -13,7 +13,7 @@ public interface Api {
     Observable<PagesCount> getVideosPagesCount(@Query("token") String token);
 
     //gets all videos from database
-    @GET("videos")
+    @GET("videos/")
     Observable<List<Video>> getVideos(@Query("page") int page, @Query("token") String token);
 
     //gets number of pages of videos added by specified user
