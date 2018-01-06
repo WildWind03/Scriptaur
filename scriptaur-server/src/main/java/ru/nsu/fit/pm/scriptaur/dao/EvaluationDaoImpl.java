@@ -1,10 +1,8 @@
 package ru.nsu.fit.pm.scriptaur.dao;
 
 import org.hibernate.*;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import ru.nsu.fit.pm.scriptaur.entity.Evaluation;
 
 import java.util.List;
@@ -18,15 +16,34 @@ public class EvaluationDaoImpl implements EvaluationDao {
     private SessionFactory sessionFactory;
 
     @Override
-    public void addMark(int userId, int videoId, int mark) {
+    public int addMark(int userId, int videoId, int mark) {
         Evaluation evaluation = new Evaluation(mark, userId, videoId);
 
         Session session = getSession();
         Transaction transaction = session.beginTransaction();
-        session.persist(evaluation);
+
+        Query query = session.createQuery("from ru.nsu.fit.pm.scriptaur.entity.Evaluation where user_id = :userId and video_id = :videoId");
+        query.setParameter("userId", userId);
+        query.setParameter("videoId", videoId);
+
+        List<Evaluation> list = query.list();
+
+        int diff = 200;
+
+        if (list.size() == 0) {
+            session.persist(evaluation);
+        } else {
+            Evaluation ev = list.get(0);
+            diff = ev.getMark();
+            ev.setMark(mark);
+            session.merge(ev);
+            diff = -diff + mark;
+        }
 
         transaction.commit();
         session.close();
+
+        return diff;
     }
 
     @Override
@@ -58,12 +75,13 @@ public class EvaluationDaoImpl implements EvaluationDao {
         Session session = getSession();
         Transaction tr = session.beginTransaction();
 
-        Criteria cr = session.createCriteria(Evaluation.class)
+       /* Criteria cr = session.createCriteria(Evaluation.class)
                 .add(Restrictions.eq("EvaluationId.userId", userId))
-                .add(Restrictions.eq("EvaluationId.videoId", videoId));
+                .add(Restrictions.eq("EvaluationId.videoId", videoId));*/
 
         //SQLQuery sqlQuery = session.createSQLQuery("SELECT * FROM evaluations WHERE user_id=" + userId + " AND video_id=" + videoId)
-               /* .addEntity(Evaluation.class)*/;
+               /* .addEntity(Evaluation.class)*/
+        ;
 
         Query query = session.createQuery("from ru.nsu.fit.pm.scriptaur.entity.Evaluation where user_id = :userId and video_id = :videoId");
         query.setParameter("userId", userId);

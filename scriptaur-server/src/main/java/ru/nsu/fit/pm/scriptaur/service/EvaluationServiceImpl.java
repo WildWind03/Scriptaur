@@ -20,8 +20,8 @@ public class EvaluationServiceImpl implements EvaluationService {
 
     @Transactional
     @Override
-    public void addMark(int userId, int videoId, int mark) {
-        this.evaluationDao.addMark(userId, videoId, mark);
+    public int addMark(int userId, int videoId, int mark) {
+        return this.evaluationDao.addMark(userId, videoId, mark);
     }
 
     @Transactional

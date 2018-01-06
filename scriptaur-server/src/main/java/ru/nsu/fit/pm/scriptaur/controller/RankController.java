@@ -34,16 +34,22 @@ public class RankController {
 
     public void update(MarkData markData, int userId) {
 
-        evaluationService.addMark(userId, markData.getVideoId(), markData.getMark());
-        videoService.updateEvaluationsCount(markData.getVideoId());
+        int diff = evaluationService.addMark(userId, markData.getVideoId(), markData.getMark());
 
-
+        if (diff == 200) {
+            videoService.updateEvaluationsCount(markData.getVideoId());
+        }
         float rating = videoService.getVideoById(markData.getVideoId()).getRating();
         long evaluations_count = videoService.getEvaluationCount(markData.getVideoId());
-        float new_mark = markData.getMark();
-        float new_rating = (rating * evaluations_count + new_mark) / (evaluations_count + 1);
-        videoService.updateVideoRating(markData.getVideoId(), new_rating);
 
+        float new_mark = markData.getMark();
+        float new_rating;
+        if (diff == 200) {
+            new_rating = (rating * (evaluations_count - 1) + new_mark) / (evaluations_count);
+        } else {
+            new_rating = (rating * evaluations_count + diff) / (evaluations_count);
+        }
+        videoService.updateVideoRating(markData.getVideoId(), new_rating);
 
     }
 
@@ -86,17 +92,19 @@ public class RankController {
         try {
             int userId = tokenService.getUserIdByToken(token);
             update(markData, userId);
-            Date trustFactorUpdated = userService.getDateOfTrustFactorUpdated(userId);
 
+            int addedBy = videoService.getAuthorId(markData.getVideoId());
+
+            Date trustFactorUpdated = userService.getDateOfTrustFactorUpdated(addedBy);
             if (trustFactorUpdated == null) {
-                updateTrustFactor(userId);
+                updateTrustFactor(addedBy);
             } else {
 
                 Date curDate = new Date();
                 long dif = (curDate.getTime() - trustFactorUpdated.getTime()) / (1000 * 60 * 60 * 24);
 
                 if (dif > 3) {
-                    updateTrustFactor(userId);
+                    updateTrustFactor(addedBy);
                 }
             }
 

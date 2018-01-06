@@ -90,4 +90,9 @@ public class VideoServiceImpl implements VideoService {
     public List<Video> findVideoList(int page, String query) {
         return videoDao.findVideoList(page, query);
     }
+
+    @Override
+    public int getAuthorId(int videoId) {
+        return videoDao.getAuthorId(videoId);
+    }
 }

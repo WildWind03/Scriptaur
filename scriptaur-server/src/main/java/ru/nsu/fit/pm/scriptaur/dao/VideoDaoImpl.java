@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.nsu.fit.pm.scriptaur.entity.User;
 import ru.nsu.fit.pm.scriptaur.entity.Video;
 
@@ -257,11 +258,29 @@ public class VideoDaoImpl implements VideoDao {
         Session session = null;
 
         try {
-
             sessionFactory.getCurrentSession();
         } catch (HibernateException e) {
             session = sessionFactory.openSession();
         }
         return session;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public int getAuthorId(int videoId) {
+        Session session = getSession();
+        Transaction tr = session.beginTransaction();
+
+        Criteria cr = session.createCriteria(Video.class)
+                .add(Restrictions.eq("videoId", videoId));
+
+        List<Video> videos = cr.list();
+        int id = videos.get(0).getAddedBy();
+
+
+        tr.commit();
+        session.close();
+
+        return id;
     }
 }

@@ -60,7 +60,7 @@ public class AddingVideoController {
         try {
             video = videoCreator(url, tokenService.getUserIdByToken(token));
         } catch (NoEntityException e) {
-            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
         Video addedVideo = videoService.addVideo(video);
 
@@ -73,7 +73,13 @@ public class AddingVideoController {
 
     private Video videoCreator(VideoUrl url, int userId) {
         Video video = new Video();
-        video.setVideoUrl(url.getVideoUrl());
+        String properUrl = url.getVideoUrl()
+                .replace("https://youtu.be/", "")
+                .replace("youtu.be/", "")
+                .replace("https://www.youtube.com/watch?v=", "")
+                .replace("www.youtube.com/watch?v=", "")
+                .replace("youtube.com/watch?v=", "");
+        video.setVideoUrl(properUrl);
         video.setEvaluationsCount(0);
         video.setRating(0);
         video.setAddedOn(new Date());
@@ -84,7 +90,7 @@ public class AddingVideoController {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build().create(YoutubeApi.class);
 
-        String URL = video.getVideoUrl().replace("https://youtu.be/", "");
+        String URL = video.getVideoUrl();
         retrofit2.Call<okhttp3.ResponseBody> call = client.getMetaInfo(API_KEY, "snippet, contentDetails", URL);
         String json = "";
         retrofit2.Response<okhttp3.ResponseBody> resp = null;

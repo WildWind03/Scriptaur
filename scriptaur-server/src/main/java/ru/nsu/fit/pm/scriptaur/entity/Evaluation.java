@@ -41,6 +41,10 @@ public class Evaluation {
         return evaluationId.getVideoId();
     }
 
+    public void setMark(Integer mark) {
+        this.mark = mark;
+    }
+
     @Embeddable
     public static class EvaluationId implements Serializable {
         public EvaluationId() {
