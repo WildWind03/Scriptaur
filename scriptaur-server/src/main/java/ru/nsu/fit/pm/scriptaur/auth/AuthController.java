@@ -15,7 +15,7 @@ import java.util.Date;
 
 @RestController
 public class AuthController {
-    private static final int DEFAULT_TRUST_FACTOR = 0;
+    private static final int DEFAULT_TRUST_FACTOR = 1;
     private static final String DEFAULT_SALT = "Russia";
 
     @Autowired
