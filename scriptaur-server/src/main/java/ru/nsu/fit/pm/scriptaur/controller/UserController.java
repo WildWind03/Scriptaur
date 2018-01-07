@@ -57,7 +57,7 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, params = {"token"})
+    @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity get(@RequestParam(value = "token") String token) {
 
@@ -84,7 +84,7 @@ public class UserController {
         if (!tokenService.checkTokenValidity(token)) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 
         Gson gson = new Gson();
-        SignUpData signUpData= gson.fromJson(signUpJson, SignUpData.class);
+        SignUpData signUpData = gson.fromJson(signUpJson, SignUpData.class);
         System.out.println(signUpData);
 
         //toDo: process SignUpData with SignUpData, token

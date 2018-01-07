@@ -249,7 +249,7 @@ public class UserDaoImpl implements UserDao {
             trans = getTransaction(session);
 
             Criteria cr = session.createCriteria(User.class)
-                    .add(Restrictions.gt("userId", userIdByToken));
+                    .add(Restrictions.eq("userId", userIdByToken));
 
             user = (User) cr.list().get(0);
         } catch (Exception e) {
