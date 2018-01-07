@@ -2,7 +2,6 @@ package ru.nsu.fit.scriptaur.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -12,11 +11,8 @@ import android.widget.*;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.bumptech.glide.Glide;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
@@ -33,12 +29,9 @@ import java.util.List;
 
 public class InfiniteVideoListFragment extends Fragment {
     public static final String VIDEOS_SOURCE_KEY = "videos_source";
-    private static final String VIDEOS_STATE = "videos";
-    private static final String CUR_PAGE_STATE = "currentPage";
-    private static final String MAX_PAGE_STATE = "maxPage";
 
     private static VideosSource videosSource;
-    private static ArrayList<Video> videos = new ArrayList<Video>();
+    private static ArrayList<Video> videos = new ArrayList<>();
     @BindView(R.id.listView)
     ListView listView;
     @BindView(R.id.emptyListHint)
@@ -159,7 +152,6 @@ public class InfiniteVideoListFragment extends Fragment {
     }
 
 
-
     private void loadFirstPage() {
         currentPage = 0;
         maxPage = 0;
@@ -181,7 +173,7 @@ public class InfiniteVideoListFragment extends Fragment {
                                         if (emptyListHint != null) {
                                             emptyListHint.setVisibility(videos.isEmpty() ? View.VISIBLE : View.INVISIBLE);
                                         }
-                                        if (swipeContainer != null){
+                                        if (swipeContainer != null) {
                                             swipeContainer.setRefreshing(false);
                                         }
                                     }

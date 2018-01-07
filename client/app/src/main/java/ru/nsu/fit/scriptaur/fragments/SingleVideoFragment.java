@@ -5,7 +5,6 @@ import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.text.Editable;
 import android.util.Log;
@@ -21,9 +20,7 @@ import butterknife.OnTextChanged;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import org.apache.commons.text.StringEscapeUtils;
@@ -124,7 +121,7 @@ public class SingleVideoFragment extends Fragment {
         service.text(videoId)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DefaultObserver<Response<ResponseBody>>(){
+                .subscribe(new DefaultObserver<Response<ResponseBody>>() {
                     XmlPullParser parser = Xml.newPullParser();
 
                     @Override

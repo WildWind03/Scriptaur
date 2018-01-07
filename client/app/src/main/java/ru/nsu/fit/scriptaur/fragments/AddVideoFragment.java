@@ -1,20 +1,16 @@
 package ru.nsu.fit.scriptaur.fragments;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import ru.nsu.fit.scriptaur.R;
@@ -55,7 +51,7 @@ public class AddVideoFragment extends AppCompatDialogFragment {
                         EditText editText = (EditText) view.findViewById(R.id.add_video_url);
                         String videoUrl = editText.getText().toString();
 
-                        if(!videoUrl.startsWith("https://youtu.be/") && !videoUrl.startsWith("http://youtu.be/")){
+                        if (!videoUrl.startsWith("https://youtu.be/") && !videoUrl.startsWith("http://youtu.be/")) {
                             videoUrl = "https://youtu.be/" + videoUrl;
                         }
 
@@ -69,8 +65,7 @@ public class AddVideoFragment extends AppCompatDialogFragment {
                                 .addVideo(PreferencesUtils.getToken(getActivity()), new VideoUrl(videoUrl))
                                 .subscribeOn(Schedulers.newThread())
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(new DefaultObserver<Video>()
-                                {
+                                .subscribe(new DefaultObserver<Video>() {
                                     @Override
                                     public void onNext(Video v) {
                                         Fragment fragment = new SingleVideoFragment();

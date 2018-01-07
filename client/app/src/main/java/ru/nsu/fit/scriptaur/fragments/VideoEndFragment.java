@@ -39,6 +39,7 @@ public class VideoEndFragment extends AppCompatDialogFragment {
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe(new DefaultObserver<Video>());
                         }
+                        getActivity().getSupportFragmentManager().popBackStack();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
