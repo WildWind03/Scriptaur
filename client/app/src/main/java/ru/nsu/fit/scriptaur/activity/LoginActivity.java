@@ -23,6 +23,8 @@ import ru.nsu.fit.scriptaur.network.entities.SignInData;
 import ru.nsu.fit.scriptaur.network.entities.User;
 import ru.nsu.fit.scriptaur.network.entities.UserToken;
 
+import java.util.concurrent.TimeUnit;
+
 
 public class LoginActivity extends AppCompatActivity {
     public final static String USERNAME_KEY = "USER_NAME";
@@ -45,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
             ApiHolder.getBackendApi().getUser(token)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
+                    .timeout(500, TimeUnit.MILLISECONDS)
                     .subscribe(new DefaultObserver<User>() {
                                    @Override
                                    public void onNext(User user) {
@@ -57,19 +60,26 @@ public class LoginActivity extends AppCompatActivity {
 
                                    @Override
                                    public void onError(Throwable e) {
-                                       getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                                               WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                                       setContentView(R.layout.login_activity_layout);
-                                       ButterKnife.bind(LoginActivity.this);
+                                       runOnUiThread(new Runnable() {
+                                           @Override
+                                           public void run() {
+                                               setUpView();
+                                           }
+                                       });
+
                                    }
                                }
                     );
         } else {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            setContentView(R.layout.login_activity_layout);
-            ButterKnife.bind(LoginActivity.this);
+            setUpView();
         }
+    }
+
+    private void setUpView() {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(R.layout.login_activity_layout);
+        ButterKnife.bind(LoginActivity.this);
     }
 
     @OnClick(R.id.signUpButton)

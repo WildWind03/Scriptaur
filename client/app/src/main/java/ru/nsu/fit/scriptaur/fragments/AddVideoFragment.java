@@ -1,10 +1,12 @@
 package ru.nsu.fit.scriptaur.fragments;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +26,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class AddVideoFragment extends AppCompatDialogFragment {
+    private AppCompatActivity activity;
 
+    @Override
+    public void onAttach(Activity activity) {
+        // TODO Auto-generated method stub
+        super.onAttach(activity);
+        this.activity=(AppCompatActivity)activity;
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -79,7 +88,7 @@ public class AddVideoFragment extends AppCompatDialogFragment {
 
                                     @Override
                                     public void onError(Throwable e) {
-                                        Toast.makeText(getActivity(), "Video not added", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(activity, "Video not added", Toast.LENGTH_LONG).show();
                                         super.onError(e);
                                     }
                                 });
