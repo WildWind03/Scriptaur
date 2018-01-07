@@ -34,4 +34,6 @@ public interface VideoDao {
     int getCountOfPagesVideosByQuery(String query);
 
     List<Video> findVideoList(int page, String query);
+
+    int getAuthorId(int videoId);
 }

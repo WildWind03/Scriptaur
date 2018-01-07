@@ -57,12 +57,12 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public List<Video> getVideoListByUserId(int userId) {
+    public List<Video> getVideoListLastMonthByUserId(int userId) {
         return this.videoDao.getVideoListByUserId(userId);
     }
 
     @Override
-    public List<Video> getVideoListByUserId(int userId, int page) {
+    public List<Video> getVideoListLastMonthByUserId(int userId, int page) {
         return videoDao.getVideoListByUserId(userId, page);
     }
 
@@ -89,5 +89,10 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public List<Video> findVideoList(int page, String query) {
         return videoDao.findVideoList(page, query);
+    }
+
+    @Override
+    public int getAuthorId(int videoId) {
+        return videoDao.getAuthorId(videoId);
     }
 }

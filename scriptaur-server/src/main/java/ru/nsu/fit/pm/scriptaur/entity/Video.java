@@ -22,7 +22,6 @@ public class Video {
     @Column(name = "added_by")
     private int addedBy;
 
-
     @Column(name = "added_on", columnDefinition = "timestamp without time zone")
     @Temporal(TemporalType.TIMESTAMP)
     private Date addedOn;
@@ -39,8 +38,20 @@ public class Video {
     @Column(name = "name")
     private String name;
 
+
     @Column(name = "length")
     private int length;
+
+    @Transient
+    private Integer userMark;
+
+    public Integer getUserMark() {
+        return userMark;
+    }
+
+    public void setUserMark(Integer userMark) {
+        this.userMark = userMark;
+    }
 
     public void setVideoId(int videoId) {
         this.videoId = videoId;

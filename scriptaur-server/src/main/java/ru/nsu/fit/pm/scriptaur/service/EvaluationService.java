@@ -6,10 +6,11 @@ import java.util.List;
 
 public interface EvaluationService {
 
-    void addMark(int userId, int videoId, int mark);
+    int addMark(int userId, int videoId, int mark);
 
     Evaluation getEvaluationByVideoId(int userId, int videoId);
 
     List<Evaluation> getEvaluationList(int page);
 
+    Integer getUserMarkByVideoId(int userId, int videoId);
 }

@@ -3,7 +3,6 @@ package ru.nsu.fit.pm.scriptaur.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.nsu.fit.pm.scriptaur.dao.EvaluationDao;
@@ -21,8 +20,8 @@ public class EvaluationServiceImpl implements EvaluationService {
 
     @Transactional
     @Override
-    public void addMark(int userId, int videoId, int mark) {
-        this.evaluationDao.addMark(userId, videoId, mark);
+    public int addMark(int userId, int videoId, int mark) {
+        return this.evaluationDao.addMark(userId, videoId, mark);
     }
 
     @Transactional
@@ -38,4 +37,9 @@ public class EvaluationServiceImpl implements EvaluationService {
     }
 
 
+    @Transactional
+    @Override
+    public Integer getUserMarkByVideoId(int userId, int videoId) {
+        return evaluationDao.getUserMarkByVideoId(userId, videoId);
+    }
 }

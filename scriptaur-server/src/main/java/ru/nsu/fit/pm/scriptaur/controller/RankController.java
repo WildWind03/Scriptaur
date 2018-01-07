@@ -7,13 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.nsu.fit.pm.scriptaur.entity.MarkData;
-import ru.nsu.fit.pm.scriptaur.entity.User;
 import ru.nsu.fit.pm.scriptaur.entity.Video;
 import ru.nsu.fit.pm.scriptaur.service.EvaluationService;
 import ru.nsu.fit.pm.scriptaur.service.TokenService;
 import ru.nsu.fit.pm.scriptaur.service.UserService;
 import ru.nsu.fit.pm.scriptaur.service.VideoService;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -30,28 +30,38 @@ public class RankController {
     private UserService userService;
 
     @Autowired
-    TokenService tokenService;
+    private TokenService tokenService;
 
     public void update(MarkData markData, int userId) {
 
-        evaluationService.addMark(userId, markData.getVideoId(), markData.getMark());
-        videoService.updateEvaluationsCount(markData.getVideoId());
+        int diff = evaluationService.addMark(userId, markData.getVideoId(), markData.getMark());
 
-
+        if (diff == 200) {
+            videoService.updateEvaluationsCount(markData.getVideoId());
+        }
         float rating = videoService.getVideoById(markData.getVideoId()).getRating();
         long evaluations_count = videoService.getEvaluationCount(markData.getVideoId());
-        float new_mark = markData.getMark();
-        float new_rating = (rating * evaluations_count + new_mark) / (evaluations_count + 1);
-        videoService.updateVideoRating(markData.getVideoId(), new_rating);
 
-        updateTrustFactor(userId);
+        float new_mark = markData.getMark();
+        float new_rating;
+        if (diff == 200) {
+            new_rating = (rating * (evaluations_count - 1) + new_mark) / (evaluations_count);
+        } else {
+            new_rating = (rating * evaluations_count + diff) / (evaluations_count);
+        }
+        videoService.updateVideoRating(markData.getVideoId(), new_rating);
 
     }
 
 
     private void updateTrustFactor(int userId) {
 
-        List<Video> videos = videoService.getVideoListByUserId(userId);
+        List<Video> videos = videoService.getVideoListLastMonthByUserId(userId);
+
+        if (videos.size() == 0) {
+            userService.updateTrustFactor(userId, 1);
+            return;
+        }
 
         float trustFactor = 0;
 
@@ -65,6 +75,8 @@ public class RankController {
         trustFactor /= sum;
 
         userService.updateTrustFactor(userId, trustFactor);
+
+        userService.updateTrustFactorDay(userId);
     }
 
     @RequestMapping(method = RequestMethod.PUT)
@@ -77,7 +89,28 @@ public class RankController {
         MarkData markData = gson.fromJson(data, MarkData.class);
 
 
-        update(markData, tokenService.getUserIdByToken(token));
+        try {
+            int userId = tokenService.getUserIdByToken(token);
+            update(markData, userId);
+
+            int addedBy = videoService.getAuthorId(markData.getVideoId());
+
+            Date trustFactorUpdated = userService.getDateOfTrustFactorUpdated(addedBy);
+            if (trustFactorUpdated == null) {
+                updateTrustFactor(addedBy);
+            } else {
+
+                Date curDate = new Date();
+                long dif = (curDate.getTime() - trustFactorUpdated.getTime()) / (1000 * 60 * 60 * 24);
+
+                if (dif > 3) {
+                    updateTrustFactor(addedBy);
+                }
+            }
+
+        } catch (Exception e) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
 
         return new ResponseEntity(HttpStatus.ACCEPTED);
     }

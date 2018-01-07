@@ -6,6 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.nsu.fit.pm.scriptaur.dao.NoEntityException;
 import ru.nsu.fit.pm.scriptaur.entity.PagesCount;
 import ru.nsu.fit.pm.scriptaur.service.TokenService;
 import ru.nsu.fit.pm.scriptaur.service.VideoService;
@@ -43,7 +44,12 @@ public class CountController {
 
         if (!tokenService.checkTokenValidity(token)) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 
-        int user_id = tokenService.getUserIdByToken(token);
+        int user_id = 0;
+        try {
+            user_id = tokenService.getUserIdByToken(token);
+        } catch (NoEntityException e) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
 
         int count = videoService.getCountOfPagesVideosByUserId(user_id);
 

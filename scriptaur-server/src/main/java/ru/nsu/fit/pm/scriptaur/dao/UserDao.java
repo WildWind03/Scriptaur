@@ -3,6 +3,7 @@ package ru.nsu.fit.pm.scriptaur.dao;
 
 import ru.nsu.fit.pm.scriptaur.entity.User;
 
+import java.util.Date;
 import java.util.List;
 
 public interface UserDao {
@@ -19,4 +20,10 @@ public interface UserDao {
     void removeUser(int id);
 
     void updateTtustFactor(int userId, float trustFactor);
+
+    float getUserTrustFactor(int userIdByToken);
+
+    Date getDateOfTrustFactorUpdated(int userId);
+
+    void updateTrustFactorDay(int userId);
 }
