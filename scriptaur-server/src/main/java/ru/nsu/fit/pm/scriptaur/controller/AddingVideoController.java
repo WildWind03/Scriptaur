@@ -49,7 +49,8 @@ public class AddingVideoController {
         float trustFactor;
         try {
             trustFactor = userService.getUserTrustFactor(tokenService.getUserIdByToken(token));
-        } catch (NoEntityException e) {
+            if (trustFactor == -1) return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 

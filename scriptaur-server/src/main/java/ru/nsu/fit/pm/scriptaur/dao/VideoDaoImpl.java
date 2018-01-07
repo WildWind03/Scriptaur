@@ -21,18 +21,30 @@ import java.util.List;
 @Component
 public class VideoDaoImpl implements VideoDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(VideoDaoImpl.class.getName());
-    public static int VIDEO_PRO_PAGE = 8;
+    private final static int VIDEO_PRO_PAGE = 8;
+
     @Autowired
     private SessionFactory sessionFactory;
+
+    private Transaction getTransaction(Session session) {
+        Transaction trans;
+        try {
+            trans = session.beginTransaction();
+        } catch (Exception e) {
+            trans = session.getTransaction();
+        }
+        return trans;
+    }
 
     @Override
     public Video addVideo(Video video) {
         Session session = getSession();
+        Transaction transaction = getTransaction(session);
 
-        Transaction transaction = session.beginTransaction();
         session.persist(video);
 
         transaction.commit();
+        session.close();
         return video;
     }
 
@@ -41,10 +53,12 @@ public class VideoDaoImpl implements VideoDao {
     public List<Video> getVideoList(int page) {
         Session session = getSession();
 
-        Transaction trans = session.beginTransaction();
+        Transaction trans = getTransaction(session);
         List<Video> videoList = session.createQuery("from ru.nsu.fit.pm.scriptaur.entity.Video").list();
+
         trans.commit();
         session.close();
+
 
         return videoList;
     }
@@ -53,7 +67,7 @@ public class VideoDaoImpl implements VideoDao {
     public void removeVideo(int id) {
         Session session = getSession();
 
-        Transaction trans = session.beginTransaction();
+        Transaction trans = getTransaction(session);
         Video video = (Video) session.load(Video.class, id);
         if (video != null) {
             session.delete(video);
@@ -70,7 +84,7 @@ public class VideoDaoImpl implements VideoDao {
     @Override
     public Video getVideoById(int id) {
         Session session = getSession();
-        Transaction trans = session.beginTransaction();
+        Transaction trans = getTransaction(session);
         Video video = (Video) session.load(Video.class, id);
         System.out.println(video);
         trans.commit();
@@ -81,7 +95,7 @@ public class VideoDaoImpl implements VideoDao {
     @Override
     public Video updateVideoRating(int id, float rating) {
         Session session = getSession();
-        Transaction trans = session.beginTransaction();
+        Transaction trans = getTransaction(session);
 
         Video video = session.get(Video.class, id);
         video.setRating(rating);
@@ -96,7 +110,7 @@ public class VideoDaoImpl implements VideoDao {
     @Override
     public int getEvaluationCount(int id) {
         Session session = getSession();
-        Transaction trans = session.beginTransaction();
+        Transaction trans = getTransaction(session);
 
         int count = session.get(Video.class, id).getEvaluationsCount();
 
@@ -108,7 +122,7 @@ public class VideoDaoImpl implements VideoDao {
     @Override
     public void updateEvaluationCount(int videoId) {
         Session session = getSession();
-        Transaction trans = session.beginTransaction();
+        Transaction trans = getTransaction(session);
 
         Video video = session.get(Video.class, videoId);
         video.setEvaluationsCount(video.getEvaluationsCount() + 1);
@@ -123,7 +137,7 @@ public class VideoDaoImpl implements VideoDao {
     @Override
     public List<Video> getVideoListByUserId(int userId) {
         Session session = getSession();
-        Transaction trans = session.beginTransaction();
+        Transaction trans = getTransaction(session);
 
 
         Date today = new Date();
@@ -153,7 +167,7 @@ public class VideoDaoImpl implements VideoDao {
     public List<Video> getVideoListByUserId(int userId, int page) {
 
         Session session = getSession();
-        Transaction ts = session.beginTransaction();
+        Transaction ts = getTransaction(session);
 
         Criteria cr = session.createCriteria(Video.class)
                 .add(Restrictions.eq("addedBy", userId))
@@ -174,7 +188,7 @@ public class VideoDaoImpl implements VideoDao {
     public List<Video> getAllVideosByPage(int page) {
 
         Session session = getSession();
-        Transaction tr = session.beginTransaction();
+        Transaction tr = getTransaction(session);
 
         Criteria cr = session.createCriteria(Video.class)
                 .setFirstResult(VIDEO_PRO_PAGE * page)
@@ -190,7 +204,7 @@ public class VideoDaoImpl implements VideoDao {
     @Override
     public int getCountOfPagesVideo() {
         Session session = getSession();
-        Transaction tr = session.beginTransaction();
+        Transaction tr = getTransaction(session);
 
         Criteria cr = session.createCriteria(Video.class)
                 .setProjection(Projections.rowCount());
@@ -199,13 +213,13 @@ public class VideoDaoImpl implements VideoDao {
         tr.commit();
         session.close();
 
-        return (int) ((count + 1) / VIDEO_PRO_PAGE);
+        return (int) Math.ceil((1. * count) / VIDEO_PRO_PAGE);
     }
 
     @Override
     public int getCountOfPagesVideosByUserId(int user_id) {
         Session session = getSession();
-        Transaction tr = session.beginTransaction();
+        Transaction tr = getTransaction(session);
 
         Criteria cr = session.createCriteria(Video.class)
                 .add(Restrictions.eq("addedBy", user_id))
@@ -215,13 +229,13 @@ public class VideoDaoImpl implements VideoDao {
         tr.commit();
         session.close();
 
-        return (int) ((count + 1) / VIDEO_PRO_PAGE);
+        return (int) Math.ceil((1. * count) / VIDEO_PRO_PAGE);
     }
 
     @Override
     public int getCountOfPagesVideosByQuery(String query) {
         Session session = getSession();
-        Transaction tr = session.beginTransaction();
+        Transaction tr = getTransaction(session);
 
         Criteria cr = session.createCriteria(Video.class)
                 .add(Restrictions.like("name", query, MatchMode.ANYWHERE).ignoreCase())
@@ -231,14 +245,14 @@ public class VideoDaoImpl implements VideoDao {
         tr.commit();
         session.close();
 
-        return (int) ((count + 1) / VIDEO_PRO_PAGE);
+        return (int) Math.ceil((1. * count) / VIDEO_PRO_PAGE);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public List<Video> findVideoList(int page, String query) {
         Session session = getSession();
-        Transaction tr = session.beginTransaction();
+        Transaction tr = getTransaction(session);
 
         Criteria cr = session.createCriteria(Video.class)
                 .add(Restrictions.like("name", query, MatchMode.ANYWHERE).ignoreCase())
@@ -269,7 +283,7 @@ public class VideoDaoImpl implements VideoDao {
     @Override
     public int getAuthorId(int videoId) {
         Session session = getSession();
-        Transaction tr = session.beginTransaction();
+        Transaction tr = getTransaction(session);
 
         Criteria cr = session.createCriteria(Video.class)
                 .add(Restrictions.eq("videoId", videoId));
