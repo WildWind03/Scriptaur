@@ -1,6 +1,7 @@
 package ru.nsu.fit.pm.scriptaur.dao;
 
 import org.hibernate.*;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +35,28 @@ public class TokenIdMatherDaoImpl implements TokenIdMatherDao {
         return tokenIdMather.getId();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void addNew(int id, String token) {
-        TokenIdMather tokenIdMatherDao = new TokenIdMather(token, id);
+        TokenIdMather tokenIdMather = new TokenIdMather(token, id);
         Session session = getSession();
-
         Transaction trans = session.beginTransaction();
-        session.persist(tokenIdMatherDao);
+
+
+        Criteria cr = session.createCriteria(TokenIdMather.class)
+                .add(Restrictions.eq("id", tokenIdMather.getId()));
+
+        List<TokenIdMather> result = cr.list();
+
+        if (result.size() == 0) {
+            session.persist(tokenIdMather);
+        } else {
+            TokenIdMather old = result.get(0);
+            old.setToken(token);
+            session.merge(old);
+        }
+
+        //session.persist(tokenIdMather);
 
         trans.commit();
         session.close();
@@ -88,7 +104,6 @@ public class TokenIdMatherDaoImpl implements TokenIdMatherDao {
 
     private Session getSession() {
         Session session = null;
-
         try {
 
             sessionFactory.getCurrentSession();
@@ -96,5 +111,15 @@ public class TokenIdMatherDaoImpl implements TokenIdMatherDao {
             session = sessionFactory.openSession();
         }
         return session;
+    }
+
+    private Transaction getTransaction(Session session) {
+        Transaction trans;
+        try {
+            trans = session.beginTransaction();
+        } catch (Exception e) {
+            trans = session.getTransaction();
+        }
+        return trans;
     }
 }

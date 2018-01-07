@@ -24,6 +24,8 @@ import ru.nsu.fit.pm.scriptaur.service.UserService;
 import ru.nsu.fit.pm.scriptaur.service.VideoService;
 import ru.nsu.fit.pm.scriptaur.util.YoutubeApi;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Date;
 
 @RestController
@@ -66,6 +68,7 @@ public class AddingVideoController {
 
         if (addedVideo == null) return new ResponseEntity(HttpStatus.BAD_REQUEST);
 
+
         return new ResponseEntity<>(addedVideo, HttpStatus.OK);
     }
 
@@ -73,6 +76,7 @@ public class AddingVideoController {
 
     private Video videoCreator(VideoUrl url, int userId) {
         Video video = new Video();
+
         String properUrl = url.getVideoUrl()
                 .replace("https://youtu.be/", "")
                 .replace("youtu.be/", "")

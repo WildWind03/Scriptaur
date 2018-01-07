@@ -21,7 +21,7 @@ import java.util.List;
 @Component
 public class VideoDaoImpl implements VideoDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(VideoDaoImpl.class.getName());
-    public static int VIDEO_PRO_PAGE = 2;
+    public static int VIDEO_PRO_PAGE = 8;
     @Autowired
     private SessionFactory sessionFactory;
 
