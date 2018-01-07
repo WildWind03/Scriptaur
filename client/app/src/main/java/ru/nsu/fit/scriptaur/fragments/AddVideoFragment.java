@@ -32,7 +32,7 @@ public class AddVideoFragment extends AppCompatDialogFragment {
     public void onAttach(Activity activity) {
         // TODO Auto-generated method stub
         super.onAttach(activity);
-        this.activity=(AppCompatActivity)activity;
+        this.activity = (AppCompatActivity) activity;
     }
 
     @Override

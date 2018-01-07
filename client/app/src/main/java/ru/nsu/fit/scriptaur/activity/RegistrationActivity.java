@@ -64,10 +64,9 @@ public class RegistrationActivity extends AppCompatActivity {
 
                         @Override
                         public void onError(Throwable e) {
-                            Toast.makeText(RegistrationActivity.this, "Failed to sign up", Toast.LENGTH_LONG).show();
-                            //todo for degug only
-                            setResult(RESULT_OK);
-                            finish();
+                            Toast.makeText(RegistrationActivity.this,
+                                    "Failed to sign up",
+                                    Toast.LENGTH_LONG).show();
                         }
                     });
         }
