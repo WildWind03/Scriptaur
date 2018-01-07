@@ -1,34 +1,45 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
+    <TextView android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:padding="7dp"
+              android:textSize="20sp"
+              android:text="Change password:"/>
+
 
     <EditText android:id="@+id/new_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:padding="7dp"
-        android:layout_margin="10dp"
-        android:inputType="textPassword"
-        android:hint="Password"/>
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/white"
+              android:padding="7dp"
+              android:layout_margin="10dp"
+              android:inputType="textPassword"
+              android:hint="Password"/>
 
     <EditText android:id="@+id/new_password_repeat"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:padding="7dp"
-        android:layout_margin="10dp"
-        android:inputType="textPassword"
-        android:hint="Repeat password"/>
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/white"
+              android:padding="7dp"
+              android:layout_margin="10dp"
+              android:inputType="textPassword"
+              android:hint="Repeat password"/>
 
-    <Button android:id="@+id/save"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="save"/>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+        <Button style="@style/Widget.AppCompat.Button.Colored"
+                android:id="@+id/save"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="save"/>
 
-    <Button android:id="@+id/signOut"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="sign out"/>
+        <Button style="@style/Widget.AppCompat.Button.Colored"
+                android:id="@+id/signOut"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="sign out"/>
+    </LinearLayout>
 </LinearLayout>

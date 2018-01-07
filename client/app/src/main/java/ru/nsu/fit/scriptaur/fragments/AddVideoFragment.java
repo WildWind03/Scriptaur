@@ -28,14 +28,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class AddVideoFragment extends AppCompatDialogFragment {
-    private AppCompatActivity activity;
 
-    @Override
-    public void onAttach(Activity activity) {
-        // TODO Auto-generated method stub
-        super.onAttach(activity);
-        this.activity=(AppCompatActivity)activity;
-    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -73,7 +66,7 @@ public class AddVideoFragment extends AppCompatDialogFragment {
                             return;
                         }
                         ApiHolder.getBackendApi()
-                                .addVideo(PreferencesUtils.getToken(activity), new VideoUrl(videoUrl))
+                                .addVideo(PreferencesUtils.getToken(getActivity()), new VideoUrl(videoUrl))
                                 .subscribeOn(Schedulers.newThread())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(new DefaultObserver<Video>()
@@ -84,14 +77,14 @@ public class AddVideoFragment extends AppCompatDialogFragment {
                                         Bundle bundle = new Bundle();
                                         bundle.putString(SingleVideoFragment.VIDEO_ID_KEY, v.getVideoUrl());
                                         fragment.setArguments(bundle);
-                                        activity.getSupportFragmentManager().beginTransaction()
+                                        getActivity().getSupportFragmentManager().beginTransaction()
                                                 .replace(R.id.content_drawer, fragment).addToBackStack(null)
                                                 .commit();
                                     }
 
                                     @Override
                                     public void onError(Throwable e) {
-                                        Toast.makeText(activity, "Video not added", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getActivity(), "Video not added", Toast.LENGTH_LONG).show();
                                         super.onError(e);
                                     }
                                 });

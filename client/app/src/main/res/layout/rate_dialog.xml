@@ -12,7 +12,7 @@
             android:layout_marginBottom="4dp"
             android:text="Congratulations\nDont't forget to rate this video"/>
     <RatingBar
-            android:theme="@style/RatingBar"
+            style="@style/Widget.AppCompat.RatingBar"
             android:id="@+id/new_rating"
             android:stepSize="1"
             android:scaleX="0.5"

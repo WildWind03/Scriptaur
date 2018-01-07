@@ -1,7 +1,11 @@
 package ru.nsu.fit.scriptaur.fragments;
 
+import android.graphics.PorterDuff;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.text.Editable;
 import android.util.Log;
@@ -9,10 +13,7 @@ import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -30,10 +31,14 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import retrofit2.Response;
 import ru.nsu.fit.scriptaur.R;
+import ru.nsu.fit.scriptaur.common.DefaultObserver;
+import ru.nsu.fit.scriptaur.common.PreferencesUtils;
 import ru.nsu.fit.scriptaur.model.AbstractPlayerListener;
 import ru.nsu.fit.scriptaur.model.Caption;
+import ru.nsu.fit.scriptaur.network.ApiHolder;
 import ru.nsu.fit.scriptaur.network.CaptionsClient;
 import ru.nsu.fit.scriptaur.network.RetrofitServiceFactory;
+import ru.nsu.fit.scriptaur.network.entities.MarkData;
 import ru.nsu.fit.scriptaur.network.entities.Video;
 
 import java.io.IOException;
@@ -57,6 +62,8 @@ public class SingleVideoFragment extends Fragment {
     TextView text;
     @BindView(R.id.editText)
     EditText editText;
+    @BindView(R.id.video_rating)
+    RatingBar ratingBar;
     private Video video;
     private String videoId;
     private List<Caption> captions;
@@ -80,6 +87,34 @@ public class SingleVideoFragment extends Fragment {
         View view = inflater.inflate(R.layout.api_fragment, container, false);
         ButterKnife.bind(this, view);
 
+        if (video.getUserMark() == null) {
+            ratingBar.setRating(video.getRating());
+        } else {
+            LayerDrawable stars = (LayerDrawable) ratingBar.getProgressDrawable();
+            stars.getDrawable(2).setColorFilter(ContextCompat.getColor(getContext(), R.color.primaryDarkColor),
+                    PorterDuff.Mode.SRC_ATOP);
+            ratingBar.setRating(video.getUserMark());
+        }
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(final RatingBar ratingBar, float rating, boolean fromUser) {
+                ApiHolder.getBackendApi().addMark(PreferencesUtils.getToken(getContext()),
+                        new MarkData(video.getVideoId(), (int) rating)).subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new DefaultObserver<Video>() {
+                                       @Override
+                                       public void onNext(Video video) {
+
+                                       }
+
+                                       @Override
+                                       public void onError(Throwable e) {
+                                       }
+                                   }
+                        );
+            }
+        });
+
         YouTubePlayerSupportFragment youTubePlayer
                 = (YouTubePlayerSupportFragment) getChildFragmentManager().findFragmentById(R.id.playerContainer);
         youTubePlayer.initialize(API_KEY, new PlayerInitializedListener());
@@ -89,32 +124,30 @@ public class SingleVideoFragment extends Fragment {
         service.text(videoId)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Response<ResponseBody>>() {
+                .subscribe(new DefaultObserver<Response<ResponseBody>>(){
                     XmlPullParser parser = Xml.newPullParser();
-
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
 
                     @Override
                     public void onNext(Response<ResponseBody> responseBody) {
                         try {
                             captions = parseResponse(responseBody.body());
                         } catch (XmlPullParserException | IOException e) {
-                            Log.e(getClass().getSimpleName(), "Failed to parse captions XML", e);
+                            onError(e);
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        timer.cancel();
+                        timer.purge();
                         Log.e(getClass().getSimpleName(), "Failed to load captions", e);
+                        Toast.makeText(getContext(),
+                                "This video doesn't support english captions",
+                                Toast.LENGTH_LONG)
+                                .show();
+//                        getActivity().getSupportFragmentManager().popBackStack();
                     }
 
-                    @Override
-                    public void onComplete() {
-
-                    }
 
                     private List<Caption> parseResponse(ResponseBody response)
                             throws XmlPullParserException, IOException {
@@ -222,6 +255,8 @@ public class SingleVideoFragment extends Fragment {
         public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
             Toast.makeText(getActivity(), "Failed!", Toast.LENGTH_LONG).show();
         }
+
+
     }
 
     private class PlayerListener extends AbstractPlayerListener {

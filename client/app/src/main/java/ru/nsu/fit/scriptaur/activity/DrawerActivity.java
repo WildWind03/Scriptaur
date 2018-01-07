@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -32,7 +31,6 @@ public class DrawerActivity extends AppCompatActivity
 
 
     private SearchView searchView;
-    private InfiniteVideoListFragment videoListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +61,7 @@ public class DrawerActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+
     }
 
 
@@ -70,21 +69,22 @@ public class DrawerActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.drawer, menu);
         searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
             @Override
             public boolean onQueryTextSubmit(String query) {
                 SearchQueryVideosSource searchQueryVideosSource = new SearchQueryVideosSource(
                         PreferencesUtils.getToken(DrawerActivity.this), query);
-                Log.d("Search", query);
-                if (videoListFragment != null) {
-                    videoListFragment.setVideoSource(searchQueryVideosSource);
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.content_drawer, videoListFragment)
-                            .commit();
-                }
-                return false;
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(InfiniteVideoListFragment.VIDEOS_SOURCE_KEY,
+                        searchQueryVideosSource);
+                InfiniteVideoListFragment videoListFragment = new InfiniteVideoListFragment();
+                videoListFragment.setArguments(bundle);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.content_drawer, videoListFragment)
+                        .addToBackStack(null)
+                        .commit();
+
+                return true;
             }
 
             @Override
@@ -104,7 +104,7 @@ public class DrawerActivity extends AppCompatActivity
     private void switchToFragment(int fragmentId) {
         switch (fragmentId) {
             case R.id.nav_videos: {
-                videoListFragment = new InfiniteVideoListFragment();
+                InfiniteVideoListFragment videoListFragment = new InfiniteVideoListFragment();
                 Bundle bundle = new Bundle();
                 bundle.putParcelable(InfiniteVideoListFragment.VIDEOS_SOURCE_KEY,
                         new AllVideosSource(PreferencesUtils.getToken(this)));
@@ -126,7 +126,7 @@ public class DrawerActivity extends AppCompatActivity
                 break;
             }
             case R.id.nav_my_videos: {
-                videoListFragment = new InfiniteVideoListFragment();
+                InfiniteVideoListFragment videoListFragment = new InfiniteVideoListFragment();
                 Bundle bundle = new Bundle();
                 String token = PreferencesUtils.getToken(this);
                 bundle.putParcelable(InfiniteVideoListFragment.VIDEOS_SOURCE_KEY, new UsersVideosSource(token));

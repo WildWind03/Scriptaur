@@ -2,7 +2,9 @@ package ru.nsu.fit.scriptaur.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +12,11 @@ import android.widget.*;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.bumptech.glide.Glide;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
@@ -28,13 +33,18 @@ import java.util.List;
 
 public class InfiniteVideoListFragment extends Fragment {
     public static final String VIDEOS_SOURCE_KEY = "videos_source";
+    private static final String VIDEOS_STATE = "videos";
+    private static final String CUR_PAGE_STATE = "currentPage";
+    private static final String MAX_PAGE_STATE = "maxPage";
 
     private static VideosSource videosSource;
-    private static List<Video> videos = new ArrayList<>();
+    private static ArrayList<Video> videos = new ArrayList<Video>();
     @BindView(R.id.listView)
     ListView listView;
     @BindView(R.id.emptyListHint)
     TextView emptyListHint;
+    @BindView(R.id.swipeContainer)
+    SwipeRefreshLayout swipeContainer;
 
     private int currentPage = 0;
     private int maxPage;
@@ -45,7 +55,6 @@ public class InfiniteVideoListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         videosSource = getArguments().getParcelable(VIDEOS_SOURCE_KEY);
-
         adapter = new BaseAdapter() {
             LayoutInflater layoutInflater = (LayoutInflater) getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -90,25 +99,23 @@ public class InfiniteVideoListFragment extends Fragment {
                 return view;
             }
         };
-    }
-
-    public void setVideoSource(VideosSource videoSource) {
-        getArguments().putParcelable(VIDEOS_SOURCE_KEY, videoSource);
-        videosSource = videoSource;
-        currentPage = 0;
-        videos.clear();
         loadFirstPage();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.video_list_fragment_2, container, false);
         ButterKnife.bind(this, view);
 
-        loadFirstPage();
+        emptyListHint.setVisibility(videos.isEmpty() ? View.VISIBLE : View.INVISIBLE);
 
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadFirstPage();
+            }
+        });
 
         listView.setOnScrollListener(new EndlessScrollListener() {
             public boolean onLoadMore() {
@@ -146,18 +153,17 @@ public class InfiniteVideoListFragment extends Fragment {
         });
 
         listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
 
         return view;
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        currentPage = 0;
-        videos.clear();
-    }
+
 
     private void loadFirstPage() {
+        currentPage = 0;
+        maxPage = 0;
+        videos.clear();
         videosSource.pagesCount()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -167,23 +173,24 @@ public class InfiniteVideoListFragment extends Fragment {
                         videosSource.getPage(currentPage++)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .doOnComplete(new Action() {
+                                .subscribe(new DefaultObserver<List<Video>>() {
                                     @Override
-                                    public void run() throws Exception {
-                                        emptyListHint.setVisibility(videos.isEmpty() ? View.VISIBLE : View.INVISIBLE);
+                                    public void onNext(List<Video> videos) {
+                                        InfiniteVideoListFragment.videos.addAll(videos);
+                                        adapter.notifyDataSetChanged();
+                                        if (emptyListHint != null) {
+                                            emptyListHint.setVisibility(videos.isEmpty() ? View.VISIBLE : View.INVISIBLE);
+                                        }
+                                        if (swipeContainer != null){
+                                            swipeContainer.setRefreshing(false);
+                                        }
                                     }
-                                }).subscribe(new DefaultObserver<List<Video>>() {
-                            @Override
-                            public void onNext(List<Video> videos) {
-                                InfiniteVideoListFragment.videos.addAll(videos);
-                                adapter.notifyDataSetChanged();
-                            }
 
-                            @Override
-                            public void onError(Throwable e) {
-                                super.onError(e);
-                            }
-                        });
+                                    @Override
+                                    public void onError(Throwable e) {
+                                        super.onError(e);
+                                    }
+                                });
 
 
                     }
@@ -200,5 +207,6 @@ public class InfiniteVideoListFragment extends Fragment {
                         Toast.makeText(getActivity(), "Request failed", Toast.LENGTH_LONG).show();
                     }
                 });
+
     }
 }

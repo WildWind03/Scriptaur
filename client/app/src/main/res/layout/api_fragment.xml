@@ -9,22 +9,10 @@
             android:id="@+id/playerContainer"
             android:tag="playerFragment"
             android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:name="com.google.android.youtube.player.YouTubePlayerSupportFragment"
+            android:name="com.google.android.youtube.player.YouTubePlayerSupportFragment"/>
 
-    />
-    <RatingBar
-            android:theme="@style/RatingBar"
-            android:layout_gravity="bottom"
-            android:stepSize="0.1"
-            android:scaleX="0.5"
-            android:scaleY="0.5"
-            android:transformPivotX="0dp"
-            android:isIndicator="true"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:numStars="5"/>
     <ScrollView android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
         <LinearLayout android:layout_width="match_parent"
                       android:layout_height="wrap_content"
                       android:orientation="vertical">
@@ -33,18 +21,35 @@
                       android:layout_height="wrap_content"/>
             <EditText android:layout_width="match_parent" android:layout_height="wrap_content"
                       android:id="@+id/editText"/>
-
-            <Button
-                    android:id="@+id/repeatButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="repeat"/>
-            <Button android:id="@+id/skipButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="skip"/>
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="wrap_content">
+                <Button
+                        style="@style/Widget.AppCompat.Button.Colored"
+                        android:id="@+id/repeatButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/repeat"/>
+                <Button style="@style/Widget.AppCompat.Button.Colored"
+                        android:id="@+id/skipButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/skip"/>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
+    <RatingBar android:id="@+id/video_rating"
+            style="@style/Widget.AppCompat.RatingBar"
+               android:layout_marginTop="5dp"
+               android:stepSize="1"
+               android:isIndicator="false"
+               android:scaleX="0.7"
+               android:scaleY="0.7"
+               android:layout_gravity="center"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:numStars="5"
+               android:rating="1"/>
 
 </LinearLayout>

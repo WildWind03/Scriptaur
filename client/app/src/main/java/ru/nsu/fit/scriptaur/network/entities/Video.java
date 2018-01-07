@@ -26,7 +26,7 @@ public class Video implements Parcelable {
     private String imageUrl;
     private String name;
     private int length;
-    private int userMark;
+    private Integer userMark;
 
     public Video(int videoId, String videoUrl, String name, String imageUrl, int length,
                  int addedBy, String addedOn, float rating, int evaluationsCount, int userMark) {
@@ -91,7 +91,7 @@ public class Video implements Parcelable {
         return evaluationsCount;
     }
 
-    public int getUserMark() {
+    public Integer getUserMark() {
         return userMark;
     }
 
