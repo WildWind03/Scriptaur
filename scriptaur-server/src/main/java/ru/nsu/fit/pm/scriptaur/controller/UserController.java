@@ -25,7 +25,6 @@ import java.util.List;
 public class UserController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class.getName());
-    private static final String DEFAULT_HASH = "USA";
 
     @Autowired
     private UserService userService;
@@ -97,7 +96,7 @@ public class UserController {
         try {
             int id  = tokenService.getUserIdByToken(token);
             User user = userService.getUserById(id);
-            user.setHash(passwordEncoder.encodePassword(signUpData.getPassword(), DEFAULT_HASH));
+            user.setHash(passwordEncoder.encodePassword(signUpData.getPassword(), user.getSalt()));
             userService.updateUser(user);
             return new ResponseEntity<>(user, HttpStatus.OK);
 

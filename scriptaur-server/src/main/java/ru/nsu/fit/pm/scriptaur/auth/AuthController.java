@@ -17,7 +17,7 @@ import java.util.Random;
 @RestController
 public class AuthController {
     private static final int DEFAULT_TRUST_FACTOR = 1;
-    private static final String DEFAULT_SALT = "USA";
+    private static final String DEFAULT_SALT = "Russia";
 
     @Autowired
     private UserService userService;
@@ -38,7 +38,7 @@ public class AuthController {
         if (null == user) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         } else {
-            String hash = passwordEncoder.encodePassword(signInData.getPassword(), DEFAULT_SALT);
+            String hash = passwordEncoder.encodePassword(signInData.getPassword(), user.getSalt());
             if (hash.equals(user.getHash())) {
 
                 String token = Jwts.builder()
