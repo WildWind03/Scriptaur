@@ -17,7 +17,7 @@ import java.util.Random;
 @RestController
 public class AuthController {
     private static final int DEFAULT_TRUST_FACTOR = 1;
-    private static final String DEFAULT_SALT = "Russia";
+    private static final String DEFAULT_SALT = "USA";
 
     @Autowired
     private UserService userService;
@@ -38,18 +38,23 @@ public class AuthController {
         if (null == user) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         } else {
-            String token = Jwts.builder()
-                    .setSubject(user.getUsername())
-                    .setIssuedAt(new Date())
-                    .setId(Integer.toString(new Random(System.currentTimeMillis()).nextInt()))
-                    .compact();
+            String hash = passwordEncoder.encodePassword(signInData.getPassword(), DEFAULT_SALT);
+            if (hash.equals(user.getHash())) {
 
-            tokenService.deleteUser(user.getUserId());
-            tokenService.addTokenId(user.getUserId(), token);
+                String token = Jwts.builder()
+                        .setSubject(user.getUsername())
+                        .setIssuedAt(new Date())
+                        .setId(Integer.toString(new Random(System.currentTimeMillis()).nextInt()))
+                        .compact();
 
-            return new ResponseEntity<>(new TokenString(token), HttpStatus.OK);
+                tokenService.deleteUser(user.getUserId());
+                tokenService.addTokenId(user.getUserId(), token);
+
+                return new ResponseEntity<>(new TokenString(token), HttpStatus.OK);
+            } else {
+                return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            }
         }
-
     }
 
     @RequestMapping(path = "/signup", method = RequestMethod.POST)
