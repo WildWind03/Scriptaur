@@ -133,7 +133,6 @@ public class InfiniteVideoListFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(), videos.get(position).getVideoUrl(), Toast.LENGTH_LONG).show();
                 Fragment fragment = new SingleVideoFragment();
                 Bundle bundle = new Bundle();
                 bundle.putParcelable(SingleVideoFragment.VIDEO_KEY, videos.get(position));

@@ -68,6 +68,7 @@ public class SingleVideoFragment extends Fragment {
     private boolean answered = true;
     private Timer timer = new Timer();
     private YouTubePlayer player;
+    private boolean correctCaptions;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -112,9 +113,8 @@ public class SingleVideoFragment extends Fragment {
             }
         });
 
-        YouTubePlayerSupportFragment youTubePlayer
+        final YouTubePlayerSupportFragment youTubePlayer
                 = (YouTubePlayerSupportFragment) getChildFragmentManager().findFragmentById(R.id.playerContainer);
-        youTubePlayer.initialize(API_KEY, new PlayerInitializedListener());
         CaptionsClient service = RetrofitServiceFactory
                 .createRetrofitService(CaptionsClient.class, BASE_URL);
 
@@ -127,6 +127,8 @@ public class SingleVideoFragment extends Fragment {
                     @Override
                     public void onNext(Response<ResponseBody> responseBody) {
                         try {
+                            correctCaptions = true;
+                            youTubePlayer.initialize(API_KEY, new PlayerInitializedListener());
                             captions = parseResponse(responseBody.body());
                         } catch (XmlPullParserException | IOException e) {
                             onError(e);
@@ -135,14 +137,12 @@ public class SingleVideoFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable e) {
-                        timer.cancel();
-                        timer.purge();
-                        Log.e(getClass().getSimpleName(), "Failed to load captions", e);
+                        correctCaptions = false;
+                        youTubePlayer.initialize(API_KEY, new PlayerInitializedListener());
                         Toast.makeText(getContext(),
                                 "This video doesn't support english captions",
                                 Toast.LENGTH_LONG)
                                 .show();
-//                        getActivity().getSupportFragmentManager().popBackStack();
                     }
 
 
@@ -240,17 +240,21 @@ public class SingleVideoFragment extends Fragment {
                                             boolean restored) {
             SingleVideoFragment.this.player = player;
             player.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
-            AbstractPlayerListener listener = new PlayerListener();
-            player.setPlayerStateChangeListener(listener);
-            player.setPlaybackEventListener(listener);
-            if (!restored) {
-                player.cueVideo(videoId);
+            if (correctCaptions) {
+                AbstractPlayerListener listener = new PlayerListener();
+                player.setPlayerStateChangeListener(listener);
+                player.setPlaybackEventListener(listener);
+                if (!restored) {
+                    player.cueVideo(videoId);
+                }
+            } else {
+                player.release();
             }
         }
 
         @Override
         public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-            Toast.makeText(getActivity(), "Failed!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "This video can not be played", Toast.LENGTH_LONG).show();
         }
 
 
