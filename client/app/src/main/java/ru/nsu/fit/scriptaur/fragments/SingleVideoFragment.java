@@ -307,10 +307,12 @@ public class SingleVideoFragment extends Fragment {
 
         @Override
         public void onVideoEnded() {
-            AppCompatDialogFragment dialog = new VideoEndFragment();
-            Bundle bundle = new Bundle();
-            bundle.putInt(VIDEO_ID_KEY, video.getVideoId());
-            dialog.setArguments(bundle);
+            AppCompatDialogFragment dialog;
+            if (video.getUserMark() != null) {
+                dialog = VideoEndFragment.newInstance(video.getVideoId(), video.getUserMark());
+            } else {
+                dialog = VideoEndFragment.newInstance(video.getVideoId());
+            }
             dialog.show(getActivity().getSupportFragmentManager(), "Rate video");
         }
     }
