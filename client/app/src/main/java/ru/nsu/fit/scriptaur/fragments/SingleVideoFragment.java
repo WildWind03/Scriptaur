@@ -106,6 +106,7 @@ public class SingleVideoFragment extends Fragment {
 
                                        @Override
                                        public void onError(Throwable e) {
+
                                        }
                                    }
                         );

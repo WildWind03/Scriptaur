@@ -79,9 +79,9 @@ public class AddVideoFragment extends AppCompatDialogFragment {
                                     public void onNext(Video v) {
                                         Fragment fragment = new SingleVideoFragment();
                                         Bundle bundle = new Bundle();
-                                        bundle.putString(SingleVideoFragment.VIDEO_ID_KEY, v.getVideoUrl());
+                                        bundle.putParcelable(SingleVideoFragment.VIDEO_KEY, v);
                                         fragment.setArguments(bundle);
-                                        getActivity().getSupportFragmentManager().beginTransaction()
+                                        activity.getSupportFragmentManager().beginTransaction()
                                                 .replace(R.id.content_drawer, fragment).addToBackStack(null)
                                                 .commit();
                                     }

@@ -113,4 +113,17 @@ public class Video implements Parcelable {
         dest.writeInt(evaluationsCount);
         dest.writeInt(userMark);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == this){
+            return true;
+        }
+        else if(!(obj instanceof Video)){
+            return false;
+        }
+        else{
+            return videoId == ((Video) obj).videoId;
+        }
+    }
 }
