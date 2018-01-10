@@ -13,10 +13,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+
+import java.util.List;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import org.acra.annotation.AcraDialog;
-import org.acra.dialog.CrashReportDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 import ru.nsu.fit.scriptaur.R;
 import ru.nsu.fit.scriptaur.common.DefaultObserver;
@@ -30,14 +31,13 @@ import ru.nsu.fit.scriptaur.fragments.ProfileFragment;
 import ru.nsu.fit.scriptaur.network.ApiHolder;
 import ru.nsu.fit.scriptaur.network.entities.User;
 
-import java.util.List;
-
 public class DrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         EasyPermissions.PermissionCallbacks {
 
 
     private SearchView searchView;
+    private boolean searchViewActive = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +81,10 @@ public class DrawerActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+        if (searchViewActive) {
+            searchView.setIconified(true);
+        }
+        
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -97,6 +101,7 @@ public class DrawerActivity extends AppCompatActivity
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                searchViewActive = true;
                 SearchQueryVideosSource searchQueryVideosSource = new SearchQueryVideosSource(
                         PreferencesUtils.getToken(DrawerActivity.this), query);
                 Bundle bundle = new Bundle();
@@ -106,7 +111,7 @@ public class DrawerActivity extends AppCompatActivity
                 videoListFragment.setArguments(bundle);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.content_drawer, videoListFragment)
-                        .addToBackStack(null)
+                        .addToBackStack("search")
                         .commit();
 
                 return true;
@@ -114,6 +119,15 @@ public class DrawerActivity extends AppCompatActivity
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                searchViewActive = false;
+                onBackPressed();
                 return false;
             }
         });
