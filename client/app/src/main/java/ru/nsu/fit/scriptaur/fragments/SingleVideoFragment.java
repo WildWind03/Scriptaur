@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.text.Editable;
-import android.util.Log;
 import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,6 +54,8 @@ public class SingleVideoFragment extends Fragment {
     Button repeatButton;
     @BindView(R.id.skipButton)
     Button skipButton;
+    @BindView(R.id.answer)
+    Button answerButton;
     @BindView(R.id.text)
     TextView text;
     @BindView(R.id.editText)
@@ -203,19 +204,17 @@ public class SingleVideoFragment extends Fragment {
         String s2 = captions.get(curCaption).getText().toLowerCase().replaceAll("[\\W]", "");
         if (s1.equals(s2)) {
             answered = true;
-            editText.post(new Runnable() {
-                @Override
-                public void run() {
-                    editText.setText("");
-                }
-            });
+            editText.setText("");
+            text.setText("");
         }
     }
 
     @OnClick(R.id.repeatButton)
     public void repeat() {
-        player.seekToMillis(captions.get(curCaption).getStart() - 50);
-        player.play();
+        if (curCaption > -1) {
+            player.seekToMillis(Math.max(captions.get(curCaption).getStart() - 50, 0));
+            player.play();
+        }
     }
 
     @OnClick(R.id.skipButton)
@@ -223,13 +222,15 @@ public class SingleVideoFragment extends Fragment {
         if (curCaption + 1 < captions.size()) {
             curCaption++;
             player.seekToMillis(captions.get(curCaption).getStart() - 50);
-            text.post(new Runnable() {
-                @Override
-                public void run() {
-                    text.setText(captions.get(curCaption).getText());
-                }
-            });
+            text.setText("");
             player.play();
+        }
+    }
+
+    @OnClick(R.id.answer)
+    public void showAnswer() {
+        if (curCaption > -1) {
+            text.setText(captions.get(curCaption).getText().trim());
         }
     }
 
@@ -265,6 +266,9 @@ public class SingleVideoFragment extends Fragment {
         @Override
         public void onVideoStarted() {
             super.onVideoStarted();
+            repeatButton.setEnabled(true);
+            skipButton.setEnabled(true);
+            answerButton.setEnabled(true);
             timer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
@@ -281,15 +285,7 @@ public class SingleVideoFragment extends Fragment {
                         } else {
                             player.pause();
                         }
-                        if (!"".equals(captions.get(curCaption).getText().trim())) {
-                            //todo degug
-                            text.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    text.setText(captions.get(curCaption).getText());
-                                }
-                            });
-                        } else {
+                        if ("".equals(captions.get(curCaption).getText().trim())) {
                             curCaption++;
                             player.play();
                             answered = false;

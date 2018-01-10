@@ -10,5 +10,6 @@
     <string name="dialog_text">Crash</string>
     <string name="dialog_comment">Sorry, the application crashed. Send report to developers.</string>
     <string name="send">Send</string>
+    <string name="show_answer">show answer</string>
 
 </resources>

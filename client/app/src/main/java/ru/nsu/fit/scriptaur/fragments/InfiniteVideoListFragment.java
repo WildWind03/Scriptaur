@@ -39,8 +39,8 @@ import ru.nsu.fit.scriptaur.network.entities.Video;
 public class InfiniteVideoListFragment extends Fragment {
     public static final String VIDEOS_SOURCE_KEY = "videos_source";
 
-    private static VideosSource videosSource;
-    private static ArrayList<Video> videos = new ArrayList<>();
+    private VideosSource videosSource;
+    private ArrayList<Video> videos = new ArrayList<>();
     @BindView(R.id.listView)
     ListView listView;
     @BindView(R.id.emptyListHint)
@@ -219,12 +219,12 @@ public class InfiniteVideoListFragment extends Fragment {
 
     private void addVideos(List<Video> videos) {
         for (Video video : videos) {
-            int position = InfiniteVideoListFragment.videos.indexOf(video);
+            int position = this.videos.indexOf(video);
             if(position == -1){
-                InfiniteVideoListFragment.videos.add(video);
+                this.videos.add(video);
             }
             else {
-                InfiniteVideoListFragment.videos.set(position, video);
+                this.videos.set(position, video);
             }
         }
 
