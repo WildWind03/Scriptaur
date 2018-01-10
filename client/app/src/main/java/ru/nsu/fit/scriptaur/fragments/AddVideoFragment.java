@@ -88,7 +88,7 @@ public class AddVideoFragment extends AppCompatDialogFragment {
 
                                     @Override
                                     public void onError(Throwable e) {
-                                        Toast.makeText(getContext(), "Video not added", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(activity, "Video not added", Toast.LENGTH_LONG).show();
                                         super.onError(e);
                                     }
                                 });
