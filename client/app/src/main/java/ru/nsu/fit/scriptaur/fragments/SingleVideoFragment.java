@@ -3,12 +3,14 @@ package ru.nsu.fit.scriptaur.fragments;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.text.Editable;
 import android.util.Xml;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
@@ -62,6 +64,9 @@ public class SingleVideoFragment extends Fragment {
     EditText editText;
     @BindView(R.id.video_rating)
     RatingBar ratingBar;
+    @BindView(R.id.video_seekbar)
+    SeekBar seekBar;
+
     private Video video;
     private String videoId;
     private List<Caption> captions;
@@ -70,6 +75,7 @@ public class SingleVideoFragment extends Fragment {
     private Timer timer = new Timer();
     private YouTubePlayer player;
     private boolean correctCaptions;
+    private Handler seekBarHandler = new Handler();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,7 +91,7 @@ public class SingleVideoFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.api_fragment, container, false);
         ButterKnife.bind(this, view);
-
+        seekBar.setPadding(0,0,0,0);
         if (video.getUserMark() == null) {
             ratingBar.setRating(video.getRating());
         } else {
@@ -194,6 +200,7 @@ public class SingleVideoFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        player = null;
         timer.cancel();
         timer.purge();
     }
@@ -235,6 +242,7 @@ public class SingleVideoFragment extends Fragment {
     }
 
 
+
     private class PlayerInitializedListener implements YouTubePlayer.OnInitializedListener {
         @Override
         public void onInitializationSuccess(YouTubePlayer.Provider provider,
@@ -269,6 +277,12 @@ public class SingleVideoFragment extends Fragment {
             repeatButton.setEnabled(true);
             skipButton.setEnabled(true);
             answerButton.setEnabled(true);
+            seekBar.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    return true;
+                }
+            });
             timer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
@@ -282,6 +296,12 @@ public class SingleVideoFragment extends Fragment {
                             }
                             player.play();
                             answered = false;
+                            text.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    text.setText("");
+                                }
+                            });
                         } else {
                             player.pause();
                         }
@@ -293,7 +313,16 @@ public class SingleVideoFragment extends Fragment {
                     }
                 }
             }, 0, 100);
-
+            seekBar.setMax(player.getDurationMillis());
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (SingleVideoFragment.this.player != null) {
+                        seekBar.setProgress(SingleVideoFragment.this.player.getCurrentTimeMillis());
+                        seekBarHandler.postDelayed(this, 100);
+                    }
+                }
+            });
         }
 
         @Override
