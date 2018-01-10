@@ -11,6 +11,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import org.acra.annotation.AcraDialog;
 import ru.nsu.fit.scriptaur.R;
 import ru.nsu.fit.scriptaur.common.DefaultObserver;
 import ru.nsu.fit.scriptaur.common.PreferencesUtils;
@@ -19,6 +20,7 @@ import ru.nsu.fit.scriptaur.network.ApiHolder;
 import ru.nsu.fit.scriptaur.network.entities.SignUpData;
 import ru.nsu.fit.scriptaur.network.entities.UserToken;
 
+@AcraDialog
 public class RegistrationActivity extends AppCompatActivity {
     @BindView(R.id.new_login)
     EditText login;

@@ -14,6 +14,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import org.acra.annotation.AcraDialog;
 import ru.nsu.fit.scriptaur.R;
 import ru.nsu.fit.scriptaur.common.DefaultObserver;
 import ru.nsu.fit.scriptaur.common.PreferencesUtils;
@@ -25,7 +26,7 @@ import ru.nsu.fit.scriptaur.network.entities.UserToken;
 
 import java.util.concurrent.TimeUnit;
 
-
+@AcraDialog
 public class LoginActivity extends AppCompatActivity {
     public final static String USERNAME_KEY = "USER_NAME";
     private final static int REGISTRATION_ACTIVITY_CODE = 1;

@@ -7,5 +7,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="repeat">repeat</string>
     <string name="skip">skip</string>
+    <string name="dialog_text">Crash</string>
+    <string name="dialog_comment">Sorry, the application crashed. Send report to developers.</string>
+    <string name="send">Send</string>
 
 </resources>

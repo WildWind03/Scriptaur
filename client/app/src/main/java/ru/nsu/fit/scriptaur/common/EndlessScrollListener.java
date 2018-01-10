@@ -3,7 +3,7 @@ package ru.nsu.fit.scriptaur.common;
 import android.widget.AbsListView;
 
 public abstract class EndlessScrollListener implements AbsListView.OnScrollListener {
-    private int visibleThreshold = 2;
+    private int visibleThreshold = 5;
     private int previousTotalItemCount = 0;
     private boolean loading = true;
 
