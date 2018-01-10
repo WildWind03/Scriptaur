@@ -15,6 +15,8 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import org.acra.annotation.AcraDialog;
+import org.acra.dialog.CrashReportDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 import ru.nsu.fit.scriptaur.R;
 import ru.nsu.fit.scriptaur.common.DefaultObserver;
