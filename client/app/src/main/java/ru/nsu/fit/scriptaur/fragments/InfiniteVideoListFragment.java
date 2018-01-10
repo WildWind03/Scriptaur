@@ -128,8 +128,7 @@ public class InfiniteVideoListFragment extends Fragment {
                             .subscribe(new DefaultObserver<List<Video>>() {
                                 @Override
                                 public void onNext(List<Video> videos) {
-                                    InfiniteVideoListFragment.videos.addAll(videos);
-                                    adapter.notifyDataSetChanged();
+                                    addVideos(videos);
                                 }
                             });
                     return true;
@@ -186,19 +185,8 @@ public class InfiniteVideoListFragment extends Fragment {
                                     .subscribe(new DefaultObserver<List<Video>>() {
                                         @Override
                                         public void onNext(final List<Video> videos) {
-                                            InfiniteVideoListFragment.videos.addAll(videos);
+                                            addVideos(videos);
 
-                                            for (Video video : videos) {
-                                                int position = InfiniteVideoListFragment.videos.indexOf(video);
-                                                if(position == -1){
-                                                    InfiniteVideoListFragment.videos.add(video);
-                                                }
-                                                else {
-                                                    InfiniteVideoListFragment.videos.set(position, video);
-                                                }
-                                            }
-
-                                            adapter.notifyDataSetChanged();
                                             if (emptyListHint != null) {
                                                 emptyListHint.setVisibility(videos.isEmpty() ? View.VISIBLE : View.INVISIBLE);
                                             }
@@ -212,8 +200,6 @@ public class InfiniteVideoListFragment extends Fragment {
                                             super.onError(e);
                                         }
                                     });
-
-
                         }
                     }
                 })
@@ -229,5 +215,19 @@ public class InfiniteVideoListFragment extends Fragment {
                         Toast.makeText(getActivity(), "Request failed", Toast.LENGTH_LONG).show();
                     }
                 });
+    }
+
+    private void addVideos(List<Video> videos) {
+        for (Video video : videos) {
+            int position = InfiniteVideoListFragment.videos.indexOf(video);
+            if(position == -1){
+                InfiniteVideoListFragment.videos.add(video);
+            }
+            else {
+                InfiniteVideoListFragment.videos.set(position, video);
+            }
+        }
+
+        adapter.notifyDataSetChanged();
     }
 }
