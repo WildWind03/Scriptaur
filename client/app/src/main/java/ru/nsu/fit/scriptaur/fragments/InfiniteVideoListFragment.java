@@ -7,15 +7,27 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.RatingBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+
+import org.joda.time.LocalTime;
+import org.joda.time.format.DateTimeFormat;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.bumptech.glide.Glide;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
-import org.joda.time.LocalTime;
-import org.joda.time.format.DateTimeFormat;
 import ru.nsu.fit.scriptaur.R;
 import ru.nsu.fit.scriptaur.common.DefaultObserver;
 import ru.nsu.fit.scriptaur.common.EndlessScrollListener;
@@ -23,15 +35,12 @@ import ru.nsu.fit.scriptaur.common.videos.VideosSource;
 import ru.nsu.fit.scriptaur.network.entities.PagesCount;
 import ru.nsu.fit.scriptaur.network.entities.Video;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class InfiniteVideoListFragment extends Fragment {
     public static final String VIDEOS_SOURCE_KEY = "videos_source";
 
-    private static VideosSource videosSource;
-    private static ArrayList<Video> videos = new ArrayList<>();
+    private VideosSource videosSource;
+    private ArrayList<Video> videos = new ArrayList<>();
     @BindView(R.id.listView)
     ListView listView;
     @BindView(R.id.emptyListHint)
@@ -119,8 +128,7 @@ public class InfiniteVideoListFragment extends Fragment {
                             .subscribe(new DefaultObserver<List<Video>>() {
                                 @Override
                                 public void onNext(List<Video> videos) {
-                                    InfiniteVideoListFragment.videos.addAll(videos);
-                                    adapter.notifyDataSetChanged();
+                                    addVideos(videos);
                                 }
                             });
                     return true;
@@ -133,7 +141,6 @@ public class InfiniteVideoListFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(), videos.get(position).getVideoUrl(), Toast.LENGTH_LONG).show();
                 Fragment fragment = new SingleVideoFragment();
                 Bundle bundle = new Bundle();
                 bundle.putParcelable(SingleVideoFragment.VIDEO_KEY, videos.get(position));
@@ -151,10 +158,19 @@ public class InfiniteVideoListFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateVideos();
+    }
 
     private void loadFirstPage() {
-        currentPage = 0;
+        currentPage = 1;
         maxPage = 0;
+        updateVideos();
+    }
+
+    private void updateVideos() {
         videos.clear();
         videosSource.pagesCount()
                 .subscribeOn(Schedulers.io())
@@ -162,29 +178,29 @@ public class InfiniteVideoListFragment extends Fragment {
                 .doOnComplete(new Action() {
                     @Override
                     public void run() throws Exception {
-                        videosSource.getPage(currentPage++)
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(new DefaultObserver<List<Video>>() {
-                                    @Override
-                                    public void onNext(List<Video> videos) {
-                                        InfiniteVideoListFragment.videos.addAll(videos);
-                                        adapter.notifyDataSetChanged();
-                                        if (emptyListHint != null) {
-                                            emptyListHint.setVisibility(videos.isEmpty() ? View.VISIBLE : View.INVISIBLE);
+                        for (int i = 0; i < currentPage; ++i) {
+                            videosSource.getPage(i)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(new DefaultObserver<List<Video>>() {
+                                        @Override
+                                        public void onNext(final List<Video> videos) {
+                                            addVideos(videos);
+
+                                            if (emptyListHint != null) {
+                                                emptyListHint.setVisibility(videos.isEmpty() ? View.VISIBLE : View.INVISIBLE);
+                                            }
+                                            if (swipeContainer != null) {
+                                                swipeContainer.setRefreshing(false);
+                                            }
                                         }
-                                        if (swipeContainer != null) {
-                                            swipeContainer.setRefreshing(false);
+
+                                        @Override
+                                        public void onError(Throwable e) {
+                                            super.onError(e);
                                         }
-                                    }
-
-                                    @Override
-                                    public void onError(Throwable e) {
-                                        super.onError(e);
-                                    }
-                                });
-
-
+                                    });
+                        }
                     }
                 })
                 .subscribe(new DefaultObserver<PagesCount>() {
@@ -199,6 +215,19 @@ public class InfiniteVideoListFragment extends Fragment {
                         Toast.makeText(getActivity(), "Request failed", Toast.LENGTH_LONG).show();
                     }
                 });
+    }
 
+    private void addVideos(List<Video> videos) {
+        for (Video video : videos) {
+            int position = this.videos.indexOf(video);
+            if(position == -1){
+                this.videos.add(video);
+            }
+            else {
+                this.videos.set(position, video);
+            }
+        }
+
+        adapter.notifyDataSetChanged();
     }
 }
