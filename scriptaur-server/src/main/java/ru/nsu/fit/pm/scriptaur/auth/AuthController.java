@@ -2,6 +2,7 @@ package ru.nsu.fit.pm.scriptaur.auth;
 
 import com.google.gson.Gson;
 import io.jsonwebtoken.Jwts;
+import org.apache.commons.text.RandomStringGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,9 @@ import java.util.Random;
 @RestController
 public class AuthController {
     private static final int DEFAULT_TRUST_FACTOR = 1;
-    private static final String DEFAULT_SALT = "Russia";
+    private static final RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder().build();
+    private static final int MIN_SALT_LENGTH = 5;
+    private static final int MAX_SALT_LENGTH = 20;
 
     @Autowired
     private UserService userService;
@@ -63,10 +66,11 @@ public class AuthController {
         Gson gson = new Gson();
         SignUpData signUpData = gson.fromJson(data, SignUpData.class);
 
-        String hashedPassword = passwordEncoder.encodePassword(signUpData.getPassword(), DEFAULT_SALT);
+        String salt = randomStringGenerator.generate(MIN_SALT_LENGTH, MAX_SALT_LENGTH);
+        String hashedPassword = passwordEncoder.encodePassword(signUpData.getPassword(), salt);
 
         User user = new User(signUpData.getUsername(), DEFAULT_TRUST_FACTOR,
-                hashedPassword, DEFAULT_SALT);
+                hashedPassword, salt);
         userService.addUser(user);
 
         String token = Jwts.builder()

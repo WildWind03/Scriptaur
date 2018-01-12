@@ -50,6 +50,8 @@ dependencies {
 
     compile group: 'joda-time', name: 'joda-time', version: '2.9.9'
 
+    compile 'org.apache.commons:commons-text:1.2'
+
 }
 
 
