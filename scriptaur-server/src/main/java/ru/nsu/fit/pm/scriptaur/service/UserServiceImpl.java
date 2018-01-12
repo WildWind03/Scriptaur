@@ -26,8 +26,8 @@ public class UserServiceImpl implements UserService{
     }
 
     @Transactional
-    public void addUser(User user) {
-        this.userDao.addUser(user);
+    public User addUser(User user) {
+        return this.userDao.addUser(user);
     }
 
     @Transactional

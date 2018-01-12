@@ -12,6 +12,7 @@ import ru.nsu.fit.pm.scriptaur.service.EvaluationService;
 import ru.nsu.fit.pm.scriptaur.service.TokenService;
 import ru.nsu.fit.pm.scriptaur.service.UserService;
 import ru.nsu.fit.pm.scriptaur.service.VideoService;
+import ru.nsu.fit.pm.scriptaur.util.TrustUpdater;
 
 import java.util.Date;
 import java.util.List;
@@ -97,14 +98,24 @@ public class RankController {
 
             Date trustFactorUpdated = userService.getDateOfTrustFactorUpdated(addedBy);
             if (trustFactorUpdated == null) {
-                updateTrustFactor(addedBy);
+                //updateTrustFactor(addedBy);
+                float trustFactorRes = TrustUpdater.calculateTrustFactor(addedBy,
+                        videoService.getVideoListLastMonthByUserId(addedBy));
+                userService.updateTrustFactor(addedBy, trustFactorRes);
+                userService.updateTrustFactorDay(addedBy);
             } else {
 
                 Date curDate = new Date();
-                long dif = (curDate.getTime() - trustFactorUpdated.getTime()) / (1000 * 60 * 60 * 24);
+                //long dif = (curDate.getTime() - trustFactorUpdated.getTime()) / (1000 * 60 * 60 * 24);
 
-                if (dif > 3) {
-                    updateTrustFactor(addedBy);
+                long diffMinutes = (curDate.getTime() - trustFactorUpdated.getTime()) / TrustUpdater.FACTOR;
+
+                if (diffMinutes > TrustUpdater.TIMEOUT_TRUST_FACTOR_UPDATE) {
+                    //updateTrustFactor(userId);
+                    float trustFactorRes = TrustUpdater.calculateTrustFactor(addedBy,
+                            videoService.getVideoListLastMonthByUserId(addedBy));
+                    userService.updateTrustFactor(addedBy, trustFactorRes);
+                    userService.updateTrustFactorDay(addedBy);
                 }
             }
 

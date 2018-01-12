@@ -2,6 +2,7 @@ package ru.nsu.fit.pm.scriptaur.dao;
 
 import org.hibernate.*;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
@@ -41,7 +42,12 @@ public class VideoDaoImpl implements VideoDao {
         Session session = getSession();
         Transaction transaction = getTransaction(session);
 
-        session.persist(video);
+        try {
+            session.persist(video);
+        } catch (Exception e) {
+            session.close();
+            return null;
+        }
 
         transaction.commit();
         session.close();
@@ -172,7 +178,8 @@ public class VideoDaoImpl implements VideoDao {
         Criteria cr = session.createCriteria(Video.class)
                 .add(Restrictions.eq("addedBy", userId))
                 .setFirstResult(VIDEO_PRO_PAGE * page)
-                .setMaxResults(VIDEO_PRO_PAGE);
+                .setMaxResults(VIDEO_PRO_PAGE)
+                .addOrder(Order.desc("addedOn"));
         List<Video> videos = cr.list();
 
 
@@ -192,7 +199,8 @@ public class VideoDaoImpl implements VideoDao {
 
         Criteria cr = session.createCriteria(Video.class)
                 .setFirstResult(VIDEO_PRO_PAGE * page)
-                .setMaxResults(VIDEO_PRO_PAGE);
+                .setMaxResults(VIDEO_PRO_PAGE)
+                .addOrder(Order.desc("addedOn"));
         List<Video> videos = cr.list();
 
         tr.commit();
@@ -257,7 +265,8 @@ public class VideoDaoImpl implements VideoDao {
         Criteria cr = session.createCriteria(Video.class)
                 .add(Restrictions.like("name", query, MatchMode.ANYWHERE).ignoreCase())
                 .setFirstResult(VIDEO_PRO_PAGE * page)
-                .setMaxResults(VIDEO_PRO_PAGE);
+                .setMaxResults(VIDEO_PRO_PAGE)
+                .addOrder(Order.desc("addedOn"));
 
         List<Video> videos = cr.list();
 

@@ -48,23 +48,23 @@ public class UserDaoImpl implements UserDao {
         return sessionFactory;
     }
 
-    public void addUser(User user) {
+    public User addUser(User user) {
         Session session = null;
         Transaction trans = null;
+        session = getSession();
+        trans = getTransaction(session);
+
         try {
-            session = getSession();
-            trans = getTransaction(session);
-
             session.persist(user);
-        } finally {
 
-            if (trans != null) {
-                trans.commit();
-            }
-            if (session != null) {
-                session.close();
-            }
+        } catch (Exception e) {
+            session.close();
+            return null;
         }
+
+        trans.commit();
+        session.close();
+        return user;
     }
 
     public void updateUser(User user) {

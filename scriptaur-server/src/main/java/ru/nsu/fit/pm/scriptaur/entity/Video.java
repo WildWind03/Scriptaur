@@ -8,7 +8,7 @@ import java.util.Date;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
-@Table(name = "videos")
+@Table(name = "videos", uniqueConstraints = @UniqueConstraint(columnNames = "video_url"))
 public class Video {
 
     @Id

@@ -67,11 +67,26 @@ public class AuthController {
         SignUpData signUpData = gson.fromJson(data, SignUpData.class);
 
         String salt = randomStringGenerator.generate(MIN_SALT_LENGTH, MAX_SALT_LENGTH);
+        if (signUpData.getPassword().length() < 8
+                || signUpData.getUsername().length() < 1
+                || signUpData.getName().length() < 1) {
+            return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
+        }
+
         String hashedPassword = passwordEncoder.encodePassword(signUpData.getPassword(), salt);
+        //String hashedPassword = passwordEncoder.encodePassword(signUpData.getPassword(), DEFAULT_SALT);
 
         User user = new User(signUpData.getUsername(), DEFAULT_TRUST_FACTOR,
                 hashedPassword, salt);
-        userService.addUser(user);
+
+        try {
+            User added = userService.addUser(user);
+            if (added == null) {
+                return new ResponseEntity(HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+        }
 
         String token = Jwts.builder()
                 .setSubject(signUpData.getUsername())

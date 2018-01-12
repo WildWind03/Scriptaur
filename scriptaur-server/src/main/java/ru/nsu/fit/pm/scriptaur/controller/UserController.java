@@ -93,6 +93,14 @@ public class UserController {
         SignUpData signUpData = gson.fromJson(signUpJson, SignUpData.class);
         System.out.println(signUpData);
 
+        if (signUpData.getPassword().length() < 8
+                || signUpData.getUsername().length() < 1
+                || signUpData.getName().length() < 1) {
+            return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
+        }
+
+
+
         try {
             int id  = tokenService.getUserIdByToken(token);
             User user = userService.getUserById(id);

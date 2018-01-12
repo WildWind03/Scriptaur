@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface UserDao {
-    void addUser(User user);
+    User addUser(User user);
 
     void updateUser(User user);
 
